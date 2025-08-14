@@ -423,6 +423,9 @@ db.prepare(`
   CREATE TABLE IF NOT EXISTS shift_types (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
+    description TEXT,
+    guides_required INTEGER DEFAULT 2,
+    roles_required TEXT,
     start_time TEXT,
     end_time TEXT,
     duration_hours DECIMAL(4,2),
