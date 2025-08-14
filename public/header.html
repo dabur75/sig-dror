@@ -1,0 +1,121 @@
+<!-- Modern Clean Header -->
+<style>
+#main-navbar {
+  background: #ede7f6; /* רקע סגול בהיר */
+  box-shadow: 0 2px 12px #e4e6eb33;
+    border-radius: 0 0 18px 18px;
+    padding: 0 0 0 0;
+  margin-bottom: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 64px;
+  direction: rtl;
+}
+#main-navbar .logo {
+    display: flex;
+    align-items: center;
+  gap: 14px;
+  margin-right: 32px;
+}
+#main-navbar .logo img {
+  height: 90px;
+  width: 90px;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+}
+#main-navbar nav {
+    display: flex;
+    gap: 0.5em;
+}
+#main-navbar nav a {
+  color: #254b77;
+  background: #f1f4fa;
+  border-radius: 18px;
+  padding: 8px 20px;
+    font-size: 1.08em;
+  font-weight: 500;
+    text-decoration: none;
+    margin: 0 2px;
+    transition: background 0.15s, color 0.15s;
+    border: 1.5px solid #fff0;
+}
+#main-navbar nav a:hover, #main-navbar nav a.active {
+  background: #e3f1fb;
+  color: #4891ca;
+  border: 1.5px solid #4891ca;
+}
+#main-navbar .user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  margin-left: 32px;
+  color: #254b77;
+    font-size: 1.08em;
+  font-weight: 500;
+}
+#main-navbar .user-info span#header-user {
+  background: #e3f1fb;
+  color: #4891ca;
+  border-radius: 10px;
+    padding: 5px 13px;
+    font-weight: 700;
+    margin-left: 4px;
+  box-shadow: 0 1px 4px #e3f1fb44;
+}
+#main-navbar .user-info span#header-role {
+  background: #f7fafc;
+  color: #254b77;
+  border-radius: 10px;
+    padding: 5px 13px;
+    font-weight: 700;
+    margin-left: 4px;
+  box-shadow: 0 1px 4px #e3f1fb44;
+}
+#main-navbar .logout-btn {
+  background: #fbe9e7;
+  color: #d84315;
+    border: none;
+  border-radius: 10px;
+    padding: 7px 18px;
+  font-weight: 600;
+    font-size: 1em;
+    margin-right: 10px;
+    cursor: pointer;
+  box-shadow: 0 1px 4px #e4e6eb33;
+    transition: background 0.15s, color 0.15s;
+  border: 1.5px solid #fbe9e7;
+}
+#main-navbar .logout-btn:hover {
+  background: #d84315;
+    color: #fff;
+}
+@media (max-width: 700px) {
+    #main-navbar { flex-direction: column; align-items: flex-start; padding: 8px 0; }
+    #main-navbar .logo { margin-right: 10px; }
+    #main-navbar nav { flex-wrap: wrap; gap: 0.2em; }
+    #main-navbar .user-info { margin-left: 10px; margin-top: 7px; }
+}
+</style>
+<div id="main-navbar">
+    <div class="logo">
+        <img src="sigalitlogo.png" alt="סיגלית" />
+    </div>
+    <nav>
+        <a href="dashboard.html">עמוד הבית</a>
+        <a href="schedule.html">סידור חודשי</a>
+        <a href="weekly_activities.html">לו"ז שבועי</a>
+        <a href="guides.html">ניהול צוות</a>
+        <a href="constraints.html">אילוצים וחופשות</a>
+        <a href="tasks.html">משימות חפיפה</a>
+        <a href="scheduler.html" id="scheduler-link" style="display:none;">שיבוץ</a>
+        <a href="reports.html" id="reports-link" style="display:none;">דוחו"ת</a>
+    </nav>
+    <div class="user-info">
+        <span id="header-user"></span>
+        <span id="header-role"></span>
+        <button class="logout-btn" onclick="logout()">התנתק</button>
+    </div>
+</div>
+

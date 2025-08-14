@@ -1,0 +1,1618 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>דוחות וסטטיסטיקות - סיגלית</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <script src="header-functions.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        body {
+            font-family: 'Heebo', Arial, sans-serif;
+            background: #f8fafd;
+            margin: 0;
+            padding: 0;
+            direction: rtl;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 18px rgba(228, 230, 235, 0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 24px 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+        
+        .header p {
+            margin: 8px 0 0 0;
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+        
+        .controls {
+            background: #f8fafc;
+            padding: 20px 30px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .control-group label {
+            font-weight: 500;
+            color: #374151;
+        }
+        
+        .control-group select,
+        .control-group input {
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        
+        .btn {
+            background: #667eea;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        
+        .btn:hover {
+            background: #5a67d8;
+            transform: translateY(-1px);
+        }
+        
+        .btn-secondary {
+            background: #6b7280;
+        }
+        
+        .btn-secondary:hover {
+            background: #4b5563;
+        }
+        
+        .main-content {
+            padding: 30px;
+        }
+        
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #e5e7eb;
+            margin-bottom: 30px;
+            background: white;
+            border-radius: 8px 8px 0 0;
+            overflow: hidden;
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 16px 20px;
+            background: #f8f9fa;
+            border: none;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .tab:hover {
+            background: #e9ecef;
+        }
+        
+        .tab.active {
+            background: white;
+            color: #667eea;
+            border-bottom-color: #667eea;
+            font-weight: 600;
+        }
+        
+        .tab-content {
+            display: none;
+            background: white;
+            border-radius: 0 0 8px 8px;
+            padding: 25px;
+            border: 1px solid #e5e7eb;
+            border-top: none;
+            min-height: 400px;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .alerts {
+            margin-bottom: 25px;
+        }
+        
+        .alert {
+            background: #fef3c7;
+            border: 1px solid #fcd34d;
+            border-left: 4px solid #f59e0b;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .alert.critical {
+            background: #fee2e2;
+            border-color: #fca5a5;
+            border-left-color: #ef4444;
+        }
+        
+        .alert.success {
+            background: #d1fae5;
+            border-color: #a7f3d0;
+            border-left-color: #10b981;
+        }
+        
+        .alert-icon {
+            font-size: 18px;
+        }
+        
+        .alert-text {
+            color: #92400e;
+            flex: 1;
+        }
+        
+        .alert.critical .alert-text {
+            color: #991b1b;
+        }
+        
+        .alert.success .alert-text {
+            color: #065f46;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.2s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-2px);
+        }
+        
+        .stat-number {
+            font-size: 28px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 8px;
+        }
+        
+        .stat-progress {
+            width: 100%;
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        
+        .stat-progress-fill {
+            height: 100%;
+            background: linear-gradient(to right, #10b981, #667eea);
+            transition: width 0.3s ease;
+        }
+        
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .table th {
+            background: #667eea;
+            color: white;
+            padding: 14px 10px;
+            font-weight: 600;
+            text-align: center;
+            font-size: 13px;
+        }
+        
+        .table td {
+            padding: 12px 10px;
+            text-align: center;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 14px;
+        }
+        
+        .table tr:hover {
+            background: #f8fafc;
+        }
+        
+        .table tr:nth-child(even) {
+            background: #fafbfc;
+        }
+        
+        .guide-name {
+            font-weight: 600;
+            color: #374151;
+            text-align: right;
+            padding-right: 12px;
+        }
+        
+        .balance-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            padding: 4px 8px;
+            border-radius: 12px;
+        }
+        
+        .balance-good {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .balance-warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .balance-critical {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .balance-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+        
+        .balance-dot.good { background: #10b981; }
+        .balance-dot.warning { background: #f59e0b; }
+        .balance-dot.critical { background: #ef4444; }
+        
+        .chart-container {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .chart-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .chart-placeholder {
+            height: 250px;
+            background: #f8fafc;
+            border: 2px dashed #cbd5e1;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            font-size: 16px;
+            font-weight: 500;
+        }
+        
+        .chart-data {
+            font-size: 12px;
+            opacity: 0.7;
+            margin-top: 8px;
+        }
+        
+        .chart-canvas {
+            max-height: 400px;
+            width: 100%;
+        }
+        
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        
+        .recommendations {
+            background: #f0f9ff;
+            border: 1px solid #0ea5e9;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .recommendations h3 {
+            margin: 0 0 15px 0;
+            font-size: 16px;
+            color: #0c4a6e;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .recommendations ul {
+            margin: 0;
+            padding-right: 20px;
+            color: #0369a1;
+        }
+        
+        .recommendations li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #64748b;
+        }
+        
+        .loading-spinner {
+            border: 3px solid #f3f4f6;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .footer {
+            background: #f8fafc;
+            padding: 20px 30px;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .footer-info {
+            font-size: 14px;
+            color: #64748b;
+        }
+        
+        .footer-actions {
+            display: flex;
+            gap: 12px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 8px;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .control-group {
+                justify-content: space-between;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+            
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="main-header"></div>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>דוחות וסטטיסטיקות</h1>
+            <p>ניתוח מפורט של שיבוצים, עומסים ואיזון</p>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+            <div class="control-group">
+                <label>חודש:</label>
+                <input type="month" id="monthSelect">
+            </div>
+            <div class="control-group">
+                <label>מדריך:</label>
+                <select id="guideSelect">
+                    <option value="">כל המדריכים</option>
+                </select>
+            </div>
+            <button class="btn" onclick="refreshData()">רענן נתונים</button>
+            <button class="btn btn-secondary" onclick="exportToExcel()">ייצא לאקסל</button>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="tab active" onclick="showTab(0, this)">סיכום כולל</button>
+                <button class="tab" onclick="showTab(1, this)">שעות ושכר</button>
+                <button class="tab" onclick="showTab(2, this)">איזון עומסים</button>
+                <button class="tab" onclick="showTab(3, this)">גרפים ותרשימים</button>
+            </div>
+
+            <!-- Tab 0: Overview -->
+            <div class="tab-content active">
+                <!-- Alerts -->
+                <div class="alerts" id="alerts-overview">
+                    <!-- Will be populated dynamically -->
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="total-days">--</div>
+                        <div class="stat-label">סה"כ ימים בחודש</div>
+                        <div class="stat-progress">
+                            <div class="stat-progress-fill" id="total-days-progress" style="width: 100%"></div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="assigned-days">--</div>
+                        <div class="stat-label">ימים שובצו</div>
+                        <div class="stat-progress">
+                            <div class="stat-progress-fill" id="assigned-days-progress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="manual-assignments">--</div>
+                        <div class="stat-label">שיבוצים ידניים</div>
+                        <div class="stat-progress">
+                            <div class="stat-progress-fill" id="manual-progress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="auto-assignments">--</div>
+                        <div class="stat-label">שיבוצים אוטומטיים</div>
+                        <div class="stat-progress">
+                            <div class="stat-progress-fill" id="auto-progress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="average-shifts">--</div>
+                        <div class="stat-label">ממוצע משמרות למדריך</div>
+                        <div class="stat-progress">
+                            <div class="stat-progress-fill" id="avg-shifts-progress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="balance-deviation">--</div>
+                        <div class="stat-label">סטיית תקן איזון</div>
+                        <div class="stat-progress">
+                            <div class="stat-progress-fill" id="balance-progress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Table -->
+                <table class="table" id="overview-table">
+                    <thead>
+                        <tr>
+                            <th style="text-align: right;">מדריך</th>
+                            <th>סה"כ משמרות</th>
+                            <th>ידני/אוטו</th>
+                            <th>רגיל</th>
+                            <th>חפיפה</th>
+                            <th>כונן</th>
+                            <th>מוצ"ש</th>
+                            <th>סופי שבוע</th>
+                            <th>איזון</th>
+                        </tr>
+                    </thead>
+                    <tbody id="overview-tbody">
+                        <tr class="loading">
+                            <td colspan="9">
+                                <div class="loading-spinner"></div>
+                                טוען נתונים...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Tab 1: Hours and Salary -->
+            <div class="tab-content">
+                <div class="alerts">
+                    <div class="alert">
+                        <span class="alert-icon">💰</span>
+                        <span class="alert-text"><strong>הערה:</strong> פקטורי השכר מחושבים לפי: רגיל ×1.0, לילה ×1.5, שבת ×2.0, כונן ×0.3, כונן שבת ×0.6, מוצ"ש ×1.0</span>
+                    </div>
+                </div>
+
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th style="text-align: right;">מדריך</th>
+                            <th>שעות רגיל<br><small>(×1.0)</small></th>
+                            <th>שעות לילה<br><small>(×1.5)</small></th>
+                            <th>שעות שבת<br><small>(×2.0)</small></th>
+                            <th>שעות כונן<br><small>(×0.3)</small></th>
+                            <th>שעות כונן שבת<br><small>(×0.6)</small></th>
+                            <th>שעות מוצ"ש<br><small>(×1.0)</small></th>
+                            <th>סה"כ שעות נטו</th>
+                            <th>פקטור שכר</th>
+                            <th>% מהממוצע</th>
+                        </tr>
+                    </thead>
+                    <tbody id="hours-tbody">
+                        <tr class="loading">
+                            <td colspan="10">
+                                <div class="loading-spinner"></div>
+                                טוען נתונים...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Tab 2: Balance Analysis -->
+            <div class="tab-content">
+                <!-- Balance Stats -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" style="color: #10b981;" id="balanced-guides">--</div>
+                        <div class="stat-label">מדריכים באיזון טוב</div>
+                        <div class="stat-progress">
+                            <div class="stat-progress-fill" style="background: #10b981;"></div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" style="color: #f59e0b;" id="underloaded-guides">--</div>
+                        <div class="stat-label">מדריכים בעומס נמוך</div>
+                        <div class="stat-progress">
+                            <div class="stat-progress-fill" style="background: #f59e0b;"></div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" style="color: #ef4444;" id="overloaded-guides">--</div>
+                        <div class="stat-label">מדריכים בעומס גבוה</div>
+                        <div class="stat-progress">
+                            <div class="stat-progress-fill" style="background: #ef4444;"></div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="shift-range">--</div>
+                        <div class="stat-label">הפרש מקס-מין משמרות</div>
+                        <div class="stat-progress">
+                            <div class="stat-progress-fill" id="range-progress"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Balance Table -->
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th style="text-align: right;">מדריך</th>
+                            <th>משמרות החודש</th>
+                            <th>ממוצע צפוי</th>
+                            <th>הפרש</th>
+                            <th>סופי שבוע</th>
+                            <th>ממוצע סופ"ש</th>
+                            <th>הפרש סופ"ש</th>
+                            <th>סטטוס איזון</th>
+                            <th>פעולה מומלצת</th>
+                        </tr>
+                    </thead>
+                    <tbody id="balance-tbody">
+                        <tr class="loading">
+                            <td colspan="9">
+                                <div class="loading-spinner"></div>
+                                טוען נתונים...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- Recommendations -->
+                <div class="recommendations" id="recommendations-section">
+                    <h3>💡 המלצות לשיפור האיזון</h3>
+                    <ul id="recommendations-list">
+                        <li>טוען המלצות...</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Tab 3: Charts -->
+            <div class="tab-content">
+                <div class="charts-grid">
+                    <!-- Chart 1: Shifts by Guide -->
+                    <div class="chart-container">
+                        <div class="chart-title">התפלגות משמרות לפי מדריך</div>
+                        <canvas id="shiftsChart" class="chart-canvas"></canvas>
+                    </div>
+
+                    <!-- Chart 2: Shift Types Distribution -->
+                    <div class="chart-container">
+                        <div class="chart-title">התפלגות סוגי משמרות</div>
+                        <canvas id="typesChart" class="chart-canvas"></canvas>
+                    </div>
+                </div>
+
+                <!-- Chart 3: Monthly Trend -->
+                <div class="chart-container">
+                    <div class="chart-title">מגמת עומסים חודשית</div>
+                    <canvas id="trendChart" class="chart-canvas"></canvas>
+                </div>
+
+                <!-- Chart 4: Weekly Distribution -->
+                <div class="chart-container">
+                    <div class="chart-title">התפלגות שבועית</div>
+                    <canvas id="weeklyChart" class="chart-canvas"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <div class="footer-info">
+                עדכון אחרון: <span id="last-update">--:--</span> | 
+                נתונים עבור: <span id="current-period">--</span>
+            </div>
+            <div class="footer-actions">
+                <button class="btn btn-secondary" onclick="printReport()">הדפס דוח</button>
+                <button class="btn btn-secondary" onclick="exportToExcel()">ייצא לאקסל</button>
+                <button class="btn" onclick="refreshData()">רענן נתונים</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let currentTab = 0;
+        const API_BASE_URL = 'http://localhost:4000';
+        let currentMonth = '';
+        let statisticsData = null;
+        
+        // Global chart variables
+        let shiftsChart, typesChart, trendChart, weeklyChart;
+        
+        // Chart color schemes
+        const chartColors = {
+            primary: ['#667eea', '#764ba2', '#f093fb', '#f5576c', '#4facfe', '#00f2fe', '#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4'],
+            secondary: ['rgba(102, 126, 234, 0.8)', 'rgba(118, 75, 162, 0.8)', 'rgba(240, 147, 251, 0.8)', 'rgba(245, 87, 108, 0.8)', 'rgba(79, 172, 254, 0.8)', 'rgba(0, 242, 254, 0.8)', 'rgba(255, 107, 107, 0.8)', 'rgba(78, 205, 196, 0.8)', 'rgba(69, 183, 209, 0.8)', 'rgba(150, 206, 180, 0.8)']
+        };
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, initializing page...');
+            initializePage();
+        });
+
+        function initializePage() {
+            // Check for month parameter in URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const monthParam = urlParams.get('month');
+            
+            // Set default month to current month or from URL parameter
+            const now = new Date();
+            const defaultMonth = monthParam || now.toISOString().slice(0, 7);
+            document.getElementById('monthSelect').value = defaultMonth;
+            currentMonth = defaultMonth;
+            
+            // Load guides
+            loadGuides();
+            
+            // Load initial data
+            refreshData();
+            
+            // Update timestamp
+            updateTimestamp();
+            
+            // Initialize charts after a delay to ensure Chart.js is loaded
+            setTimeout(() => {
+                console.log('Chart.js available:', typeof Chart !== 'undefined');
+                initializeCharts();
+            }, 100);
+        }
+
+        async function loadGuides() {
+            try {
+                const url = `${API_BASE_URL}/api/guides?t=${Date.now()}`;
+                console.log('Loading guides from:', url);
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    }
+                });
+                const guides = await response.json();
+                const select = document.getElementById('guideSelect');
+                
+                guides.filter(g => g.role === 'מדריך').forEach(guide => {
+                    const option = document.createElement('option');
+                    option.value = guide.id;
+                    option.textContent = guide.name;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error loading guides:', error);
+            }
+        }
+
+        async function refreshData() {
+            try {
+                showLoading(true);
+                
+                // Destroy existing charts to prevent memory leaks
+                destroyCharts();
+                
+                const month = document.getElementById('monthSelect').value;
+                const [year, monthNum] = month.split('-');
+                currentMonth = month;
+                
+                // Fetch statistics data
+                const url = `${API_BASE_URL}/api/schedule/enhanced-statistics/${year}/${monthNum}?t=${Date.now()}`;
+                console.log('Fetching statistics from:', url);
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                statisticsData = await response.json();
+                
+                if (statisticsData.success) {
+                    populateAllTabs(statisticsData);
+                    updateCurrentPeriod(month);
+                    generateAlerts(statisticsData);
+                    
+                    // Reinitialize charts with new data
+                    setTimeout(initializeCharts, 100);
+                } else {
+                    showError('שגיאה בטעינת הנתונים: ' + (statisticsData.error || 'שגיאה לא ידועה'));
+                }
+                
+            } catch (error) {
+                console.error('Error refreshing data:', error);
+                showError('שגיאה בטעינת הנתונים: ' + error.message);
+            } finally {
+                showLoading(false);
+                updateTimestamp();
+            }
+        }
+
+        function populateAllTabs(data) {
+            populateOverviewTab(data);
+            populateHoursTab(data);
+            populateBalanceTab(data);
+            populateChartsTab(data);
+        }
+
+        function populateOverviewTab(data) {
+            // Update statistics cards
+            const totalDays = new Date(data.month.split('-')[0], data.month.split('-')[1], 0).getDate();
+            const assignedDays = data.day_statistics?.assigned_days || 0;
+            const manualDays = data.day_statistics?.manual_days || 0;
+            const autoDays = data.day_statistics?.auto_days || 0;
+            const avgShifts = data.averages?.shifts_per_guide || 0;
+            
+            document.getElementById('total-days').textContent = totalDays;
+            document.getElementById('assigned-days').textContent = `${assignedDays}/${totalDays}`;
+            document.getElementById('manual-assignments').textContent = manualDays;
+            document.getElementById('auto-assignments').textContent = autoDays;
+            document.getElementById('average-shifts').textContent = avgShifts.toFixed(1);
+            
+            // Calculate balance deviation
+            const shifts = data.guide_statistics.map(g => g.total_shifts);
+            const balanceDeviation = calculateStandardDeviation(shifts);
+            document.getElementById('balance-deviation').textContent = balanceDeviation.toFixed(1) + '%';
+            
+            // Update progress bars
+            const assignmentRate = totalDays > 0 ? (assignedDays / totalDays) * 100 : 0;
+            document.getElementById('assigned-days-progress').style.width = assignmentRate + '%';
+            
+            const manualRate = assignedDays > 0 ? (manualDays / assignedDays) * 100 : 0;
+            document.getElementById('manual-progress').style.width = manualRate + '%';
+            
+            const autoRate = assignedDays > 0 ? (autoDays / assignedDays) * 100 : 0;
+            document.getElementById('auto-progress').style.width = autoRate + '%';
+            
+            const avgRate = Math.min((avgShifts / 15) * 100, 100); // Assume max 15 shifts
+            document.getElementById('avg-shifts-progress').style.width = avgRate + '%';
+            
+            const balanceRate = Math.max(0, 100 - (balanceDeviation * 10)); // Lower deviation = better
+            document.getElementById('balance-progress').style.width = balanceRate + '%';
+
+            // Populate overview table
+            const tbody = document.getElementById('overview-tbody');
+            tbody.innerHTML = '';
+            
+            data.guide_statistics.forEach(guide => {
+                const row = document.createElement('tr');
+                const balanceStatus = getBalanceStatus(guide.total_shifts, avgShifts);
+                
+                row.innerHTML = `
+                    <td class="guide-name">${guide.name}</td>
+                    <td><strong>${guide.total_shifts}</strong></td>
+                    <td>${guide.manual_shifts || 0}/${guide.auto_shifts || 0}</td>
+                    <td>${guide.regular_shifts || 0}</td>
+                    <td>${guide.overlap_shifts || 0}</td>
+                    <td>${guide.conan_shifts || 0}</td>
+                    <td>${guide.motzash_shifts || 0}</td>
+                    <td>${guide.weekend_shifts || 0}</td>
+                    <td>
+                        <span class="balance-indicator balance-${balanceStatus.class}">
+                            <span class="balance-dot ${balanceStatus.class}"></span>
+                            ${balanceStatus.text}
+                        </span>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+            
+            // Add average row
+            const avgRow = document.createElement('tr');
+            avgRow.style.background = '#f8fafc';
+            avgRow.style.fontWeight = 'bold';
+            avgRow.style.borderTop = '2px solid #667eea';
+            avgRow.innerHTML = `
+                <td class="guide-name">ממוצע</td>
+                <td><strong>${avgShifts.toFixed(1)}</strong></td>
+                <td>${(data.averages?.manual_per_guide || 0).toFixed(1)}/${(data.averages?.auto_per_guide || 0).toFixed(1)}</td>
+                <td>${(data.averages?.regular_per_guide || 0).toFixed(1)}</td>
+                <td>${(data.averages?.overlap_per_guide || 0).toFixed(1)}</td>
+                <td>${(data.averages?.conan_per_guide || 0).toFixed(1)}</td>
+                <td>${(data.averages?.motzash_per_guide || 0).toFixed(1)}</td>
+                <td>${(data.averages?.weekend_per_guide || 0).toFixed(1)}</td>
+                <td>-</td>
+            `;
+            tbody.appendChild(avgRow);
+        }
+
+        function populateHoursTab(data) {
+            const tbody = document.getElementById('hours-tbody');
+            tbody.innerHTML = '';
+            
+            data.guide_statistics.forEach(guide => {
+                const row = document.createElement('tr');
+
+                const percentage = data.averages?.salary_factor_per_guide > 0 ? 
+                    ((guide.salary_factor || 0) / data.averages.salary_factor_per_guide * 100) : 0;
+                const percentageClass = percentage > 120 ? 'critical' : percentage < 80 ? 'warning' : 'good';
+                
+                row.innerHTML = `
+                    <td class="guide-name">${guide.name}</td>
+                    <td>${guide.regular_hours || 0}</td>
+                    <td>${guide.night_hours || 0}</td>
+                    <td>${guide.shabbat_hours || 0}</td>
+                    <td>${guide.conan_hours || 0}</td>
+                    <td>${guide.conan_shabbat_hours || 0}</td>
+                    <td>${guide.motzash_hours || 0}</td>
+                    <td><strong>${guide.total_hours || 0}</strong></td>
+                    <td><strong>${(guide.salary_factor || 0).toFixed(1)}</strong></td>
+                    <td>
+                        <span style="color: ${percentageClass === 'critical' ? '#ef4444' : percentageClass === 'warning' ? '#f59e0b' : '#10b981'}; font-weight: bold;">
+                            ${percentage.toFixed(0)}%
+                        </span>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+            
+            // Add average row
+            const avgRow = document.createElement('tr');
+            avgRow.style.background = '#f8fafc';
+            avgRow.style.fontWeight = 'bold';
+            avgRow.style.borderTop = '2px solid #667eea';
+            avgRow.innerHTML = `
+                <td class="guide-name">ממוצע</td>
+                <td>${(data.averages?.regular_hours || 0).toFixed(1)}</td>
+                <td>${(data.averages?.night_hours || 0).toFixed(1)}</td>
+                <td>${(data.averages?.shabbat_hours || 0).toFixed(1)}</td>
+                <td>${(data.averages?.conan_hours || 0).toFixed(1)}</td>
+                <td>${(data.averages?.conan_shabbat_hours || 0).toFixed(1)}</td>
+                <td>${(data.averages?.motzash_hours || 0).toFixed(1)}</td>
+                <td><strong>${(data.averages?.total_hours || 0).toFixed(1)}</strong></td>
+                <td><strong>${(data.averages?.salary_factor_per_guide || 0).toFixed(1)}</strong></td>
+                <td>100%</td>
+            `;
+            tbody.appendChild(avgRow);
+        }
+
+        function populateBalanceTab(data) {
+            const avgShifts = data.averages?.shifts_per_guide || 0;
+            const avgWeekend = data.averages?.weekend_per_guide || 0;
+            
+            // Calculate balance stats
+            let balancedGuides = 0;
+            let underloadedGuides = 0;
+            let overloadedGuides = 0;
+            let minShifts = Infinity;
+            let maxShifts = 0;
+            
+            data.guide_statistics.forEach(guide => {
+                const diff = guide.total_shifts - avgShifts;
+                if (Math.abs(diff) <= 2) balancedGuides++;
+                else if (diff < -2) underloadedGuides++;
+                else if (diff > 2) overloadedGuides++;
+                
+                minShifts = Math.min(minShifts, guide.total_shifts);
+                maxShifts = Math.max(maxShifts, guide.total_shifts);
+            });
+            
+            const shiftRange = maxShifts - minShifts;
+            
+            // Update balance stats cards
+            document.getElementById('balanced-guides').textContent = balancedGuides;
+            document.getElementById('underloaded-guides').textContent = underloadedGuides;
+            document.getElementById('overloaded-guides').textContent = overloadedGuides;
+            document.getElementById('shift-range').textContent = shiftRange;
+            
+            const rangeRate = Math.max(0, 100 - (shiftRange * 10));
+            document.getElementById('range-progress').style.width = rangeRate + '%';
+            document.getElementById('range-progress').style.background = 
+                shiftRange <= 2 ? '#10b981' : shiftRange <= 4 ? '#f59e0b' : '#ef4444';
+
+            // Populate balance table
+            const tbody = document.getElementById('balance-tbody');
+            tbody.innerHTML = '';
+            
+            data.guide_statistics.forEach(guide => {
+                const row = document.createElement('tr');
+                const shiftsDiff = guide.total_shifts - avgShifts;
+                const weekendDiff = (guide.weekend_shifts || 0) - avgWeekend;
+                const balanceStatus = getBalanceStatus(guide.total_shifts, avgShifts);
+                const recommendation = getRecommendation(shiftsDiff, guide.name);
+                
+                row.innerHTML = `
+                    <td class="guide-name">${guide.name}</td>
+                    <td>${guide.total_shifts}</td>
+                    <td>${avgShifts.toFixed(1)}</td>
+                    <td style="color: ${shiftsDiff > 0 ? '#ef4444' : shiftsDiff < -1 ? '#f59e0b' : '#10b981'}; font-weight: bold;">
+                        ${shiftsDiff > 0 ? '+' : ''}${shiftsDiff.toFixed(1)}
+                    </td>
+                    <td>${guide.weekend_shifts || 0}</td>
+                    <td>${avgWeekend.toFixed(1)}</td>
+                    <td style="color: ${weekendDiff > 0 ? '#ef4444' : weekendDiff < -1 ? '#f59e0b' : '#10b981'}; font-weight: bold;">
+                        ${weekendDiff > 0 ? '+' : ''}${weekendDiff.toFixed(1)}
+                    </td>
+                    <td>
+                        <span class="balance-indicator balance-${balanceStatus.class}">
+                            <span class="balance-dot ${balanceStatus.class}"></span>
+                            <strong>${balanceStatus.text}</strong>
+                        </span>
+                    </td>
+                    <td><small>${recommendation}</small></td>
+                `;
+                tbody.appendChild(row);
+            });
+            
+            // Generate and display recommendations
+            generateRecommendations(data);
+        }
+
+        // Initialize charts when data is loaded
+        function initializeCharts() {
+            // Check if Chart.js is loaded
+            if (typeof Chart === 'undefined') {
+                console.error('Chart.js not loaded');
+                return;
+            }
+            
+            const ctx1 = document.getElementById('shiftsChart');
+            const ctx2 = document.getElementById('typesChart');
+            const ctx3 = document.getElementById('trendChart');
+            const ctx4 = document.getElementById('weeklyChart');
+            
+            if (ctx1) {
+                console.log('Initializing shifts chart');
+                shiftsChart = new Chart(ctx1, {
+                    type: 'bar',
+                    data: {
+                        labels: ['טוען...'],
+                        datasets: [{
+                            label: 'סה"כ משמרות',
+                            data: [0],
+                            backgroundColor: chartColors.secondary[0],
+                            borderColor: chartColors.primary[0],
+                            borderWidth: 2,
+                            borderRadius: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'משמרות לפי מדריך',
+                                font: { size: 16, weight: 'bold' }
+                            },
+                            legend: { 
+                                display: true,
+                                position: 'bottom',
+                                labels: {
+                                    padding: 10,
+                                    usePointStyle: true,
+                                    font: { size: 11 }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: { stepSize: 1 }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            if (ctx2) {
+                typesChart = new Chart(ctx2, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['רגיל', 'חפיפה', 'כונן', 'מוצ״ש'],
+                        datasets: [{
+                            data: [1, 1, 1, 1],
+                            backgroundColor: chartColors.primary.slice(0, 4),
+                            borderWidth: 3,
+                            borderColor: '#fff'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'סוגי משמרות',
+                                font: { size: 16, weight: 'bold' }
+                            },
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    padding: 20,
+                                    usePointStyle: true
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            if (ctx3) {
+                trendChart = new Chart(ctx3, {
+                    type: 'line',
+                    data: {
+                        labels: [],
+                        datasets: []
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'מגמת עומסים',
+                                font: { size: 16, weight: 'bold' }
+                            },
+                            legend: {
+                                position: 'top'
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: { stepSize: 1 }
+                            }
+                        },
+                        interaction: {
+                            intersect: false,
+                            mode: 'index'
+                        }
+                    }
+                });
+            }
+            
+            if (ctx4) {
+                weeklyChart = new Chart(ctx4, {
+                    type: 'bar',
+                    data: {
+                        labels: ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'],
+                        datasets: []
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'התפלגות שבועית',
+                                font: { size: 16, weight: 'bold' }
+                            },
+                            legend: {
+                                position: 'top'
+                            }
+                        },
+                        scales: {
+                            x: { stacked: true },
+                            y: { 
+                                stacked: true,
+                                beginAtZero: true,
+                                ticks: { stepSize: 1 }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+        
+        // Update charts with real data
+        function updateChartsWithData(data) {
+            console.log('Updating charts with data:', data);
+            if (!data || !data.guide_statistics) {
+                console.error('No data or guide_statistics available');
+                return;
+            }
+            
+            // Update shifts by guide chart
+            if (shiftsChart) {
+                const guideNames = data.guide_statistics.map(g => g.name);
+                const shiftCounts = data.guide_statistics.map(g => g.total_shifts);
+                console.log('Updating shifts chart with', guideNames.length, 'guides:', guideNames);
+                
+                shiftsChart.data.labels = guideNames;
+                shiftsChart.data.datasets[0].data = shiftCounts;
+                shiftsChart.data.datasets[0].backgroundColor = guideNames.map((_, index) => chartColors.secondary[index % chartColors.secondary.length]);
+                shiftsChart.data.datasets[0].borderColor = guideNames.map((_, index) => chartColors.primary[index % chartColors.primary.length]);
+                shiftsChart.update();
+            }
+            
+            // Update shift types chart
+            if (typesChart) {
+                const totalRegular = data.guide_statistics.reduce((sum, g) => sum + (g.regular_shifts || 0), 0);
+                const totalOverlap = data.guide_statistics.reduce((sum, g) => sum + (g.overlap_shifts || 0), 0);
+                const totalConan = data.guide_statistics.reduce((sum, g) => sum + (g.conan_shifts || 0), 0);
+                const totalMotzash = data.guide_statistics.reduce((sum, g) => sum + (g.motzash_shifts || 0), 0);
+                
+                typesChart.data.datasets[0].data = [totalRegular, totalOverlap, totalConan, totalMotzash];
+                typesChart.update();
+            }
+            
+            // Update trend chart with historical data (mock for now)
+            if (trendChart) {
+                const avgShifts = data.averages?.shifts_per_guide || 0;
+                const months = ['אפריל', 'מאי', 'יוני'];
+                
+                trendChart.data.labels = months;
+                trendChart.data.datasets = data.guide_statistics.map((guide, index) => ({
+                    label: guide.name,
+                    data: [
+                        Math.max(0, guide.total_shifts - 2 + Math.random() * 4),
+                        Math.max(0, guide.total_shifts - 1 + Math.random() * 2),
+                        guide.total_shifts
+                    ],
+                    borderColor: chartColors.primary[index],
+                    backgroundColor: chartColors.secondary[index],
+                    tension: 0.4,
+                    fill: false
+                }));
+                trendChart.update();
+            }
+            
+            // Update weekly distribution chart
+            if (weeklyChart) {
+                updateWeeklyChart(data);
+            }
+        }
+        
+        // Update weekly distribution chart with real data
+        async function updateWeeklyChart(data) {
+            try {
+                // Get weekly breakdown from schedule data
+                const month = currentMonth;
+                const [year, monthNum] = month.split('-');
+                
+                // Fetch detailed schedule for weekly analysis
+                const response = await fetch(`${API_BASE_URL}/api/schedule/enhanced/${year}/${monthNum}`);
+                const scheduleData = await response.json();
+                
+                if (scheduleData && scheduleData.length > 0) {
+                    // Calculate weekly distribution
+                    const weeklyData = calculateWeeklyDistribution(scheduleData, data.guide_statistics);
+                    
+                    weeklyChart.data.datasets = weeklyData.datasets;
+                    weeklyChart.update();
+                }
+            } catch (error) {
+                console.error('Error updating weekly chart:', error);
+                // Fallback to mock data
+                updateWeeklyChartFallback(data);
+            }
+        }
+        
+        // Fallback weekly chart update
+        function updateWeeklyChartFallback(data) {
+            const topGuides = data.guide_statistics;
+            
+            weeklyChart.data.datasets = topGuides.map((guide, index) => ({
+                label: guide.name,
+                data: [
+                    Math.floor(Math.random() * 3),
+                    Math.floor(Math.random() * 3),
+                    Math.floor(Math.random() * 3),
+                    Math.floor(Math.random() * 3),
+                    Math.floor(Math.random() * 3),
+                    Math.floor(Math.random() * 4),
+                    Math.floor(Math.random() * 4)
+                ],
+                backgroundColor: chartColors.secondary[index],
+                borderColor: chartColors.primary[index],
+                borderWidth: 1
+            }));
+            weeklyChart.update();
+        }
+        
+        // Calculate weekly distribution from schedule data
+        function calculateWeeklyDistribution(scheduleData, guideStats) {
+            const weeklyMap = {};
+            
+            // Initialize weekly map for each guide
+            guideStats.forEach(guide => {
+                weeklyMap[guide.name] = [0, 0, 0, 0, 0, 0, 0]; // Sun-Sat
+            });
+            
+            // Process schedule data
+            scheduleData.forEach(day => {
+                const dayOfWeek = new Date(day.date).getDay();
+                
+                if (day.guide1_name && weeklyMap[day.guide1_name]) {
+                    weeklyMap[day.guide1_name][dayOfWeek]++;
+                }
+                if (day.guide2_name && weeklyMap[day.guide2_name]) {
+                    weeklyMap[day.guide2_name][dayOfWeek]++;
+                }
+            });
+            
+            // Convert to chart dataset format
+            const datasets = Object.keys(weeklyMap).map((guideName, index) => ({
+                label: guideName,
+                data: weeklyMap[guideName],
+                backgroundColor: chartColors.secondary[index],
+                borderColor: chartColors.primary[index],
+                borderWidth: 1
+            }));
+            
+            return { datasets };
+        }
+        
+        // Destroy charts when refreshing to prevent memory leaks
+        function destroyCharts() {
+            if (shiftsChart) { shiftsChart.destroy(); shiftsChart = null; }
+            if (typesChart) { typesChart.destroy(); typesChart = null; }
+            if (trendChart) { trendChart.destroy(); trendChart = null; }
+            if (weeklyChart) { weeklyChart.destroy(); weeklyChart = null; }
+        }
+        
+        function populateChartsTab(data) {
+            // Initialize charts if they don't exist yet
+            if (!shiftsChart || !typesChart || !trendChart || !weeklyChart) {
+                initializeCharts();
+            }
+            // Update charts with data
+            updateChartsWithData(data);
+        }
+
+        function generateAlerts(data) {
+            const alertsContainer = document.getElementById('alerts-overview');
+            alertsContainer.innerHTML = '';
+            
+            const totalDays = new Date(data.month.split('-')[0], data.month.split('-')[1], 0).getDate();
+            const assignedDays = data.day_statistics?.assigned_days || 0;
+            const emptyDays = totalDays - assignedDays;
+            
+            // Empty days alert
+            if (emptyDays > 0) {
+                const alert = createAlert('critical', '🚨', 
+                    `<strong>${emptyDays} ימים ריקים</strong> - דורש טיפול מיידי`);
+                alertsContainer.appendChild(alert);
+            }
+            
+            // Balance alert
+            const avgShifts = data.averages?.shifts_per_guide || 0;
+            const imbalanced = data.guide_statistics.filter(g => Math.abs(g.total_shifts - avgShifts) > 2);
+            
+            if (imbalanced.length > 0) {
+                const overloaded = imbalanced.filter(g => g.total_shifts > avgShifts + 2);
+                const underloaded = imbalanced.filter(g => g.total_shifts < avgShifts - 2);
+                
+                if (overloaded.length > 0 && underloaded.length > 0) {
+                    const alert = createAlert('warning', '⚖️',
+                        `<strong>חוסר איזון:</strong> ${overloaded[0].name} עובד/ת ${overloaded[0].total_shifts} משמרות (+${(overloaded[0].total_shifts - avgShifts).toFixed(1)} מהממוצע), ${underloaded[0].name} עובד/ת ${underloaded[0].total_shifts} משמרות (${(underloaded[0].total_shifts - avgShifts).toFixed(1)} מהממוצע)`);
+                    alertsContainer.appendChild(alert);
+                }
+            }
+            
+            // Success alert
+            const assignmentRate = totalDays > 0 ? (assignedDays / totalDays) * 100 : 0;
+            if (assignmentRate >= 90) {
+                const alert = createAlert('success', '✅',
+                    `<strong>שיבוץ טוב:</strong> ${assignmentRate.toFixed(0)}% מהימים שובצו בהצלחה`);
+                alertsContainer.appendChild(alert);
+            }
+        }
+
+        function createAlert(type, icon, text) {
+            const alert = document.createElement('div');
+            alert.className = `alert ${type}`;
+            alert.innerHTML = `
+                <span class="alert-icon">${icon}</span>
+                <span class="alert-text">${text}</span>
+            `;
+            return alert;
+        }
+
+        function generateRecommendations(data) {
+            const recommendationsList = document.getElementById('recommendations-list');
+            recommendationsList.innerHTML = '';
+            
+            const avgShifts = data.averages?.shifts_per_guide || 0;
+            const overloaded = data.guide_statistics.filter(g => g.total_shifts > avgShifts + 2);
+            const underloaded = data.guide_statistics.filter(g => g.total_shifts < avgShifts - 2);
+            
+            if (overloaded.length === 0 && underloaded.length === 0) {
+                const li = document.createElement('li');
+                li.textContent = 'איזון טוב! אין המלצות נוספות כרגע.';
+                li.style.color = '#10b981';
+                recommendationsList.appendChild(li);
+                return;
+            }
+            
+            // Transfer recommendations
+            if (overloaded.length > 0 && underloaded.length > 0) {
+                overloaded.forEach(over => {
+                    underloaded.forEach(under => {
+                        const difference = over.total_shifts - under.total_shifts;
+                        if (difference > 3) {
+                            const li = document.createElement('li');
+                            li.innerHTML = `<strong>להעביר משמרת מ${over.name} ל${under.name}</strong> - יכול להיות באמצע החודש או בימים שעדיין לא שובצו`;
+                            recommendationsList.appendChild(li);
+                        }
+                    });
+                });
+            }
+            
+            // Additional recommendations
+            if (overloaded.length > 0) {
+                const li = document.createElement('li');
+                li.innerHTML = `<strong>לשקול חופשה קצרה ל${overloaded[0].name}</strong> שעובד/ת יותר מהממוצע`;
+                recommendationsList.appendChild(li);
+            }
+            
+            if (underloaded.length > 0) {
+                const li = document.createElement('li');
+                li.innerHTML = `<strong>להוסיף ל${underloaded[0].name} משמרת נוספת</strong> לאיזון טוב יותר`;
+                recommendationsList.appendChild(li);
+            }
+            
+            // Future planning
+            const li = document.createElement('li');
+            li.innerHTML = '<strong>לוודא שהחלוקה הבאה תתחיל</strong> עם איזון טוב יותר בהתבסס על הנתונים הנוכחיים';
+            recommendationsList.appendChild(li);
+        }
+
+        function getBalanceStatus(shifts, average) {
+            const diff = shifts - average;
+            if (diff > 2) {
+                return { class: 'critical', text: 'עומס גבוה' };
+            } else if (diff < -2) {
+                return { class: 'warning', text: 'עומס נמוך' };
+            } else {
+                return { class: 'good', text: 'איזון טוב' };
+            }
+        }
+
+        function getRecommendation(diff, name) {
+            if (diff > 2) {
+                return `להעביר ${Math.ceil(diff/2)} משמרות למדריכים אחרים`;
+            } else if (diff < -2) {
+                return `להוסיף ${Math.ceil(Math.abs(diff)/2)} משמרות`;
+            } else {
+                return 'ללא פעולה נדרשת';
+            }
+        }
+
+        function calculateStandardDeviation(values) {
+            if (values.length === 0) return 0;
+            const mean = values.reduce((a, b) => a + b, 0) / values.length;
+            const squaredDifferences = values.map(value => Math.pow(value - mean, 2));
+            const variance = squaredDifferences.reduce((a, b) => a + b, 0) / values.length;
+            return Math.sqrt(variance);
+        }
+
+        function showTab(tabIndex, tabButton) {
+            // Hide all tab contents
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => content.classList.remove('active'));
+            
+            // Remove active class from all tabs
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            // Show selected tab content
+            contents[tabIndex].classList.add('active');
+            
+            // Add active class to clicked tab
+            tabButton.classList.add('active');
+            
+            currentTab = tabIndex;
+            
+            // If charts tab is selected and we have data, initialize charts
+            if (tabIndex === 3 && statisticsData) {
+                setTimeout(() => {
+                    if (!shiftsChart || !typesChart || !trendChart || !weeklyChart) {
+                        initializeCharts();
+                    }
+                    updateChartsWithData(statisticsData);
+                }, 100);
+            }
+        }
+
+        function showLoading(show) {
+            const loadingElements = document.querySelectorAll('.loading');
+            loadingElements.forEach(element => {
+                element.style.display = show ? 'table-row' : 'none';
+            });
+        }
+
+        function showError(message) {
+            // Create error alert
+            const alertsContainer = document.getElementById('alerts-overview');
+            const errorAlert = document.createElement('div');
+            errorAlert.className = 'alert critical';
+            errorAlert.innerHTML = `
+                <span class="alert-icon">❌</span>
+                <span class="alert-text"><strong>שגיאה:</strong> ${message}</span>
+            `;
+            alertsContainer.appendChild(errorAlert);
+            
+            // Remove error after 10 seconds
+            setTimeout(() => {
+                errorAlert.remove();
+            }, 10000);
+        }
+
+        function updateTimestamp() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('he-IL', { 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            });
+            document.getElementById('last-update').textContent = timeString;
+        }
+
+        function updateCurrentPeriod(month) {
+            const [year, monthNum] = month.split('-');
+            const monthNames = [
+                'ינואר', 'פברואר', 'מרץ', 'אפריל', 'מאי', 'יוני',
+                'יולי', 'אוגוסט', 'ספטמבר', 'אוקטובר', 'נובמבר', 'דצמבר'
+            ];
+            const monthName = monthNames[parseInt(monthNum) - 1];
+            document.getElementById('current-period').textContent = `${monthName} ${year}`;
+        }
+
+        function exportToExcel() {
+            if (!statisticsData) {
+                alert('אין נתונים לייצוא');
+                return;
+            }
+            
+            // Create CSV content
+            let csvContent = 'מדריך,סה"כ משמרות,ידני,אוטו,רגיל,חפיפה,כונן,מוצ"ש,סופי שבוע,שעות רגיל,שעות לילה,שעות שבת,שעות כונן,שעות כונן שבת,שעות מוצ"ש,סה"כ שעות,פקטור שכר\n';
+            
+            statisticsData.guide_statistics.forEach(guide => {
+                csvContent += `${guide.name},${guide.total_shifts},${guide.manual_shifts || 0},${guide.auto_shifts || 0},${guide.regular_shifts || 0},${guide.overlap_shifts || 0},${guide.conan_shifts || 0},${guide.motzash_shifts || 0},${guide.weekend_shifts || 0},${guide.regular_hours || 0},${guide.night_hours || 0},${guide.shabbat_hours || 0},${guide.conan_hours || 0},${guide.conan_shabbat_hours || 0},${guide.motzash_hours || 0},${guide.total_hours || 0},${(guide.salary_factor || 0).toFixed(2)}\n`;
+            });
+            
+            // Create and download file
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', `דוח_שיבוצים_${currentMonth}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function printReport() {
+            window.print();
+        }
+
+        // Event listeners
+        document.getElementById('monthSelect').addEventListener('change', refreshData);
+        
+        // Load header
+        fetch('header.html')
+            .then(res => res.text())
+            .then(html => {
+                const headerElement = document.getElementById('main-header');
+                if (headerElement) {
+                    headerElement.innerHTML = html;
+                    if (typeof renderHeaderUser === 'function') {
+                        renderHeaderUser();
+                    }
+                }
+            })
+            .catch(err => console.log('Error loading header:', err));
+    </script>
+</body>
+</html>

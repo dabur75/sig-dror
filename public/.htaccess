@@ -1,0 +1,9 @@
+RewriteEngine On
+
+# Redirect API calls to Node.js server
+RewriteRule ^api/(.*)$ http://localhost:4000/api/$1 [P,L]
+
+# Allow all other requests
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ /$1 [L] 

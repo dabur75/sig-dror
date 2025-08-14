@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>Test Weekend Types</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <h1>Test Weekend Types Loading</h1>
+    <div id="result"></div>
+    
+    <script>
+        async function testWeekendTypes() {
+            try {
+                const response = await fetch('http://localhost:4000/api/weekend-types/2025/8');
+                const data = await response.json();
+                
+                document.getElementById('result').innerHTML = `
+                    <h2>API Response:</h2>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                    
+                    <h2>Weekend Types:</h2>
+                    <ul>
+                        ${Object.entries(data.weekendTypes || {}).map(([date, type]) => 
+                            `<li><strong>${date}:</strong> ${type}</li>`
+                        ).join('')}
+                    </ul>
+                `;
+            } catch (error) {
+                document.getElementById('result').innerHTML = `
+                    <h2>Error:</h2>
+                    <pre>${error.message}</pre>
+                `;
+            }
+        }
+        
+        testWeekendTypes();
+    </script>
+</body>
+</html> 

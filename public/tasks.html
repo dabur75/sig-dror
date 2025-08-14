@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>משימות - סיגלית</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { background: #f7fafd; font-family: 'Heebo', Arial, sans-serif; }
+        .container { max-width: 900px; margin: 36px auto; background: #fff; border-radius: 16px; box-shadow: 0 4px 18px #e4e6eb44; padding: 36px;}
+        h2 { margin: 0 0 18px 0;}
+        .tabs { display: flex; gap: 24px; margin-bottom: 20px;}
+        .tab-btn { background: #e7f1fa; color: #3682c6; border: none; padding: 10px 24px; border-radius: 10px 10px 0 0; font-size: 17px; cursor: pointer;}
+        .tab-btn.active, .tab-btn:hover { background: #4891ca; color: #fff; }
+        .task-row { display: flex; align-items: center; gap: 12px; margin-bottom: 9px; background: #f8fafd; border-radius: 7px; padding: 9px 9px;}
+        .task-row.done { background: #e6f8e6; color: #6b6b6b;}
+        .task-row .task-text { flex: 2; }
+        .task-row .task-meta { font-size: 13px; color: #555; margin-right: 7px;}
+        .btn { background: #4891ca; color: #fff; padding: 7px 16px; border: none; border-radius: 7px; cursor: pointer; font-size: 16px;}
+        .btn-small { padding: 3px 8px; font-size: 13px;}
+        .btn:disabled { opacity: 0.6; }
+        .task-actions { display: flex; gap: 4px;}
+        .move-date { font-size: 13px; border-radius: 6px; border: 1px solid #bed6e7; padding: 2px 6px;}
+        .date-label { color: #226199; font-size: 15px; font-weight: bold; margin-left: 7px;}
+        @media (max-width:700px) {
+            .container { max-width:99vw; padding:10px;}
+            .tabs { flex-direction: column; gap: 7px;}
+            .task-row { flex-direction: column; align-items: flex-start;}
+        }
+    </style>
+</head>
+<body>
+    <div id="main-header"></div>
+    <div class="container">
+        <h2>ניהול משימות</h2>
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('open')">פתוחות</button>
+            <button class="tab-btn" onclick="switchTab('closed')">סגורות</button>
+        </div>
+        <div id="open-tasks-section">
+            <form id="add-task-form" style="margin-bottom:22px; display: flex; gap:14px;">
+                <input type="text" id="task-input" placeholder="כתוב משימה חדשה..." required style="flex:2;padding:9px;border-radius:8px;border:1px solid #bdd9f6;">
+                <input type="date" id="task-date" required style="flex:1;padding:9px;border-radius:8px;border:1px solid #bdd9f6;">
+                <button class="btn" type="submit" style="flex:1;">הוסף</button>
+            </form>
+            <div style="margin-bottom:13px; display: flex; align-items: center; gap: 10px;">
+                <span class="date-label">הצג משימות ליום:</span>
+                <input type="date" id="filter-date" style="font-size:15px;padding:3px 8px;border-radius:6px;border:1px solid #b7d1e6;">
+                <button class="btn btn-small" id="show-all-btn" type="button">הצג הכל</button>
+                <span id="open-tasks-count" style="margin-right:auto; color:#4891ca; font-weight:bold;"></span>
+            </div>
+            <div id="open-tasks-list"></div>
+        </div>
+        <div id="closed-tasks-section" style="display:none;">
+            <div style="margin-bottom:13px;">
+                <span class="date-label">סנן לפי חודש:</span>
+                <input type="month" id="filter-month" style="font-size:15px;padding:3px 8px;border-radius:6px;border:1px solid #b7d1e6;">
+            </div>
+            <div id="closed-tasks-list"></div>
+        </div>
+    </div>
+    <div id="main-footer"></div>
+
+    <script>
+    // פונקציה לקבלת הנתונים הנוכחיים
+    function getCurrentUserData() {
+        return {
+            role: localStorage.getItem('role') || "מדריך",
+            guide: localStorage.getItem('guide') || "",
+            name: localStorage.getItem('name'),
+            userId: localStorage.getItem('userId')
+        };
+    }
+    
+    // בדיקה - הדפס את הנתונים לקונסול
+    const userData = getCurrentUserData();
+    console.log('Tasks page - User Data:', userData);
+
+    // הצג לשונית
+    function switchTab(tab) {
+        document.querySelectorAll('.tab-btn').forEach(btn=>btn.classList.remove('active'));
+        if(tab==='open') {
+            document.querySelector('.tab-btn:nth-child(1)').classList.add('active');
+            document.getElementById('open-tasks-section').style.display = '';
+            document.getElementById('closed-tasks-section').style.display = 'none';
+            renderOpenTasks();
+        } else {
+            document.querySelector('.tab-btn:nth-child(2)').classList.add('active');
+            document.getElementById('open-tasks-section').style.display = 'none';
+            document.getElementById('closed-tasks-section').style.display = '';
+            renderClosedTasks();
+        }
+    }
+
+    // הוספת משימה
+    document.getElementById('add-task-form').onsubmit = async function(e) {
+        e.preventDefault();
+        const text = document.getElementById('task-input').value.trim();
+        const shiftDate = document.getElementById('task-date').value || new Date().toISOString().slice(0,10);
+        if (!text || !shiftDate) return;
+        const userData = getCurrentUserData();
+        let creator = userData.guide || "מערכת";
+        await fetch('http://localhost:4000/api/tasks', {
+            method: 'POST',
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({ text, creator_id: userData.userId || null, shift_date: shiftDate, status: "פתוחה", created_at: new Date().toISOString() })
+        });
+        document.getElementById('task-input').value = "";
+        document.getElementById('task-date').value = new Date().toISOString().slice(0,10);
+        renderOpenTasks();
+    };
+
+    // משימות פתוחות
+    async function renderOpenTasks() {
+        const res = await fetch('http://localhost:4000/api/tasks');
+        let tasks = await res.json();
+        let filterDate = document.getElementById('filter-date').value;
+        // הצג כל משימה שאינה "בוצע"
+        let filtered = tasks.filter(t => t.status !== "בוצע");
+        // אם המשתמש בחר תאריך, סנן לפי תאריך, אחרת הצג הכל
+        if (filterDate) {
+            filtered = filtered.filter(t => t.shift_date === filterDate);
+        }
+        filtered.sort((a, b) => a.created_at.localeCompare(b.created_at));
+        const list = document.getElementById('open-tasks-list');
+        const userData = getCurrentUserData();
+        document.getElementById('open-tasks-count').textContent = filtered.length ? `סה"כ ${filtered.length} משימות פתוחות` : '';
+        if (!filtered.length) {
+            list.innerHTML = "<div style='color:#888; margin:22px 0;'>אין משימות פתוחות לתצוגה</div>";
+            return;
+        }
+        list.innerHTML = "";
+        filtered.forEach(t=>{
+            list.innerHTML += `
+            <div class="task-row">
+                <span class="task-text">${t.text}</span>
+                <span class="task-meta">[${t.creator_name || 'לא ידוע'}]</span>
+                <span class="task-meta">${formatDate(t.shift_date)}</span>
+                <div class="task-actions">
+                    <button class="btn btn-small" onclick="closeTask(${t.id})">בוצע</button>
+                    <button class="btn btn-small" style="background:#c6ceec;color:#223;" onclick="moveTaskDate(${t.id})">העבר יום</button>
+                    ${userData.role==="רכז"? `<button class="btn btn-small" style="background:#e68787;color:#222;" onclick="deleteTask(${t.id})">מחק</button>`:""}
+                </div>
+            </div>
+            `;
+        });
+    }
+
+    // סגירת משימה
+    async function closeTask(id) {
+        const userData = getCurrentUserData();
+        const closer = userData.guide || "מערכת";
+        const res = await fetch('http://localhost:4000/api/tasks/'+id, {
+            method: 'PUT',
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({ status: "סגורה", closed_at: new Date().toISOString(), closed_by_id: userData.userId || null })
+        });
+        renderOpenTasks();
+    }
+
+    // העברת משימה
+    function moveTaskDate(id) {
+        const newDate = prompt("הכנס תאריך חדש (yyyy-mm-dd)");
+        if (!newDate || !/^\d{4}-\d{2}-\d{2}$/.test(newDate)) return;
+        fetch('http://localhost:4000/api/tasks/'+id, {
+            method:'PUT',
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({ shift_date: newDate })
+        }).then(()=>renderOpenTasks());
+    }
+
+    // מחיקה
+    async function deleteTask(id) {
+        if (!confirm("למחוק את המשימה?")) return;
+        await fetch('http://localhost:4000/api/tasks/'+id, {method:'DELETE'});
+        renderOpenTasks();
+    }
+
+    // משימות סגורות
+    async function renderClosedTasks() {
+        const res = await fetch('http://localhost:4000/api/tasks');
+        let tasks = await res.json();
+        let filterMonth = document.getElementById('filter-month').value || new Date().toISOString().slice(0,7);
+        // הצג כל משימה שסטטוס שלה "בוצע" או "סגורה"
+        let filtered = tasks.filter(t => (t.status === "בוצע" || t.status === "סגורה") && t.shift_date && t.shift_date.slice(0,7) === filterMonth);
+        filtered.sort((a, b) => (b.closed_at || '').localeCompare(a.closed_at || ''));
+        const list = document.getElementById('closed-tasks-list');
+        if (!filtered.length) {
+            list.innerHTML = "<div style='color:#888; margin:22px 0;'>אין משימות סגורות לחודש זה</div>";
+            return;
+        }
+        list.innerHTML = "";
+        filtered.forEach(t=>{
+            list.innerHTML += `
+            <div class="task-row done">
+                <span class="task-text">${t.text}</span>
+                <span class="task-meta">[${t.creator_name || 'לא ידוע'}]</span>
+                <span class="task-meta">${formatDate(t.shift_date)}</span>
+                <span class="task-meta">סגר: ${t.closed_by_name || "לא ידוע"}</span>
+            </div>
+            `;
+        });
+    }
+
+    // תצוגת תאריך
+    function formatDate(d) {
+        if (!d) return "";
+        let arr = d.split("-");
+        return `${arr[2]}/${arr[1]}/${arr[0]}`;
+    }
+
+    // אתחול תאריכים
+    document.addEventListener("DOMContentLoaded", ()=>{
+        document.getElementById('task-date').value = new Date().toISOString().slice(0,10);
+        document.getElementById('filter-date').value = '';
+        document.getElementById('filter-date').onchange = renderOpenTasks;
+        document.getElementById('filter-month').value = new Date().toISOString().slice(0,7);
+        document.getElementById('filter-month').onchange = renderClosedTasks;
+        renderOpenTasks();
+    });
+    
+    // UX: כפתור הצג הכל
+    document.addEventListener('DOMContentLoaded', function() {
+        const showAllBtn = document.getElementById('show-all-btn');
+        if (showAllBtn) {
+            showAllBtn.onclick = function() {
+                document.getElementById('filter-date').value = '';
+                renderOpenTasks();
+            };
+        }
+        const filterDate = document.getElementById('filter-date');
+        if (filterDate) {
+            filterDate.onchange = renderOpenTasks;
+        }
+    });
+    
+    // וודא שהפונקציה renderHeaderUser נקראת אחרי שהכל נטען
+    window.addEventListener('load', function() {
+        console.log('Window loaded, calling renderHeaderUser...');
+        setTimeout(() => {
+          renderHeaderUser();
+        }, 500);
+    });
+
+    // HEADER
+    fetch('header.html')
+      .then(res => res.text())
+      .then(html => {
+        document.getElementById('main-header').innerHTML = html;
+        // וודא שהאלמנטים קיימים לפני קריאת הפונקציה
+        setTimeout(() => {
+          console.log('Header loaded, calling renderHeaderUser...');
+          console.log('header-user element:', document.getElementById('header-user'));
+          console.log('header-role element:', document.getElementById('header-role'));
+          renderHeaderUser();
+        }, 100);
+      });
+    // FOOTER
+    fetch('footer.html')
+      .then(res => res.text())
+      .then(html => {
+        document.getElementById('main-footer').innerHTML = html;
+      });
+
+    </script>
+    <script src="header-functions.js"></script>
+</body>
+</html>

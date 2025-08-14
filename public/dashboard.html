@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>סיגלית - דאשבורד</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { font-family: 'Heebo', Arial, sans-serif; background: #f8fafd; margin: 0; padding: 0; }
+        .container { 
+            max-width: 1200px; 
+            margin: 20px auto; 
+            background: #fff; 
+            border-radius: 16px; 
+            box-shadow: 0 4px 16px #e4e6eb44; 
+            padding: 20px; 
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+        }
+        .left-column {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+        .right-column {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+        .block { 
+            background: #f1f4fa; 
+            border-radius: 12px; 
+            padding: 14px; 
+            margin-bottom: 0;
+        }
+        h2 { 
+            margin-top: 0; 
+            margin-bottom: 12px;
+            font-size: 1.2em;
+        }
+        .btn { 
+            background: #4891ca; 
+            color: #fff; 
+            padding: 6px 12px; 
+            border: none; 
+            border-radius: 6px; 
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+        .btn:hover { background: #3872a4; }
+        #tasks-list { list-style: none; margin:0; padding:0; }
+        #tasks-list li { 
+            background: #f7fafc; 
+            margin-bottom: 6px; 
+            padding: 8px 10px; 
+            border-radius: 8px; 
+            box-shadow:0 1px 4px #e6e7e944; 
+            display: flex; 
+            align-items:center; 
+            justify-content: space-between; 
+            font-size: 0.9em;
+        }
+        .task-actions { display: flex; gap: 5px; }
+        .move-date-popup {
+            display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: #0005; align-items: center; justify-content: center; z-index: 99;
+        }
+        .move-date-popup-inner {
+            background: #fff; padding: 20px; border-radius: 15px; box-shadow: 0 2px 18px #357aad33; min-width: 230px; text-align: center;
+        }
+        .daily-controls {
+            display: flex; align-items: center; gap: 8px; justify-content: flex-end; margin-bottom: 10px;
+        }
+        .daily-controls input[type="date"] {
+            font-size: 0.9em; padding: 4px 6px; border-radius: 6px; border: 1.2px solid #bdd9f6; background: #fff;
+        }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px;}
+        th, td { border: 1px solid #d9e4ee; padding: 6px; text-align: right; font-size: 0.85em;}
+        th { background: #e3f1fb;}
+        .category {
+            display: inline-block;
+            margin-top: 2px;
+            margin-bottom: 1px;
+            padding: 2px 8px;
+            border-radius: 8px;
+            font-size: 0.8em;
+            font-weight: 600;
+            letter-spacing: 0.2px;
+            box-shadow: 0 0 2px #bbb;
+        }
+        .טיפולית { background: #53b2e2; color:#fff;}
+        .פיזית { background: #ffe97c; color: #4d4d4d; }
+        .אומנות { background: #b580fa; color: #fff;}
+        .אחר { background: #919ba7; color:#fff;}
+        .override-row { background: #fbeaf2 !important; }
+        .override-note { color: #df1378; font-weight: bold; }
+
+        /* ---- מדריכים במשמרת ---- */
+        .block-shift { min-height: 80px; }
+        #shift-title { margin-bottom: 12px; text-align: left; font-size: 1.1em;}
+        .guide-cards { display: flex; gap: 15px; flex-wrap: wrap; align-items: flex-start; justify-content: flex-end;}
+        .guide-card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 3px 16px #b1a0e10d;
+            min-width: 120px;
+            min-height: 60px;
+            padding: 12px 8px 8px 8px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 3px;
+            transition: box-shadow 0.15s;
+        }
+        .guide-card:hover { box-shadow: 0 7px 24px #b39ddb2f;}
+        .guide-emoji { font-size: 1.6em; margin-bottom: 3px; }
+        .guide-name { font-weight: 700; color: #573a97; letter-spacing: 0.07em; font-size: 0.9em; }
+        #referrals-list li {
+            background: #f7fafc;
+            margin-bottom: 6px;
+            padding: 8px 10px;
+            border-radius: 8px;
+            box-shadow: 0 1px 4px #e6e7e944;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.9em;
+        }
+        @media (max-width: 900px) {
+            .container { 
+                grid-template-columns: 1fr; 
+                max-width: 100%; 
+                padding: 12px; 
+            }
+            .left-column, .right-column {
+                gap: 15px;
+            }
+            .container { max-width: 100%; padding: 8px; }
+            .block { min-width: 0; padding: 8px; }
+            table, th, td { font-size: 13px; }
+            h2 { font-size: 18px; }
+            .guide-cards { gap: 5px; }
+            .guide-card { min-width: 80px; padding: 8px 4px;}
+            #shift-title { font-size: 0.9em;}
+        }
+    </style>
+</head>
+<body>
+    <div id="main-header"></div>
+
+    <div class="container">
+        <!-- משימות -->
+        <div class="left-column">
+        <div class="block">
+            <h2>משימות</h2>
+            <ul id="tasks-list"></ul>
+                <form id="add-task-form" style="margin-top:12px;">
+                    <input type="text" id="task-input" placeholder="כתוב משימה חדשה..." required style="width:66%;padding:6px;border-radius:6px;border:1px solid #bdd9f6;font-size:0.9em;">
+                <button class="btn" type="submit">הוסף</button>
+            </form>
+        </div>
+
+        <!-- חלונית הזזת משימה -->
+        <div class="move-date-popup" id="moveDatePopup">
+            <div class="move-date-popup-inner">
+                <h3>העבר משימה ליום אחר</h3>
+                <input type="date" id="moveDateInput" style="font-size:18px; padding:8px; margin:12px 0;">
+                <br>
+                <button class="btn" onclick="moveTaskToNewDate()">אישור</button>
+                <button class="btn" style="background:#ccc; color:#222; margin-right:9px;" onclick="closeMovePopup()">ביטול</button>
+            </div>
+        </div>
+        <!-- הפניות לרופא -->
+<div class="block" id="referrals-block">
+    <h2>הפניות לרופא</h2>
+
+    <div class="daily-controls">
+        <label>תאריך:
+            <input type="date" id="referral-date-input" />
+        </label>
+        <button class="btn" id="referral-prev-day">יום קודם ←</button>
+        <button class="btn" id="referral-today">היום</button>
+        <button class="btn" id="referral-next-day">מחר →</button>
+    </div>
+
+    <ul id="referrals-list" style="list-style:none; padding:0;"></ul>
+
+                <form id="add-referral-form" style="margin-top: 12px;">
+        <input type="text" id="patient-name" placeholder="שם המטופל" required
+                           style="width:22%; padding:6px; border-radius:6px; border:1px solid #bdd9f6; margin-left:8px;font-size:0.9em;">
+        <input type="text" id="referral-reason" placeholder="סיבת הפנייה" required
+                           style="width:30%; padding:6px; border-radius:6px; border:1px solid #bdd9f6; margin-left:8px;font-size:0.9em;">
+        <select id="referral-doctor"
+                            style="padding:6px; border-radius:6px; border:1px solid #bdd9f6;font-size:0.9em;">
+            <option value="ד\"ר קרן">ד"ר אורית</option>
+            <option value="ד\"ר שלמה">ד"ר מיסם</option>
+        </select>
+        <button class="btn" type="submit">הוסף</button>
+        </form>
+    </div>
+        <!-- חלונית הזזת הפניה -->
+    <div class="move-date-popup" id="moveReferralPopup">
+    <div class="move-date-popup-inner">
+        <h3>העבר הפנייה ליום אחר</h3>
+        <input type="date" id="moveReferralDateInput" style="font-size:18px; padding:8px; margin:12px 0;">
+        <br>
+        <button class="btn" onclick="moveReferralToNewDate()">אישור</button>
+        <button class="btn" style="background:#ccc; color:#222; margin-right:9px;" onclick="closeMoveReferralPopup()">ביטול</button>
+    </div>
+        </div>
+
+        <!-- לוז יומי דינמי -->
+        <div class="block">
+            <h2>לו"ז יומי</h2>
+            <div class="daily-controls">
+                <label>תאריך:
+                    <input type="date" id="date-input" />
+                </label>
+                <button class="btn" id="prev-day-btn">יום קודם ←</button>
+                <button class="btn" id="today-btn">היום</button>
+                <button class="btn" id="tomorrow-btn">מחר →</button>
+                <button class="btn" id="add-override-btn" style="background:#18b972; color:#fff; margin-right:16px;">+ הוסף פעילות חד-פעמית</button>
+            </div>
+            <div id="daily-schedule"></div>
+            <div id="override-popup" style="display:none;"></div>
+                </div>
+            </div>
+
+            <!-- הודעות ומדריכים במשמרת -->
+            <div class="right-column">
+                <!-- Conversation List Block -->
+                <div class="block" id="conversations-block">
+                    <h2>שיחות</h2>
+                    <button class="btn" id="new-conversation-btn" style="margin-bottom:8px;">+ שיחה חדשה</button>
+                    <select id="new-conversation-select" style="display:none; margin-bottom:8px;"></select>
+                    <ul id="conversations-list" style="list-style:none; padding:0; margin:0;"></ul>
+                </div>
+                <!-- Conversation View Block -->
+                <div class="block" id="conversation-view-block" style="display:none;">
+                    <h2 id="conversation-view-title">שיחה</h2>
+                    <ul id="conversation-messages-list" style="list-style:none; padding:0; margin:0; min-height:60px;"></ul>
+                    <button id="expand-messages-btn" style="display:none; margin-top:8px;" class="btn">הצג הכל</button>
+                </div>
+                <!-- הודעות -->
+                <div class="block" id="messages-block">
+                    <h2>הודעות</h2>
+                    <ul id="messages-list" style="list-style:none; padding:0;"></ul>
+                                    <form id="send-message-form" style="margin-top:10px; display:flex; gap:6px; align-items:center;">
+                    <select id="msg-to" required style="width:18%;padding:6px;border-radius:6px;border:1px solid #bdd9f6;font-size:0.9em;">
+                        <option value="">בחר נמען...</option>
+                    </select>
+                    <input type="text" id="msg-text" placeholder="כתוב הודעה..." required style="width:60%;padding:6px;border-radius:6px;border:1px solid #bdd9f6;font-size:0.9em;">
+                    <button class="btn" type="submit">שלח</button>
+                </form>
+                </div>
+
+                <!-- מדריכים במשמרת -->
+                <div class="block block-shift" id="on-shift-block">
+                    <div id="shift-title"></div>
+                    <div id="on-shift-list" class="guide-cards"></div>
+                </div>
+        </div>
+    </div>
+
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // ========== HEADER ==========
+        fetch('header.html')
+          .then(res => res.text())
+          .then(html => {
+            document.getElementById('main-header').innerHTML = html;
+            renderHeaderUser();
+          });
+
+
+
+
+
+        // ========== FOOTER ==========
+        fetch('footer.html')
+          .then(res => res.text())
+          .then(html => {
+            const footerDiv = document.createElement('div');
+            footerDiv.innerHTML = html;
+            document.body.appendChild(footerDiv);
+          });
+
+
+
+        // ========================== TASKS ===============================
+        async function fetchTasks() {
+            const res = await fetch('http://localhost:4000/api/tasks');
+            return await res.json();
+        }
+        async function renderTasks() {
+            const tasks = await fetchTasks();
+            const ul = document.getElementById('tasks-list');
+            if (!tasks.length) {
+                ul.innerHTML = `<li style="color:#b2b2b2;">אין משימות פתוחות</li>`;
+                return;
+            }
+            ul.innerHTML = "";
+            tasks.filter(t=>t.status!=="בוצע").forEach(task => {
+                ul.innerHTML += `<li>
+                    <div>
+                      <b>${task.text}</b>
+                      <span style="font-size:13px;color:#557;"> (${task.creator_name || "מערכת"}, ${task.shift_date || "לא משויך"})</span>
+                    </div>
+                    <div class="task-actions">
+                      <button class="btn" style="background:#3db66b;" onclick="completeTask(${task.id})">בוצע</button>
+                      <button class="btn" style="background:#f2c53a; color:#1d1d1d;" onclick="openMovePopup(${task.id})">העבר ליום אחר</button>
+                    </div>
+                </li>`;
+            });
+        }
+        renderTasks();
+
+        document.getElementById('add-task-form').onsubmit = async function(e) {
+            e.preventDefault();
+            const text = document.getElementById('task-input').value.trim();
+            if (!text) return;
+            let creator_id = localStorage.getItem('userId') || null;
+            let today = new Date().toISOString().slice(0,10);
+            await fetch('http://localhost:4000/api/tasks', {
+                method: 'POST',
+                headers: {'Content-Type':'application/json'},
+                body: JSON.stringify({ text, creator_id, shift_date: today, status: "פתוחה", created_at: new Date().toISOString() })
+            });
+            document.getElementById('task-input').value = "";
+            renderTasks();
+        };
+
+        async function completeTask(id) {
+            let closer_id = localStorage.getItem('userId') || null;
+            await fetch('http://localhost:4000/api/tasks/'+id, {
+                method:'PUT',
+                headers:{'Content-Type':'application/json'},
+                body: JSON.stringify({ 
+                    status: "בוצע", 
+                    closed_by_id: closer_id, 
+                    closed_at: new Date().toISOString() 
+                })
+            });
+            renderTasks();
+        }
+        window.completeTask = completeTask;
+
+        window.openMovePopup = function(id) {
+            moveTaskId = id;
+            document.getElementById('moveDatePopup').style.display = 'flex';
+        }
+        window.closeMovePopup = function() {
+            document.getElementById('moveDatePopup').style.display = 'none';
+            moveTaskId = null;
+        }
+        window.moveTaskToNewDate = async function() {
+            const newDate = document.getElementById('moveDateInput').value;
+            if (!newDate) return alert("בחר תאריך יעד");
+            await fetch('http://localhost:4000/api/tasks/'+moveTaskId, {
+                method:'PUT',
+                headers:{'Content-Type':'application/json'},
+                body: JSON.stringify({ shift_date: newDate })
+            });
+            closeMovePopup();
+            renderTasks();
+        }
+
+        // ================= מדריכים במשמרת =================
+        const guideEmojis = {
+            "רפאל": "🦁", "חיצחקי": "🦉", "עמית": "🐼", "יפתח": "🦊",
+            "עופרי": "🦄", "שקד": "🐢", "תום": "🐨", "אלדד": "🐵"
+        };
+        function getGuideEmoji(name) {
+            if (guideEmojis[name]) return guideEmojis[name];
+            const options = ["🐸", "🐥", "🦩", "🦜", "🦕", "🦑", "🦦", "🦔", "🦓", "🦝", "🐙", "🦈", "🦍", "🦆"];
+            return options[Math.floor(Math.random() * options.length)];
+        }
+
+        async function renderOnShift() {
+            const res = await fetch('http://localhost:4000/api/schedule');
+            const schedule = await res.json();
+            const today = new Date();
+            const todayStr = today.toISOString().slice(0,10);
+            const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+            const dispDate = today.toLocaleDateString('he-IL', options).replace(/\//g, '.');
+
+            document.getElementById('shift-title').innerHTML = `מדריכים במשמרת <span style="font-weight:400; font-size:0.98em; color:#8775ab"> - ${dispDate}</span>`;
+
+            const todayShift = schedule.find(s => s.date === todayStr);
+            let html = '';
+
+            if (todayShift && (todayShift.guide1 || todayShift.guide2)) {
+                const guides = [todayShift.guide1, todayShift.guide2].filter(Boolean);
+                html = guides.map(name => `
+                    <div class="guide-card">
+                        <div class="guide-emoji">${getGuideEmoji(name)}</div>
+                        <div class="guide-name">${name}</div>
+                    </div>
+                `).join('');
+            } else {
+                html = `<span style="color:#aaa; font-size:1.09em;">אין מדריכים במשמרת היום</span>`;
+            }
+
+            document.getElementById("on-shift-list").innerHTML = html;
+        }
+        renderOnShift();
+
+        // ========================== לוז יומי ===========================
+        const categories = [
+            {name: 'טיפולית', color: 'טיפולית'},
+            {name: 'פיזית', color: 'פיזית'},
+            {name: 'אומנות', color: 'אומנות'},
+            {name: 'אחר', color: 'אחר'}
+        ];
+        function normalizeWeekday(weekday) {
+            return weekday.replace(/^יום\s*/, '').trim();
+        }
+        async function fetchActivities() {
+            const res = await fetch('http://localhost:4000/api/weekly-activities');
+            return await res.json();
+        }
+        async function fetchOverrides() {
+            const res = await fetch('http://localhost:4000/api/weekly-overrides');
+            return await res.json();
+        }
+        function setupDailyScheduleUI() {
+            const dateInput = document.getElementById('date-input');
+            const today = new Date();
+            dateInput.value = today.toISOString().slice(0,10);
+
+            document.getElementById('today-btn').onclick = () => {
+                const d = new Date();
+                dateInput.value = d.toISOString().slice(0,10);
+                renderDailySchedule(dateInput.value);
+            };
+            document.getElementById('tomorrow-btn').onclick = () => {
+                const d = new Date(dateInput.value);
+                d.setDate(d.getDate()+1);
+                dateInput.value = d.toISOString().slice(0,10);
+                renderDailySchedule(dateInput.value);
+            };
+            document.getElementById('prev-day-btn').onclick = () => {
+                const d = new Date(dateInput.value);
+                d.setDate(d.getDate()-1);
+                dateInput.value = d.toISOString().slice(0,10);
+                renderDailySchedule(dateInput.value);
+            };
+            dateInput.onchange = () => renderDailySchedule(dateInput.value);
+            renderDailySchedule(dateInput.value);
+        }
+        setupDailyScheduleUI();
+
+        document.getElementById('add-override-btn').onclick = function() {
+            const date = document.getElementById('date-input').value;
+            const categories = [
+                {name: 'טיפולית'},
+                {name: 'פיזית'},
+                {name: 'אומנות'},
+                {name: 'אחר'}
+            ];
+            document.getElementById('override-popup').innerHTML = `
+                <div style="position:fixed;top:0;left:0;width:100vw;height:100vh;background:#0007;z-index:9999;display:flex;align-items:center;justify-content:center;">
+                  <div style="background:#fff;padding:28px 22px 18px 22px;border-radius:18px;box-shadow:0 8px 32px #357aad33;min-width:270px;position:relative;max-width:95vw;">
+                    <button onclick="document.getElementById('override-popup').style.display='none'" style="position:absolute;top:8px;left:12px;background:#eee;border:none;border-radius:6px;font-size:1.2em;cursor:pointer;color:#868686;padding:0 9px;">✖</button>
+                    <form id="override-form">
+                      <h3 style="margin-top:0;margin-bottom:18px;font-size:1.1em;color:#4891ca;">הוסף פעילות חד-פעמית ליום זה</h3>
+                      <label>שעה: <input type="time" name="time" required style="margin-right:8px;border-radius:7px;border:1px solid #d1e1f5;padding:5px 8px;font-size:1em;"></label><br><br>
+                      <label>שם פעילות: <input name="title" required style="margin-right:8px;border-radius:7px;border:1px solid #d1e1f5;padding:5px 8px;font-size:1em;"></label><br><br>
+                      <label>מנחה: <input name="facilitator" style="margin-right:8px;border-radius:7px;border:1px solid #d1e1f5;padding:5px 8px;font-size:1em;"></label><br><br>
+                      <label>קטגוריה:
+                        <select name="category" style="margin-right:8px;border-radius:7px;border:1px solid #d1e1f5;padding:5px 8px;font-size:1em;">
+                          ${categories.map(c => `<option value="${c.name}">${c.name}</option>`).join('')}
+                        </select>
+                      </label><br><br>
+                      <label>הערה: <input name="note" style="margin-right:8px;border-radius:7px;border:1px solid #d1e1f5;padding:5px 8px;font-size:1em;"></label><br><br>
+                      <button class="btn" type="submit" style="background:#18b972;">הוסף</button>
+                    </form>
+                  </div>
+                </div>
+            `;
+            document.getElementById('override-popup').style.display = 'block';
+            document.getElementById('override-form').onsubmit = async function(e) {
+                e.preventDefault();
+                const f = e.target;
+                const obj = {
+                    date,
+                    time: f.time.value,
+                    title: f.title.value,
+                    facilitator: f.facilitator.value,
+                    category: f.category.value,
+                    note: f.note.value
+                };
+                await fetch('http://localhost:4000/api/weekly-overrides', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(obj)
+                });
+                document.getElementById('override-popup').style.display = 'none';
+                renderDailySchedule(date);
+            };
+        };
+
+        async function renderDailySchedule(dateStr) {
+            const dailyDiv = document.getElementById('daily-schedule');
+            let dstr = dateStr || new Date().toISOString().slice(0,10);
+            let dayObj = new Date(dstr + "T12:00:00");
+            let weekday = dayObj.toLocaleDateString('he-IL', {weekday: 'long'});
+            let normalizedWeekday = normalizeWeekday(weekday);
+
+            const activities = await fetchActivities();
+            const overrides = await fetchOverrides();
+            const todaysOverrides = overrides.filter(o => o.date === dstr).sort((a, b) => (a.time > b.time ? 1 : -1));
+            const regulars = activities.filter(a => a.weekday === normalizedWeekday).sort((a, b) => (a.time > b.time ? 1 : -1));
+            const overrideTimes = new Set(todaysOverrides.map(o => o.time));
+            let allActs = [];
+            todaysOverrides.forEach(o => allActs.push({...o, isOverride:true}));
+            regulars.forEach(a => { if (!overrideTimes.has(a.time)) allActs.push({...a, isOverride:false}); });
+            allActs.sort((a, b) => (a.time > b.time ? 1 : -1));
+            let html = "";
+            if (!allActs.length) {
+                html = `<div style="text-align:center; color:#bbb; font-size:1.08em;">אין פעילויות מתוכננות להיום.</div>`;
+            } else {
+                html += `<table style="width:100%; border-collapse:collapse; margin-top:8px;">`;
+                html += `<tr>
+                    <th style="background:#e3f1fb;">שעה</th>
+                    <th style="background:#e3f1fb;">שם פעילות</th>
+                    <th style="background:#e3f1fb;">מנחה</th>
+                    <th style="background:#e3f1fb;">סוג</th>
+                    <th style="background:#e3f1fb;">הערה</th>
+                </tr>`;
+                allActs.forEach(act => {
+                    html += `<tr${act.isOverride ? ' class="override-row"' : ''}>
+                        <td>${act.time || ''}</td>
+                        <td><b>${act.title || ''}</b></td>
+                        <td style="font-weight:600;color:#254b77;">${act.facilitator || ''}</td>
+                        <td>
+                            <span class="category ${act.category || 'אחר'}" style="font-size:0.95em; padding:3px 11px;">
+                                ${act.category || ''}
+                            </span>
+                        </td>
+                        <td>${act.isOverride ? '<span class="override-note">שינוי חד-פעמי</span>' : ''}</td>
+                    </tr>`;
+                });
+                html += `</table>`;
+            }
+            dailyDiv.innerHTML = html;
+        }
+
+        // ========================== הודעות ===============================
+        // Hide old direct messages block
+        const oldMsgBlock = document.getElementById('messages-block');
+        if (oldMsgBlock) oldMsgBlock.style.display = 'none';
+
+        // Hide old inline conversation view
+        const oldConvBlock = document.getElementById('conversation-view-block');
+        if (oldConvBlock) oldConvBlock.style.display = 'none';
+
+    });
+    
+    // הפניות לרופא
+document.addEventListener("DOMContentLoaded", function() {
+    const referralDateInput = document.getElementById('referral-date-input');
+    const referralList = document.getElementById('referrals-list');
+
+    function setReferralDate(date) {
+        referralDateInput.value = date.toISOString().slice(0, 10);
+        loadReferrals(date.toISOString().slice(0, 10));
+    }
+
+    document.getElementById('referral-today').onclick = () => setReferralDate(new Date());
+
+    document.getElementById('referral-prev-day').onclick = () => {
+        const d = new Date(referralDateInput.value);
+        d.setDate(d.getDate() - 1);
+        setReferralDate(d);
+    };
+
+    document.getElementById('referral-next-day').onclick = () => {
+        const d = new Date(referralDateInput.value);
+        d.setDate(d.getDate() + 1);
+        setReferralDate(d);
+    };
+
+    referralDateInput.onchange = () => {
+        loadReferrals(referralDateInput.value);
+    };
+
+    async function loadReferrals(dateStr) {
+        const res = await fetch(`http://localhost:4000/api/doctor-referrals?date=${dateStr}`);
+        const referrals = await res.json();
+        if (!referrals.length) {
+            referralList.innerHTML = `<li style="color:#b2b2b2;">אין הפניות לרופא בתאריך זה</li>`;
+        } else {
+            referralList.innerHTML = referrals
+                .filter(r => r.status !== "בוצע")
+                .map(r => `
+                    <li>
+                        <div>
+                            <b>${r.patient}</b> - ${r.reason}
+                            <span style="font-size:13px;color:#557;">(${r.doctor})</span>
+                        </div>
+                        <div class="task-actions">
+                            <button class="btn" style="background:#3db66b;" onclick="completeReferral(${r.id})">בוצע</button>
+                            <button class="btn" style="background:#f2c53a; color:#1d1d1d;" onclick="openMoveReferralPopup(${r.id})">העבר ליום אחר</button>
+                        </div>
+                    </li>
+                `).join('');
+        }
+    }
+
+
+    document.getElementById('add-referral-form').onsubmit = async function(e) {
+        e.preventDefault();
+        const patient = document.getElementById('patient-name').value.trim();
+        const reason = document.getElementById('referral-reason').value.trim();
+        const doctor = document.getElementById('referral-doctor').value;
+        const date = referralDateInput.value;
+        const createdBy = localStorage.getItem("guide") || "מערכת";
+
+        if (!patient || !reason || !doctor || !date) return;
+
+        await fetch('http://localhost:4000/api/doctor-referrals', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                patient, reason, doctor, date, createdBy
+            })
+        });
+
+        // ניקוי שדות
+        document.getElementById('patient-name').value = "";
+        document.getElementById('referral-reason').value = "";
+        document.getElementById('referral-doctor').value = "ד\"ר קרן";
+
+        loadReferrals(date);
+    };
+
+    // אתחול התאריך להיום
+    setReferralDate(new Date());
+});
+
+async function completeReferral(id) {
+    const res = await fetch('http://localhost:4000/api/doctor-referrals');
+    const all = await res.json();
+    const ref = all.find(r => r.id === id);
+    if (!ref) return;
+
+    ref.status = "בוצע";
+    ref.closedAt = new Date().toISOString();
+    ref.closedBy = localStorage.getItem("guide") || "מערכת";
+
+    await fetch(`http://localhost:4000/api/doctor-referrals/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(ref)
+    });
+
+    loadReferrals(referralDateInput.value);
+}
+window.completeReferral = completeReferral;
+let moveReferralId = null;
+
+function openMoveReferralPopup(id) {
+    moveReferralId = id;
+    document.getElementById('moveReferralPopup').style.display = 'flex';
+}
+
+function closeMoveReferralPopup() {
+    moveReferralId = null;
+    document.getElementById('moveReferralPopup').style.display = 'none';
+}
+
+async function moveReferralToNewDate() {
+    const newDate = document.getElementById('moveReferralDateInput').value;
+    if (!newDate) return alert("בחר תאריך יעד");
+
+    const res = await fetch('http://localhost:4000/api/doctor-referrals');
+    const all = await res.json();
+    const ref = all.find(r => r.id === moveReferralId);
+    if (!ref) return;
+
+    ref.date = newDate;
+
+    await fetch(`http://localhost:4000/api/doctor-referrals/${ref.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(ref)
+    });
+
+    closeMoveReferralPopup();
+    loadReferrals(referralDateInput.value);
+}
+
+// --- Conversation List ---
+let allUsers = [];
+let userIdToName = {};
+let currentUserId = Number(localStorage.getItem('userId'));
+
+async function fetchAllUsers() {
+    const res = await fetch('http://localhost:4000/api/guides');
+    allUsers = await res.json();
+    userIdToName = {};
+    allUsers.forEach(u => userIdToName[Number(u.id)] = u.name);
+}
+
+async function fetchConversations() {
+    if (!currentUserId) return [];
+    const res = await fetch(`http://localhost:4000/api/conversations?user=${currentUserId}`);
+    return await res.json();
+}
+function getOtherParticipant(conv) {
+    return conv.participants.find(p => p !== currentUserId);
+}
+async function fetchConversationMessages(convId) {
+    const res = await fetch(`http://localhost:4000/api/conversations/${convId}/messages`);
+    return await res.json();
+}
+
+// New Conversation UI
+const newConvBtn = document.getElementById('new-conversation-btn');
+const newConvSelect = document.getElementById('new-conversation-select');
+newConvBtn.onclick = async function() {
+    await fetchAllUsers();
+    const conversations = await fetchConversations();
+    const existingIds = new Set([currentUserId, ...conversations.flatMap(c => c.participants)]);
+    newConvSelect.innerHTML = '<option value="">בחר משתמש...</option>' +
+        allUsers.filter(u => u.id !== currentUserId && !conversations.some(c => c.participants.includes(u.id)))
+        .map(u => `<option value="${u.id}">${u.name}</option>`).join('');
+    newConvSelect.style.display = 'inline-block';
+};
+newConvSelect.onchange = async function() {
+    const otherId = Number(newConvSelect.value);
+    if (!otherId) return;
+    // Create or get conversation
+    const res = await fetch('http://localhost:4000/api/conversations', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ participants: [currentUserId, otherId] })
+    });
+    const conv = await res.json();
+    newConvSelect.style.display = 'none';
+    await renderConversations();
+    openConversationModal(conv);
+};
+
+let showAllConversations = false;
+
+async function renderConversations() {
+    await fetchAllUsers(); // Always fetch users first
+    const conversations = await fetchConversations();
+    const ul = document.getElementById('conversations-list');
+    const expandBtn = document.getElementById('expand-conversations-btn');
+    if (!ul) return;
+    if (!conversations.length) {
+        ul.innerHTML = '<li style="color:#b2b2b2;">אין שיחות פעילות</li>';
+        if (expandBtn) expandBtn.style.display = 'none';
+        return;
+    }
+    ul.innerHTML = '';
+    conversations.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
+    let toShow = showAllConversations ? conversations : conversations.slice(0, 5);
+    toShow.forEach(conv => {
+        const otherId = getOtherParticipant(conv);
+        let otherName = userIdToName[otherId];
+        if (!otherName) {
+            console.warn('User ID not found in userIdToName map:', otherId, userIdToName);
+            otherName = 'משתמש';
+        }
+        const li = document.createElement('li');
+        li.className = 'conversation-item';
+        li.style = 'padding:7px 0; border-bottom:1px solid #e3e3e3; cursor:pointer;';
+        li.innerHTML = `<b>${otherName}</b>`;
+        li.onclick = () => {
+            document.querySelectorAll('.conversation-item').forEach(el => el.classList.remove('active'));
+            li.classList.add('active');
+            openConversationModal(conv);
+        };
+        ul.appendChild(li);
+    });
+    // Expand/collapse button logic
+    if (conversations.length > 5) {
+        if (!expandBtn) {
+            const btn = document.createElement('button');
+            btn.id = 'expand-conversations-btn';
+            btn.className = 'btn';
+            btn.style.marginTop = '8px';
+            btn.textContent = showAllConversations ? 'הסתר' : 'הצג הכל';
+            btn.onclick = function() {
+                showAllConversations = !showAllConversations;
+                renderConversations();
+            };
+            ul.parentNode.appendChild(btn);
+        } else {
+            expandBtn.style.display = 'block';
+            expandBtn.textContent = showAllConversations ? 'הסתר' : 'הצג הכל';
+            expandBtn.onclick = function() {
+                showAllConversations = !showAllConversations;
+                renderConversations();
+            };
+        }
+    } else if (expandBtn) {
+        expandBtn.style.display = 'none';
+    }
+}
+
+// Modal logic (update to use userId)
+let currentModalConv = null;
+async function openConversationModal(conv) {
+    currentModalConv = conv;
+    const modal = document.getElementById('conversation-modal');
+    const messagesList = document.getElementById('modal-messages-list');
+    const title = document.getElementById('modal-title');
+    const input = document.getElementById('modal-msg-text');
+    const otherId = getOtherParticipant(conv);
+    let otherName = userIdToName[otherId];
+    if (!otherName) {
+        console.warn('User ID not found in userIdToName map (modal):', otherId, userIdToName);
+        otherName = 'משתמש';
+    }
+    messagesList.innerHTML = '<li style="color:#b2b2b2;">טוען...</li>';
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+    title.textContent = 'שיחה עם ' + otherName;
+    await renderModalMessages(conv.id);
+    setTimeout(() => { if(input) input.focus(); }, 200);
+    // Bind close button
+    const closeModalBtn = document.getElementById('close-modal-btn');
+    if (closeModalBtn) closeModalBtn.onclick = closeConversationModal;
+    // Bind send form
+    const modalSendForm = document.getElementById('modal-send-message-form');
+    if (modalSendForm) {
+        modalSendForm.onsubmit = async function(e) {
+            e.preventDefault();
+            if (!currentModalConv) return;
+            const input = document.getElementById('modal-msg-text');
+            const text = input.value.trim();
+            if (!text) return;
+            await fetch(`http://localhost:4000/api/conversations/${currentModalConv.id}/messages`, {
+                method: 'POST',
+                headers: {'Content-Type':'application/json'},
+                body: JSON.stringify({ from: currentUserId, text })
+            });
+            input.value = '';
+            await renderModalMessages(currentModalConv.id);
+        };
+    }
+}
+async function renderModalMessages(convId) {
+    await fetchAllUsers(); // Ensure mapping is always up to date
+    const messagesList = document.getElementById('modal-messages-list');
+    const messages = await fetchConversationMessages(convId);
+    messagesList.innerHTML = '';
+    if (!messages.length) {
+        messagesList.innerHTML = '<li style="color:#b2b2b2;">אין הודעות בשיחה זו</li>';
+        return;
+    }
+    messages.forEach(msg => {
+        const sender = userIdToName[Number(msg.from_user_id)] || 'משתמש';
+        const li = document.createElement('li');
+        li.innerHTML = `<div>${sender}: ${msg.text}</div><div class="msg-meta">${new Date(msg.timestamp).toLocaleString('he-IL')}</div>`;
+        messagesList.appendChild(li);
+    });
+    messagesList.scrollTop = messagesList.scrollHeight;
+}
+function closeConversationModal() {
+    document.getElementById('conversation-modal').style.display = 'none';
+    document.body.style.overflow = '';
+    currentModalConv = null;
+}
+// Close modal on X
+const closeModalBtn = document.getElementById('close-modal-btn');
+if (closeModalBtn) closeModalBtn.onclick = closeConversationModal;
+// Close modal on outside click
+const modalOverlay = document.getElementById('conversation-modal');
+if (modalOverlay) {
+    modalOverlay.addEventListener('mousedown', function(e) {
+        if (e.target === modalOverlay) closeConversationModal();
+    });
+}
+// Close modal on ESC
+window.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && document.getElementById('conversation-modal').style.display === 'flex') {
+        closeConversationModal();
+    }
+});
+// Send message from modal
+const modalSendForm = document.getElementById('modal-send-message-form');
+if (modalSendForm) {
+    modalSendForm.onsubmit = async function(e) {
+        e.preventDefault();
+        if (!currentModalConv) return;
+        const input = document.getElementById('modal-msg-text');
+        const text = input.value.trim();
+        if (!text) return;
+        const from = localStorage.getItem('userId') || localStorage.getItem('name') || 'מערכת';
+        const fromName = localStorage.getItem('name') || 'משתמש';
+        const to = getOtherParticipant(currentModalConv, fromName);
+        await fetch(`http://localhost:4000/api/conversations/${currentModalConv.id}/messages`, {
+            method: 'POST',
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({ from, to, text, fromName })
+        });
+        input.value = '';
+        await renderModalMessages(currentModalConv.id);
+    };
+}
+// --- Update conversation list to open modal ---
+async function renderConversations() {
+    const user = localStorage.getItem('name') || localStorage.getItem('guide') || '';
+    const conversations = await fetchConversations();
+    const ul = document.getElementById('conversations-list');
+    if (!ul) return;
+    if (!conversations.length) {
+        ul.innerHTML = '<li style="color:#b2b2b2;">אין שיחות פעילות</li>';
+        return;
+    }
+    ul.innerHTML = '';
+    conversations.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+    conversations.forEach(conv => {
+        const other = getOtherParticipant(conv);
+        const lastMsg = conv.lastMessage || '';
+        const li = document.createElement('li');
+        li.className = 'conversation-item';
+        li.style = 'padding:7px 0; border-bottom:1px solid #e3e3e3; cursor:pointer;';
+        li.innerHTML = `<b>${other}</b> <span style="color:#888;font-size:0.93em;">${lastMsg ? ' - ' + lastMsg : ''}</span>`;
+        li.onclick = () => {
+            document.querySelectorAll('.conversation-item').forEach(el => el.classList.remove('active'));
+            li.classList.add('active');
+            openConversationModal(conv);
+        };
+        ul.appendChild(li);
+    });
+}
+renderConversations();
+
+    </script>
+    <script src="header-functions.js"></script>
+    <!-- Conversation Modal -->
+    <div id="conversation-modal" class="modal-overlay" style="display:none;">
+      <div class="modal-content" tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <button id="close-modal-btn" aria-label="סגור" style="position:absolute;top:16px;left:16px;background:none;border:none;font-size:1.7em;cursor:pointer;color:#573a97;">&times;</button>
+        <h2 id="modal-title" style="margin-top:0;margin-bottom:18px;font-size:1.2em;color:#573a97;text-align:center;">שיחה</h2>
+        <ul id="modal-messages-list" style="list-style:none;padding:0;max-height:320px;overflow-y:auto;margin-bottom:18px;"></ul>
+        <form id="modal-send-message-form" style="display:flex;gap:8px;align-items:center;">
+          <input type="text" id="modal-msg-text" placeholder="כתוב הודעה..." required style="flex:1;padding:8px 12px;border-radius:8px;border:1.5px solid #bfa7e6;font-size:1em;">
+          <button class="btn" type="submit" style="background:#a98eea;">שלח</button>
+        </form>
+      </div>
+    </div>
+
+    <style>
+      .modal-overlay {
+        position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+        background: rgba(87,58,151,0.13); z-index: 9999; display: flex; align-items: center; justify-content: center;
+      }
+      .modal-content {
+        background: #f3edfa; border-radius: 18px; box-shadow: 0 8px 32px #573a9740;
+        min-width: 340px; max-width: 98vw; width: 410px; min-height: 220px; max-height: 90vh;
+        padding: 32px 24px 18px 24px; position: relative; display: flex; flex-direction: column;
+        outline: none;
+      }
+      #modal-messages-list li {
+        background: #fff; margin-bottom: 7px; border-radius: 8px; padding: 8px 10px;
+        box-shadow: 0 1px 4px #bfa7e633; font-size: 1em; color: #573a97;
+        display: flex; flex-direction: column;
+      }
+      #modal-messages-list li .msg-meta {
+        font-size: 0.85em; color: #a98eea; margin-top: 2px; align-self: flex-end;
+      }
+      .modal-content:focus { outline: 2px solid #a98eea; }
+      @media (max-width: 600px) {
+        .modal-content { min-width: 0; width: 98vw; padding: 16px 4vw 12px 4vw; }
+      }
+    </style>
+    <!-- End Conversation Modal -->
+</body>
+</html>

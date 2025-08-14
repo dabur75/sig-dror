@@ -1,0 +1,2452 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>שיבוץ חודשי - סיגלית</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="header-functions.js"></script>
+    <style>
+        /* Header Styles */
+        #main-navbar {
+          background: #ede7f6; /* רקע סגול בהיר */
+          box-shadow: 0 2px 12px #e4e6eb33;
+            border-radius: 0 0 18px 18px;
+            padding: 0 0 0 0;
+          margin-bottom: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 64px;
+          direction: rtl;
+        }
+        #main-navbar .logo {
+            display: flex;
+            align-items: center;
+          gap: 14px;
+          margin-right: 32px;
+        }
+        #main-navbar .logo img {
+          height: 90px;
+          width: 90px;
+          border-radius: 0;
+          background: none;
+          box-shadow: none;
+        }
+        #main-navbar nav {
+            display: flex;
+            gap: 0.5em;
+        }
+        #main-navbar nav a {
+          color: #254b77;
+          background: #f1f4fa;
+          border-radius: 18px;
+          padding: 8px 20px;
+            font-size: 1.08em;
+          font-weight: 500;
+            text-decoration: none;
+            margin: 0 2px;
+            transition: background 0.15s, color 0.15s;
+            border: 1.5px solid #fff0;
+        }
+        #main-navbar nav a:hover, #main-navbar nav a.active {
+          background: #e3f1fb;
+          color: #4891ca;
+          border: 1.5px solid #4891ca;
+        }
+        #main-navbar .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+          margin-left: 32px;
+          color: #254b77;
+            font-size: 1.08em;
+          font-weight: 500;
+        }
+        #main-navbar .user-info span#header-user {
+          background: #e3f1fb;
+          color: #4891ca;
+          border-radius: 10px;
+            padding: 5px 13px;
+            font-weight: 700;
+            margin-left: 4px;
+          box-shadow: 0 1px 4px #e3f1fb44;
+        }
+        #main-navbar .user-info span#header-role {
+          background: #f7fafc;
+          color: #254b77;
+          border-radius: 10px;
+            padding: 5px 13px;
+            font-weight: 700;
+            margin-left: 4px;
+          box-shadow: 0 1px 4px #e3f1fb44;
+        }
+        #main-navbar .logout-btn {
+          background: #fbe9e7;
+          color: #d84315;
+            border: none;
+          border-radius: 10px;
+            padding: 7px 18px;
+          font-weight: 600;
+            font-size: 1em;
+            margin-right: 10px;
+            cursor: pointer;
+          box-shadow: 0 1px 4px #e4e6eb33;
+            transition: background 0.15s, color 0.15s;
+          border: 1.5px solid #fbe9e7;
+        }
+        #main-navbar .logout-btn:hover {
+          background: #d84315;
+            color: #fff;
+        }
+        @media (max-width: 700px) {
+            #main-navbar { flex-direction: column; align-items: flex-start; padding: 8px 0; }
+            #main-navbar .logo { margin-right: 10px; }
+            #main-navbar nav { flex-wrap: wrap; gap: 0.2em; }
+            #main-navbar .user-info { margin-left: 10px; margin-top: 7px; }
+        }
+
+        /* Footer Styles */
+        #main-footer {
+            width: 100%;
+          background: #fff;
+          color: #8a99b3;
+            text-align: center;
+            padding: 18px 0 10px 0;
+            font-size: 1.08em;
+          font-weight: 500;
+            border-radius: 18px 18px 0 0;
+          box-shadow: 0 -2px 12px #e4e6eb33;
+            letter-spacing: 0.03em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            z-index: 100;
+          direction: rtl;
+        }
+        body { padding-bottom: 60px !important; }
+        #main-footer .footer-icon {
+            font-size: 1.3em;
+            margin-left: 7px;
+          color: #4891ca;
+          filter: drop-shadow(0 0 2px #e3f1fb);
+        }
+        @media (max-width: 700px) {
+            #main-footer { font-size: 0.98em; padding: 12px 0 7px 0; }
+        }
+
+        body {
+            font-family: 'Heebo', Arial, sans-serif;
+            background: #f8fafd;
+            margin: 0;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 5px auto;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            padding: 10px 20px 10px 20px;
+        }
+        h2 {
+            margin-top: 0;
+            letter-spacing: 0.5px;
+            font-size: 1.3rem;
+            text-align: center;
+            color: #1a365d;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+        .shibutz-table {
+            width: 100%;
+            margin: 6px 0 4px 0;
+            border-collapse: separate;
+            border-spacing: 0 2px;
+            background: none;
+        }
+        .shibutz-table th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-size: 0.85rem;
+            border-radius: 5px 5px 0 0;
+            border: none;
+            padding: 3px 0;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+        .shibutz-table td {
+            vertical-align: top;
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 4px 3px 6px 3px;
+            min-width: 100px;
+            min-height: 60px;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            font-size: 11px;
+            position: relative;
+        }
+        .shibutz-table td:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+        }
+        .shibutz-table td.weekend-open {
+            background: #e6ffe5;
+            border-color: #a8e6b7;
+        }
+        .shibutz-table td.weekend-closed {
+            background: #fff1f1;
+            border-color: #f7cfcf;
+        }
+        .shibutz-table td.shabat {
+            background: #fffbdd;
+            border-color: #f1e8b0;
+        }
+        .edit-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 2px;
+            transition: all 0.2s ease;
+            font-size: 10px;
+            box-shadow: 0 2px 4px rgba(102, 126, 234, 0.3);
+        }
+        .edit-btn:hover {
+            background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(102, 126, 234, 0.4);
+        }
+        /* -------- SIDE PANEL -------- */
+        #side-panel-overlay {
+            display: none;
+            position: fixed;
+            top: 0; right: 0; bottom: 0; left: 0;
+            background: rgba(30,40,60,0.23);
+            z-index: 50;
+        }
+        #side-panel {
+            display: none;
+            position: fixed;
+            right: 0; top: 0; bottom: 0;
+            width: 380px; max-width: 99vw;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            box-shadow: -8px 0 40px rgba(0,0,0,0.15);
+            padding: 32px 24px 24px 24px;
+            z-index: 80;
+            border-radius: 0 0 0 20px;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateX(100%);
+        }
+        #side-panel.open {
+            display: block;
+            transform: translateX(0%);
+        }
+        #side-panel-close {
+            position: absolute; left: 20px; top: 17px;
+            background: none; border: none; color: #888;
+            font-size: 1.25em; cursor: pointer;
+        }
+        .side-panel-title {
+            font-size: 1.4em;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #1a365d;
+            text-align: center;
+        }
+        .side-panel-date {
+            color: #336;
+            font-size: 1.08em; font-weight: 500;
+            margin-bottom: 13px;
+        }
+        .role-label {
+            font-size: 1.04em;
+            color: #555;
+            font-weight: 600;
+            margin-bottom: 7px;
+        }
+        .guide-list {
+            list-style: none; padding: 0; margin: 0 0 17px 0;
+        }
+        .guide-list li {
+            padding: 10px 12px; 
+            border-bottom: 1px solid #e2e8f0;
+            display: flex; align-items: center; gap: 7px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.2s ease;
+            border-radius: 8px;
+            margin-bottom: 2px;
+        }
+        .guide-list li.available {
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+            color: #065f46;
+            font-weight: 600;
+        }
+        .guide-list li.available:hover {
+            background: linear-gradient(135deg, #a7f3d0 0%, #6ee7b7 100%);
+            transform: translateX(4px);
+        }
+        .guide-list li.selected {
+            border: 2px solid #10b981;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            font-weight: 700;
+        }
+        .guide-list li.blocked {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            color: #991b1b;
+            opacity: 0.8;
+            cursor: not-allowed;
+            font-weight: 500;
+        }
+        .guide-list li.blocked-override {
+            background: linear-gradient(135deg, #fef3c7 0%, #fcd34d 100%);
+            color: #92400e;
+            cursor: pointer;
+            font-weight: 500;
+            border: 2px dashed #f59e0b;
+        }
+        .guide-list li.blocked-override:hover {
+            background: linear-gradient(135deg, #fcd34d 0%, #f59e0b 100%);
+            color: #78350f;
+        }
+        .guide-list li .guide-note {
+            font-size: 12px; color: #888; margin-right: 8px;
+        }
+        .no-guides {
+            margin: 22px 0 12px 0; text-align: center; color: #a40000; font-size: 1.07em; font-weight: bold;
+        }
+        #side-panel-save {
+            width:100%;margin-top:20px;
+        }
+        .side-panel-fields {
+            margin-bottom: 12px;
+        }
+        .side-panel-field-label {
+            font-weight: 700;
+            color: #345;
+            font-size: 1.07em;
+            margin-bottom: 4px;
+            display: block;
+        }
+        .selected-guide-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 14px;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+            border: 2px solid #10b981;
+            border-radius: 10px;
+            color: #065f46;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
+        }
+        .selected-guide-item .remove-guide {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
+        }
+        .selected-guide-item .remove-guide:hover {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            transform: scale(1.1);
+            box-shadow: 0 4px 8px rgba(239, 68, 68, 0.4);
+        }
+        .guide-role {
+            font-size: 12px;
+            color: #666;
+            margin-right: 8px;
+        }
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            padding: 6px 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            margin: 6px 4px 6px 0;
+            box-shadow: 0 3px 8px rgba(102, 126, 234, 0.3);
+            transition: all 0.2s ease;
+        }
+        .btn:hover {
+            background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+        }
+        @media (max-width: 900px) {
+            .container { max-width: 97vw; padding: 10px 0 14px 0; }
+            .shibutz-table th, .shibutz-table td { min-width: 110px; font-size: 13px; }
+            #side-panel { width: 99vw; padding: 17px 4px 14px 7px;}
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div id="main-navbar">
+        <div class="logo">
+            <img src="sigalitlogo.png" alt="סיגלית">
+            <span style="font-size: 1.5em; font-weight: 700; color: #254b77;">סיגלית</span>
+        </div>
+        <nav>
+            <a href="dashboard.html">דשבורד</a>
+            <a href="scheduler.html" class="active">שיבוץ חודשי</a>
+            <a href="guides.html">מדריכים</a>
+            <a href="constraints.html">אילוצים</a>
+            <a href="reports.html">דוחות</a>
+            <a href="tasks.html">משימות</a>
+        </nav>
+        <div class="user-info">
+            <span id="header-user">טוען...</span>
+            <span id="header-role">טוען...</span>
+            <button class="logout-btn" onclick="logout()">התנתק</button>
+        </div>
+    </div>
+
+    <!-- Coordinator Access Check -->
+    <script>
+        // Check if user is coordinator
+        function checkCoordinatorAccess() {
+            const userRole = localStorage.getItem('userRole');
+            if (userRole !== 'רכז' && userRole !== 'רכזת') {
+                alert('גישה מוגבלת - רק רכזים יכולים לגשת לעמוד זה');
+                window.location.href = 'dashboard.html';
+                return false;
+            }
+            return true;
+        }
+        
+        // Check access on page load
+        if (!checkCoordinatorAccess()) {
+            // Redirect will happen in the function
+        }
+    </script>
+
+    <!-- Load the new organized scheduler -->
+    <iframe src="organized_scheduler.html" style="width: 100%; height: calc(100vh - 140px); border: none; margin-top: 20px;"></iframe>
+
+    <!-- Footer -->
+    <div id="main-footer">
+        <span class="footer-icon">🌸</span>
+        <span>סיגלית &copy; 2024 | כל הזכויות שמורות</span>
+    </div>
+
+<script>
+// Load user info on page load
+document.addEventListener('DOMContentLoaded', function() {
+    loadUserInfo();
+});
+</script>
+
+async function fetchAllGuides() {
+    const res = await fetch('http://localhost:4000/api/guides');
+    allGuides = await res.json();
+}
+async function fetchAllRules() {
+    const res = await fetch('http://localhost:4000/api/scheduling-rules');
+    allRules = await res.json();
+}
+async function fetchShabbatStatuses() {
+  const res = await fetch('http://localhost:4000/api/shabbat-status/all');
+  const data = await res.json();
+  shabbatStatuses = {};
+  data.forEach(row => shabbatStatuses[row.date] = row.status);
+}
+
+async function setShabbatStatus(date, status) {
+  await fetch('http://localhost:4000/api/shabbat-status', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ date, status })
+  });
+  shabbatStatuses[date] = status;
+  renderShabbatStatusControls();
+}
+
+function renderShabbatStatusControls() {
+  const container = document.getElementById('shabbat-status-controls');
+  if (!container) return;
+  const shabbatDates = getShabbatDatesForCurrentMonth();
+  container.innerHTML = '';
+  shabbatDates.forEach(date => {
+    const status = shabbatStatuses[date] || 'פתוחה';
+    const label = document.createElement('div');
+    label.style.marginLeft = '18px';
+    label.style.display = 'inline-block';
+    label.style.marginBottom = '8px';
+    label.innerHTML = `שבת ${date}: ` +
+      `<label style='margin-left:8px;'><input type='radio' name='shabbat-status-${date}' value='סגורה' ${status==='סגורה'?'checked':''} onchange='setShabbatStatus("${date}","סגורה")'> סגורה</label>` +
+      `<label style='margin-left:8px;'><input type='radio' name='shabbat-status-${date}' value='פתוחה' ${status==='פתוחה'?'checked':''} onchange='setShabbatStatus("${date}","פתוחה")'> פתוחה</label>`;
+    container.appendChild(label);
+  });
+}
+
+// Helper: get all שבתות in the current month (assume you have a calendar grid)
+function getShabbatDatesForCurrentMonth() {
+  // Replace with your actual calendar logic
+  // Example: return ['2024-06-08', '2024-06-15', '2024-06-22', '2024-06-29'];
+  // For demo, just return 4 שבתות
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = now.getMonth();
+  let dates = [];
+  for (let d = 1; d <= 31; d++) {
+    const dt = new Date(year, month, d);
+    if (dt.getMonth() !== month) break;
+    // שבת = 6 (Saturday)
+    if (dt.getDay() === 6) {
+      dates.push(dt.toISOString().slice(0, 10));
+    }
+  }
+  return dates;
+}
+
+function guideNameById(id) {
+    const g = allGuides.find(g=>g.id==id);
+    return g ? g.name : `[מדריך #${id}]`;
+}
+function renderRulesList() {
+    const listDiv = document.getElementById('rules-list');
+    if (!allRules.length) {
+        listDiv.innerHTML = '<div style="color:#888;text-align:center;">אין חוקים כרגע</div>';
+        return;
+    }
+    listDiv.innerHTML = allRules.map(rule => {
+        let desc = '';
+        if (rule.type === 'manual_only') {
+            desc = `לא לשבץ את <b>${guideNameById(rule.guide_id)}</b> באוטומט (ידני בלבד)`;
+        } else if (rule.type === 'prevent_pair') {
+            desc = `לא לשבץ יחד את <b>${guideNameById(rule.guide_id)}</b> ו-<b>${guideNameById(rule.guide2_id)}</b>`;
+        } else if (rule.type === 'no_oncall') {
+            desc = `לא לשבץ את <b>${guideNameById(rule.guide_id)}</b> ככונן שבת סגורה`;
+        } else if (rule.type === 'manual_weekend_consecutive') {
+            desc = `<b>${guideNameById(rule.guide_id)}</b> - שיבוץ ידני בלבד בשישי-שבת רצוף`;
+        } else if (rule.type === 'no_weekends') {
+            desc = `לא לשבץ את <b>${guideNameById(rule.guide_id)}</b> בסופי שבוע באוטומטי`;
+        }
+        let delBtn = '';
+        if (localStorage.getItem('role') === 'רכז') {
+            delBtn = `<button class='btn' style='background:#eee;color:#a00;font-size:12px;padding:2px 8px;margin-right:8px;' onclick='deleteRule(${rule.id})'>מחק</button>`;
+        }
+        // Only show if desc is not empty
+        if (!desc) return '';
+        return `<div style='margin-bottom:10px;padding:7px 0;border-bottom:1px solid #eee;'>${delBtn}${desc}</div>`;
+    }).join('');
+}
+function renderAddRuleSection() {
+    const sec = document.getElementById('add-rule-section');
+    if (localStorage.getItem('role') !== 'רכז') { sec.innerHTML = ''; return; }
+    sec.innerHTML = `
+      <h4 style='margin:10px 0 6px 0;font-size:1em;color:#573a97;'>הוסף חוק חדש</h4>
+      <select id='rule-type' style='padding:5px 8px;border-radius:7px;border:1px solid #d1e1f5;'>
+        <option value='manual_only'>מדריך זה בשיבוץ ידני בלבד</option>
+        <option value='prevent_pair'>לא לשבץ שני מדריכים יחד</option>
+        <option value='no_oncall'>לא לשבץ מדריך זה ככונן שבת סגורה</option>
+        <option value='manual_weekend_consecutive'>שיבוץ ידני בלבד בשישי-שבת רצוף</option>
+        <option value='no_weekends'>לא לשבץ בסופי שבוע באוטומטי</option>
+      </select>
+      <div id='rule-guides-section' style='margin-top:8px;'></div>
+      <button class='btn' style='margin-top:10px;' onclick='addRule()'>הוסף</button>
+    `;
+    renderRuleGuidesSection();
+    document.getElementById('rule-type').onchange = renderRuleGuidesSection;
+}
+function renderRuleGuidesSection() {
+    const type = document.getElementById('rule-type').value;
+    const sec = document.getElementById('rule-guides-section');
+    if (type === 'manual_only' || type === 'no_oncall' || type === 'manual_weekend_consecutive' || type === 'no_weekends') {
+        // Only show guides with role מדריך for specific rules
+        const filteredGuides = ['no_oncall', 'manual_weekend_consecutive', 'no_weekends'].includes(type) ? 
+            allGuides.filter(g=>g.role==="מדריך") : allGuides;
+        sec.innerHTML = `<label>בחר מדריך: <select id='rule-guide1'>${filteredGuides.map(g=>`<option value='${g.id}'>${g.name}</option>`).join('')}</select></label>`;
+    } else if (type === 'prevent_pair') {
+        sec.innerHTML = `<label>מדריך 1: <select id='rule-guide1'>${allGuides.map(g=>`<option value='${g.id}'>${g.name}</option>`).join('')}</select></label>
+        <label style='margin-right:12px;'>מדריך 2: <select id='rule-guide2'>${allGuides.map(g=>`<option value='${g.id}'>${g.name}</option>`).join('')}</select></label>`;
+    }
+}
+async function openRulesModal() {
+    document.getElementById('rules-modal').style.display = 'flex';
+    await fetchAllGuides();
+    await fetchAllRules();
+    renderRulesList();
+    renderAddRuleSection();
+}
+function closeRulesModal() {
+    document.getElementById('rules-modal').style.display = 'none';
+}
+async function addRule() {
+    const type = document.getElementById('rule-type').value;
+    const guide_id = Number(document.getElementById('rule-guide1').value);
+    let guide2_id = null;
+    if (type === 'prevent_pair') {
+        guide2_id = Number(document.getElementById('rule-guide2').value);
+        if (guide_id === guide2_id) { alert('בחר שני מדריכים שונים'); return; }
+    }
+    const res = await fetch('http://localhost:4000/api/scheduling-rules', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({
+            type,
+            guide_id,
+            guide2_id,
+            role: localStorage.getItem('role'),
+            created_by: Number(localStorage.getItem('userId'))
+        })
+    });
+    if (!res.ok) { alert('שגיאה בהוספת חוק'); return; }
+    await fetchAllRules();
+    renderRulesList();
+}
+async function deleteRule(id) {
+    const res = await fetch(`http://localhost:4000/api/scheduling-rules/${id}`, {
+        method: 'DELETE',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ role: localStorage.getItem('role') })
+    });
+    if (!res.ok) { alert('שגיאה במחיקת חוק'); return; }
+    await fetchAllRules();
+    renderRulesList();
+}
+
+// ----------- דינמי: HEADER+FOOTER -----------
+// HEADER
+fetch('header.html')
+  .then(res => res.text())
+  .then(html => {
+    document.getElementById('main-header').innerHTML = html;
+            renderHeaderUser();
+  });
+// FOOTER
+fetch('footer.html')
+  .then(res => res.text())
+  .then(html => {
+    document.getElementById('main-footer').innerHTML = html;
+  });
+function renderHeaderUser() {
+    var userSpan = document.getElementById("header-user");
+    var roleSpan = document.getElementById("header-role");
+    var guideName = localStorage.getItem("name") || "";
+    var role = localStorage.getItem("role");
+
+    if (userSpan) {
+      userSpan.textContent = guideName ? guideName : (role === "רכז" ? "רכז/רכזת" : "מדריך/ה");
+    }
+    if (roleSpan) {
+      if (role === "רכז" || role === "רכזת") {
+        roleSpan.textContent = (role === "רכזת" ? "רכזת" : "רכז");
+      } else if (role === "מדריך" || role === "מדריכה") {
+        roleSpan.textContent = (role === "מדריכה" ? "מדריכה" : "מדריך");
+      } else {
+        roleSpan.textContent = "";
+      }
+    }
+    window.logout = function() {
+      localStorage.clear();
+      window.location.href = "login.html";
+    };
+}
+
+// =============== LOAD DATA ===============
+window.onload = () => {
+    Promise.all([
+        fetch('http://localhost:4000/api/guides').then(res => res.json()),
+        fetch('http://localhost:4000/api/constraints').then(res => res.json()),
+        fetch('http://localhost:4000/api/fixed-constraints').then(res => res.json()),
+        fetch('http://localhost:4000/api/vacations').then(res => res.json())
+    ]).then(([guidesData, constraintsData, fixedData, vacsData]) => {
+        guides = guidesData.filter(g => g.role === "מדריך");
+        console.log('Loaded guides:', guides);
+        constraints = constraintsData;
+        fixedConstraints = fixedData;
+        vacations = vacsData;
+        console.log('Loaded constraints:', constraints);
+        showMonthPicker();
+    });
+};
+
+// ================= MONTH PICKER & LOAD DRAFT =================
+function showMonthPicker() {
+    document.getElementById('main').innerHTML = `
+        <h2>צור שיבוץ חודשי חדש</h2>
+        <label>בחר חודש:</label>
+        <select id="month-select">
+            <option value="2025-07">יולי 2025</option>
+            <option value="2025-08">אוגוסט 2025</option>
+            <option value="2025-09">ספטמבר 2025</option>
+            <option value="2025-10">אוקטובר 2025</option>
+        </select>
+        <button class="btn" onclick="generateDaysList()">המשך</button>
+        <button class="btn" style="background:#eee;color:#222;border:1.3px solid #bbb;margin-right:9px;" onclick="loadDraft()">ייבא טיוטה</button>
+    `;
+}
+async function loadDraft() {
+    if (!allGuides.length) await fetchAllGuides();
+    fetch('http://localhost:4000/api/schedule-draft')
+        .then(res => res.json())
+        .then(draft => {
+            if (!draft || !Array.isArray(draft) || !draft.length) {
+                alert("לא נמצאה טיוטה קיימת");
+                return;
+            }
+            // 1. מצא את החודש מתוך הטיוטה
+            let firstDate = draft[0].date;
+            selectedMonth = firstDate.slice(0,7); // YYYY-MM
+
+            // 2. צור לוח חודש רגיל
+            generateDaysList();
+
+            // 3. עדכן מדריכים לפי הטיוטה
+            draft.forEach(d => {
+                const guide1Name = d.guide1_id ? allGuides.find(g => g.id === d.guide1_id)?.name || "" : "";
+                const guide2Name = d.guide2_id ? allGuides.find(g => g.id === d.guide2_id)?.name || "" : "";
+                
+                manualShibutz[d.date] = {
+                    overlap: guide1Name,
+                    regular: guide2Name
+                };
+                // סמן שבת פתוחה/סגורה
+                if (d.type === "שבת פתוחה" || d.type === "שבת סגורה") {
+                    weekendsState[d.date] = d.type === "שבת פתוחה" ? "open" : "closed";
+                }
+            });
+
+            // 4. בנה אילוצים וגריד מחדש
+            buildBlockedGuidesByDay();
+            renderCalendarGrid();
+        })
+        .catch(()=>alert("שגיאה בטעינת טיוטה"));
+}
+
+
+// =================== BUILD CALENDAR =======================
+async function generateDaysList() {
+    selectedMonth = document.getElementById('month-select').value;
+    daysArray = [];
+    manualShibutz = {};
+    blockedGuidesByDay = {};
+
+    // טען נתונים נחוצים
+    if (!allGuides.length) await fetchAllGuides();
+    if (!guides.length) {
+        const res = await fetch('http://localhost:4000/api/guides');
+        guides = await res.json();
+    }
+    await fetchConstraintsAndVacations();
+    await loadShabbatStatusesForMonth(selectedMonth); // <-- קריטי
+
+    const year = +selectedMonth.split('-')[0];
+    const month = +selectedMonth.split('-')[1];
+    const daysInMonth = new Date(year, month, 0).getDate();
+    const dayNames = ["ראשון", "שני", "שלישי", "רביעי", "חמישי", "שישי", "שבת"];
+    const firstDayOfWeek = new Date(year, month-1, 1).getDay();
+    for (let i = 0; i < firstDayOfWeek; i++) daysArray.push(null);
+
+    for(let day=1; day<=daysInMonth; day++) {
+        let d = new Date(year, month-1, day);
+        let iso = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        let dow = d.getDay();
+        let label = `${dayNames[dow]}, ${day}.${month}.${year}`;
+        daysArray.push({iso, dow, label});
+    }
+
+    buildBlockedGuidesByDay();
+    loadDraftsList();
+    renderCalendarGrid();
+}
+
+async function fetchConstraintsAndVacations() {
+    try {
+        const [constraintsRes, fixedRes, vacationsRes] = await Promise.all([
+            fetch('http://localhost:4000/api/constraints'),
+            fetch('http://localhost:4000/api/fixed-constraints'),
+            fetch('http://localhost:4000/api/vacations')
+        ]);
+        constraints = await constraintsRes.json();
+        fixedConstraints = await fixedRes.json();
+        vacations = await vacationsRes.json();
+    } catch (err) {
+        console.error('Error fetching constraints:', err);
+        constraints = [];
+        fixedConstraints = [];
+        vacations = [];
+    }
+}
+
+// --- Utility: Load all shabbat statuses from server and update weekendsState ---
+async function loadShabbatStatusesForMonth(month) {
+    weekendsState = {};
+    try {
+        const response = await fetch('http://localhost:4000/api/shabbat-status/all');
+        const shabbatData = await response.json();
+        shabbatData.forEach(row => {
+            if (!month || row.date.startsWith(month)) {
+                weekendsState[row.date] = row.status === 'סגורה' ? 'closed' : 'open';
+            }
+        });
+    } catch (err) {
+        console.log('לא נמצאו נתוני שבת שמורים, מתחיל עם ברירת מחדל');
+    }
+}
+
+// =============== BLOCKED GUIDES (constraints, vacations, רציפות) ===============
+function buildBlockedGuidesByDay() {
+    blockedGuidesByDay = {};
+    daysArray.forEach((d, idx) => {
+        if (!d) return;
+        let arr = [];
+
+        // אילוץ חד פעמי
+        constraints.forEach(c => {
+            if (c.date === d.iso) {
+                arr.push({ guideId: c.guideId, type: "חד פעמי", note: c.note || "" });
+            }
+        });
+        // אילוץ קבוע
+        fixedConstraints.forEach(fc => {
+            if (Number(fc.weekday) === d.dow) {
+                arr.push({ guideId: fc.guideId, type: "קבוע", note: fc.note || "" });
+            }
+        });
+        // חופשה
+        vacations.forEach(vac => {
+            if (vac.status === 'approved' && vac.dateStart <= d.iso && vac.dateEnd >= d.iso) {
+                arr.push({ guideId: vac.guideId, type: "חופשה", note: vac.note || "" });
+            }
+        });
+
+        // ======== חסימה עקב רצף (לא יומיים ברצף, למעט כונן שישי-שבת סגורה) ========
+        guides.forEach(g => {
+            let prevIdx = idx-1, nextIdx = idx+1;
+            let prev = daysArray[prevIdx], next = daysArray[nextIdx];
+            let isFriday = d.dow === 5;
+            let isSat = d.dow === 6;
+            let fridayIso = isSat && prev && prev.dow === 5 ? prev.iso : null;
+            let fridayClosed = fridayIso && weekendsState[fridayIso] === 'closed';
+            let guideName = g.name;
+
+            // חריג: אם כונן (overlap) בשישי-שבת סגורה, לא לחסום
+            if (
+                (isFriday && weekendsState[d.iso] === 'closed' && manualShibutz[d.iso]?.overlap === guideName && next && next.dow === 6 && manualShibutz[next.iso]?.overlap === guideName) ||
+                (isSat && fridayClosed && manualShibutz[d.iso]?.overlap === guideName && prev && prev.dow === 5 && manualShibutz[prev.iso]?.overlap === guideName)
+            ) {
+                return;
+            }
+
+            // חסום אם שובץ יום לפני או אחרי (בכל תפקיד)
+            let blockedByPrev = prev && manualShibutz[prev.iso] &&
+                (manualShibutz[prev.iso].overlap === guideName || manualShibutz[prev.iso].regular === guideName);
+            let blockedByNext = next && manualShibutz[next.iso] &&
+                (manualShibutz[next.iso].overlap === guideName || manualShibutz[next.iso].regular === guideName);
+
+            // חסום אם שובץ היום
+            let blockedToday = manualShibutz[d.iso] &&
+                (manualShibutz[d.iso].overlap === guideName || manualShibutz[d.iso].regular === guideName);
+
+            // אם שובץ יום לפני או אחרי, חסום (אלא אם כבר חסום מאילוץ אחר)
+            if (
+                !(arr.some(b => String(b.guideId) === String(g.id))) &&
+                (blockedByPrev || blockedByNext)
+            ) {
+                arr.push({ guideId: g.id, type: "חוקיות", note: "לא ניתן לשבץ יומיים רצוף" });
+            }
+            // תמיד חסום אם שובץ היום (למנוע כפילות)
+            if (
+                !(arr.some(b => String(b.guideId) === String(g.id))) &&
+                blockedToday
+            ) {
+                arr.push({ guideId: g.id, type: "שובץ", note: "כבר שובץ ליום זה" });
+            }
+        });
+        blockedGuidesByDay[d.iso] = arr;
+    });
+}
+function isGuideBlockedOnDay(guideId, iso) {
+    return (blockedGuidesByDay[iso] || []).filter(b => String(b.guideId) === String(guideId));
+}
+
+// ========== CALENDAR TABLE WITH EDIT BUTTON ============
+function renderCalendarGrid() {
+    const monthNames = ["ינואר", "פברואר", "מרץ", "אפריל", "מאי", "יוני", "יולי", "אוגוסט", "ספטמבר", "אוקטובר", "נובמבר", "דצמבר"];
+    const [year, month] = selectedMonth.split('-');
+    const monthName = monthNames[parseInt(month) - 1];
+    
+    let html = `
+    <h2 style="text-align:center; margin-bottom:10px; color:#1a365d;">שיבוץ חודשי - ${monthName} ${year}</h2>
+    <div style="margin-bottom:20px; text-align:center;">
+        <button class="btn" id="rules-btn" style="margin:5px;">חוקי שיבוץ</button>
+
+        <button class="btn" onclick="runAutoShibutz()" style="margin:5px;">שבץ אוטומטית</button>
+        
+        <div style="display:inline-block; margin:5px; background:#f8f9fa; padding:10px; border-radius:8px; border:1px solid #dee2e6;">
+            <div style="margin-bottom:8px; font-weight:600; color:#495057;">טיוטאות שיבוץ</div>
+            <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap; justify-content:center;">
+                <input type="text" id="draftNameInput" placeholder="שם הטיוטה" style="padding:4px 8px; border:1px solid #ced4da; border-radius:4px; font-size:14px; width:120px;">
+                <button class="btn" onclick="saveDraftWithName()" style="background:#17a2b8; font-size:14px; padding:4px 12px;">שמור</button>
+                <select id="draftSelect" style="padding:4px 8px; border:1px solid #ced4da; border-radius:4px; font-size:14px; width:120px;">
+                    <option value="">בחר טיוטה</option>
+                </select>
+                <button class="btn" onclick="loadSelectedDraft()" style="background:#28a745; font-size:14px; padding:4px 12px;">טען</button>
+                <button class="btn" onclick="deleteSelectedDraft()" style="background:#dc3545; font-size:14px; padding:4px 12px;">מחק</button>
+                <button class="btn" onclick="exportScheduleToExcel()" style="background:#0d6efd; color:white; font-size:14px; padding:4px 12px;">📊 ייצוא לאקסל</button>
+            </div>
+        </div>
+        
+        <button class="btn" onclick="sendDraftForApproval()" style="margin:5px; background:#ffc107; color:#212529;">שלח לאישור</button>
+        <button class="btn" onclick="approveFinalSchedule()" style="margin:5px; background:#dc3545;">אשר סידור סופי</button>
+        <button class="btn" onclick="resetScheduler()" style="margin:5px; background:#ffbaba; color:#a80000;">אפס סידור</button>
+    </div>
+    <table class="shibutz-table" style="table-layout:fixed; width:100%;">
+      <tr>
+        <th style="width:14.28%">ראשון</th>
+        <th style="width:14.28%">שני</th>
+        <th style="width:14.28%">שלישי</th>
+        <th style="width:14.28%">רביעי</th>
+        <th style="width:14.28%">חמישי</th>
+        <th style="width:14.28%">שישי</th>
+        <th style="width:14.28%">שבת</th>
+      </tr>`;
+    for (let i = 0; i < daysArray.length; i += 7) {
+        html += "<tr>";
+        for (let j = 0; j < 7; j++) {
+            let d = daysArray[i + j];
+            if (!d) html += `<td></td>`;
+            else {
+                if (!manualShibutz[d.iso]) manualShibutz[d.iso] = {overlap:"",regular:"",motzash:""};
+                let fridayClass = '';
+                let saturdayClass = '';
+                let isFriday = d.dow === 5;
+                let isSaturday = d.dow === 6;
+                let shabbatIso = null;
+                let isClosedShabbat = false;
+                let shabbatStatusHtml = '';
+                if (isFriday) {
+                    let nextDay = daysArray[i + j + 1];
+                    if (nextDay && nextDay.dow === 6) {
+                        shabbatIso = nextDay.iso;
+                        let status = shabbatStatuses[shabbatIso] || 'פתוחה';
+                        isClosedShabbat = status === 'סגורה';
+                        shabbatStatusHtml = `
+                          <div style='margin-top:7px; font-size:12px; text-align:center;'>
+                            <label style='cursor:pointer;'>
+                              <input type='checkbox' ${isClosedShabbat?'checked':''} onchange='setShabbatStatusForShabbat("${shabbatIso}",this.checked?"סגורה":"פתוחה")'> שבת סגורה
+                            </label>
+                          </div>
+                        `;
+                        if (isClosedShabbat) {
+                            fridayClass = 'shabbat-closed';
+                            saturdayClass = 'shabbat-closed';
+                        }
+                    }
+                }
+                if (isSaturday) {
+                    let status = shabbatStatuses[d.iso] || 'פתוחה';
+                    isClosedShabbat = status === 'סגורה';
+                    if (isClosedShabbat) {
+                        saturdayClass = 'shabbat-closed';
+                    }
+                }
+                // --- Friday cell rendering ---
+                if (isFriday && shabbatIso && isClosedShabbat) {
+                    // שבת סגורה: הצג רק כונן (overlap)
+                    const hasOverride = manualShibutz[d.iso]?.manualOverrides && Object.keys(manualShibutz[d.iso].manualOverrides).length > 0;
+                    const overrideIndicator = hasOverride ? '<div style="background:#f59e0b; color:white; font-size:8px; padding:1px 3px; border-radius:3px; margin-bottom:2px; text-align:center;">OVERRIDE</div>' : '';
+                    
+                    html += `<td class="${fridayClass}">
+                        <div style="font-size:10px; font-weight:600; color:#4a5568; margin-bottom:3px;">${d.label}</div>
+                        ${overrideIndicator}
+                        <div style="margin-bottom:2px;">
+                          <span style="font-weight:600; font-size:9px; color:#718096;">כונן:</span>
+                          <div style="color:#2d3748; font-weight:600; font-size:10px; background:#f7fafc; padding:1px 2px; border-radius:2px; margin-top:1px;">${manualShibutz[d.iso].overlap || '—'}</div>
+                        </div>
+                        ${shabbatStatusHtml}
+                        <button class="edit-btn" onclick="openSidePanel('${d.iso}')">ערוך</button>
+                    </td>`;
+                } else if (isSaturday && isClosedShabbat) {
+                    // שבת סגורה: הצג כונן (מהשישי, read-only) + מדריך נוסף (regular)
+                    let prevDay = daysArray[i + j - 1];
+                    let fridayGuide = prevDay ? manualShibutz[prevDay.iso]?.overlap || '' : '';
+                    const hasOverride = manualShibutz[d.iso]?.manualOverrides && Object.keys(manualShibutz[d.iso].manualOverrides).length > 0;
+                    const overrideIndicator = hasOverride ? '<div style="background:#f59e0b; color:white; font-size:8px; padding:1px 3px; border-radius:3px; margin-bottom:2px; text-align:center;">OVERRIDE</div>' : '';
+                    
+                    html += `<td class="${saturdayClass}">
+                        <div style="font-size:10px; font-weight:600; color:#4a5568; margin-bottom:3px;">${d.label}</div>
+                        ${overrideIndicator}
+                        <div style="margin-bottom:2px;">
+                          <span style="font-weight:600; font-size:9px; color:#718096;">כונן שישי/שבת:</span>
+                          <div style="color:#2d3748; font-weight:600; font-size:10px; background:#f7fafc; padding:1px 2px; border-radius:2px; margin-top:1px;">${fridayGuide || '—'}</div>
+                        </div>
+                        <div style="margin-bottom:2px;">
+                          <span style="font-weight:600; font-size:9px; color:#718096;">מדריך נוסף:</span>
+                          <div style="color:#2d3748; font-weight:600; font-size:10px; background:#f7fafc; padding:1px 2px; border-radius:2px; margin-top:1px;">${manualShibutz[d.iso].regular || '—'}</div>
+                        </div>
+                        <button class="edit-btn" onclick="openSidePanel('${d.iso}')">ערוך</button>
+                    </td>`;
+                } else {
+                    // שבת פתוחה או יום רגיל: הצג שמות מדריכים
+                    const hasOverride = manualShibutz[d.iso]?.manualOverrides && Object.keys(manualShibutz[d.iso].manualOverrides).length > 0;
+                    const overrideIndicator = hasOverride ? '<div style="background:#f59e0b; color:white; font-size:8px; padding:1px 3px; border-radius:3px; margin-bottom:2px; text-align:center;">OVERRIDE</div>' : '';
+                    
+                    html += `<td class="${isFriday ? fridayClass : isSaturday ? saturdayClass : ''}">
+                        <div style="font-size:10px; font-weight:600; color:#4a5568; margin-bottom:3px;">${d.label}</div>
+                        ${overrideIndicator}
+                        <div style="margin-bottom:2px;">
+                          <span style="font-weight:600; font-size:9px; color:#718096;">חפיפה:</span>
+                          <div style="color:#2d3748; font-weight:600; font-size:10px; background:#f7fafc; padding:1px 2px; border-radius:2px; margin-top:1px;">${manualShibutz[d.iso].overlap || '—'}</div>
+                        </div>
+                        <div style="margin-bottom:2px;">
+                          <span style="font-weight:600; font-size:9px; color:#718096;">רגיל:</span>
+                          <div style="color:#2d3748; font-weight:600; font-size:10px; background:#f7fafc; padding:1px 2px; border-radius:2px; margin-top:1px;">${manualShibutz[d.iso].regular || '—'}</div>
+                        </div>
+                        ${shabbatStatusHtml}
+                        <button class="edit-btn" onclick="openSidePanel('${d.iso}')">ערוך</button>
+                    </td>`;
+                }
+            }
+        }
+        html += "</tr>";
+    }
+    html += `</table>
+        <div id="auto-result"></div>
+        <div id="weekly-breakdown"></div>
+        <div id="hours-statistics"></div>
+    `;
+    document.getElementById('main').innerHTML = html;
+    document.getElementById('rules-btn').onclick = openRulesModal;
+    
+    // עדכן טבלאות
+    updateWeeklyBreakdownTable();
+    updateHoursStatistics();
+}
+
+// עדכון מדריך שישי משפיע אוטומטית על שבת סגורה
+window.updateGuide = function(date, role, value) {
+    manualShibutz[date][role] = value;
+    // אם זה שישי של שבת סגורה, עדכן גם את שבת
+    const d = new Date(date);
+    if (d.getDay() === 5) {
+        // מצא את שבת שאחריה
+        let shabbat = new Date(d);
+        shabbat.setDate(d.getDate() + 1);
+        let shabbatIso = shabbat.toISOString().slice(0,10);
+        if (shabbatStatuses[shabbatIso] === 'סגורה') {
+            if (!manualShibutz[shabbatIso]) manualShibutz[shabbatIso] = {overlap:"",regular:"",motzash:""};
+            manualShibutz[shabbatIso].overlap = value;
+        }
+    }
+    renderCalendarGrid();
+    // עדכן טבלאות אחרי שינוי ידני
+    setTimeout(() => {
+        updateWeeklyBreakdownTable();
+        updateHoursStatistics();
+    }, 50);
+};
+// CSS for שבת סגורה רקע
+const style = document.createElement('style');
+style.innerHTML = `
+  .shabbat-closed {
+    background: linear-gradient(135deg, #fff1f1 0%, #ffe5e5 100%) !important;
+    border-color: #f7cfcf !important;
+  }
+`;
+document.head.appendChild(style);
+// פונקציה חדשה לעדכון סטטוס שבת
+window.setShabbatStatusForShabbat = async function(shabbatIso, status) {
+  await fetch('http://localhost:4000/api/shabbat-status', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ date: shabbatIso, status })
+  });
+  shabbatStatuses[shabbatIso] = status;
+  renderCalendarGrid();
+};
+// ========== SIDE PANEL FUNCTIONS ===========
+let currentEditingDate = null;
+
+window.openSidePanel = function(iso) {
+    buildBlockedGuidesByDay(); // רענון חסימות לפני הצגת הפאנל
+    currentEditingDate = iso;
+    let d = daysArray.find(day => day && day.iso === iso);
+    if (!d) return;
+    
+    document.getElementById('side-panel-date').textContent = d.label;
+    
+    let isFriday = d.dow === 5;
+    let isSaturday = d.dow === 6;
+    let isClosedShabbat = isSaturday && weekendsState[iso] === 'closed';
+    let prevDay = daysArray[daysArray.findIndex(day => day && day.iso === iso) - 1];
+    // Render selected guides
+    let selectedHtml = '';
+    if (isFriday && weekendsState[daysArray[daysArray.findIndex(day => day && day.iso === iso) + 1]?.iso] === 'סגורה') {
+        // שישי של שבת סגורה: עריכה של overlap בלבד
+        if (manualShibutz[iso]?.overlap) {
+            selectedHtml += `<div class="selected-guide-item">
+                <span><span class="guide-role">כונן:</span>${manualShibutz[iso].overlap}</span>
+                <button class="remove-guide" onclick="removeGuide('overlap')">&times;</button>
+            </div>`;
+        }
+    } else if (isSaturday && isClosedShabbat) {
+        // שבת סגורה: הצג overlap (read-only) ו-regular (editable)
+        let fridayGuide = prevDay ? manualShibutz[prevDay.iso]?.overlap || '' : '';
+        if (fridayGuide) {
+            selectedHtml += `<div class="selected-guide-item">
+                <span><span class="guide-role">כונן שישי/שבת:</span>${fridayGuide}</span>
+            </div>`;
+        }
+        if (manualShibutz[iso]?.regular) {
+            selectedHtml += `<div class="selected-guide-item">
+                <span><span class="guide-role">מדריך נוסף:</span>${manualShibutz[iso].regular}</span>
+                <button class="remove-guide" onclick="removeGuide('regular')">&times;</button>
+            </div>`;
+        }
+    } else {
+        // רגיל
+        if (manualShibutz[iso]?.overlap) {
+            selectedHtml += `<div class="selected-guide-item">
+                <span><span class="guide-role">חפיפה:</span>${manualShibutz[iso].overlap}</span>
+                <button class="remove-guide" onclick="removeGuide('overlap')">&times;</button>
+            </div>`;
+        }
+        if (manualShibutz[iso]?.regular) {
+            selectedHtml += `<div class="selected-guide-item">
+                <span><span class="guide-role">רגיל:</span>${manualShibutz[iso].regular}</span>
+                <button class="remove-guide" onclick="removeGuide('regular')">&times;</button>
+            </div>`;
+        }
+    }
+    document.getElementById('selected-guides').innerHTML = selectedHtml;
+    // Render available guides
+    let blocked = (blockedGuidesByDay[iso] || []).map(b => String(b.guideId));
+    let noOncallIds = allRules.filter(r => r.type === 'no_oncall').map(r => String(r.guide_id));
+    let availableGuides = guides.filter(g => !blocked.includes(String(g.id)));
+    let blockedGuides = guides.filter(g => blocked.includes(String(g.id)));
+    let availableHtml = '';
+    
+    // Add event listener for manual override checkbox
+    setTimeout(() => {
+        const overrideCheckbox = document.getElementById('manual-override-checkbox');
+        if (overrideCheckbox) {
+            overrideCheckbox.addEventListener('change', function() {
+                openSidePanel(iso); // Refresh the panel
+            });
+        }
+    }, 100);
+    if (isFriday && weekendsState[daysArray[daysArray.findIndex(day => day && day.iso === iso) + 1]?.iso] === 'סגורה') {
+        // שישי של שבת סגורה: בחירה של overlap בלבד
+        let filteredGuides = availableGuides.filter(g => !noOncallIds.includes(String(g.id)));
+        
+        // Add blocked guides to available if manual override will be enabled
+        let blockedForOncall = blockedGuides.filter(g => !noOncallIds.includes(String(g.id)));
+        let allPossibleGuides = [...filteredGuides, ...blockedForOncall];
+        
+        if (allPossibleGuides.length === 0) {
+            availableHtml += '<li class="blocked">אין מדריכים זמינים לתפקיד כונן (חוק מותאם אישית)</li>';
+        } else {
+            allPossibleGuides.forEach(g => {
+            let isSelected = (manualShibutz[iso]?.overlap === g.name);
+                let isBlocked = blocked.includes(String(g.id));
+                let overrideText = isBlocked ? ' (חסום - דרוש Override)' : '';
+                let className = 'available';
+                if (isSelected) className += ' selected';
+                if (isBlocked) className = 'blocked-override';
+                
+                availableHtml += `<li class="${className}" data-blocked="${isBlocked}" onclick="selectGuideWithOverride('${g.name}','overlap', ${isBlocked})">${g.name}${overrideText}</li>`;
+            });
+        }
+    } else if (isSaturday && isClosedShabbat) {
+        // שבת סגורה: בחירה של regular בלבד
+        let allPossibleGuides = [...availableGuides, ...blockedGuides];
+        
+        allPossibleGuides.forEach(g => {
+            let isSelected = (manualShibutz[iso]?.regular === g.name);
+            let isBlocked = blocked.includes(String(g.id));
+            let overrideText = isBlocked ? ' (חסום - דרוש Override)' : '';
+            let className = 'available';
+            if (isSelected) className += ' selected';
+            if (isBlocked) className = 'blocked-override';
+            
+            availableHtml += `<li class="${className}" data-blocked="${isBlocked}" onclick="selectGuideWithOverride('${g.name}','regular', ${isBlocked})">${g.name}${overrideText}</li>`;
+        });
+    } else {
+        // רגיל
+        let allPossibleGuides = [...availableGuides, ...blockedGuides];
+        
+        allPossibleGuides.forEach(g => {
+            let isSelected = (manualShibutz[iso]?.overlap === g.name || manualShibutz[iso]?.regular === g.name);
+            let isBlocked = blocked.includes(String(g.id));
+            let overrideText = isBlocked ? ' (חסום - דרוש Override)' : '';
+            let className = 'available';
+            if (isSelected) className += ' selected';
+            if (isBlocked) className = 'blocked-override';
+            
+            availableHtml += `<li class="${className}" data-blocked="${isBlocked}" onclick="selectGuideWithOverride('${g.name}','', ${isBlocked})">${g.name}${overrideText}</li>`;
+        });
+    }
+    // עכשיו המדריכים החסומים כבר מוצגים למעלה, אז לא צריך להציג אותם שוב
+    document.getElementById('available-guides').innerHTML = availableHtml;
+    document.getElementById('side-panel-overlay').style.display = 'block';
+    document.getElementById('side-panel').classList.add('open');
+};
+window.selectGuideSpecial = function(guideName, role) {
+    if (!currentEditingDate) return;
+    if (!manualShibutz[currentEditingDate]) manualShibutz[currentEditingDate] = {overlap:"",regular:"",motzash:""};
+    manualShibutz[currentEditingDate][role] = guideName;
+    // אם זה שישי של שבת סגורה, עדכן גם את שבת
+    let d = new Date(currentEditingDate);
+    if (d.getDay() === 5 && role === 'overlap') {
+        let shabbat = new Date(d);
+        shabbat.setDate(d.getDate() + 1);
+        let shabbatIso = shabbat.toISOString().slice(0,10);
+        if (shabbatStatuses[shabbatIso] === 'סגורה') {
+            if (!manualShibutz[shabbatIso]) manualShibutz[shabbatIso] = {overlap:"",regular:"",motzash:""};
+            manualShibutz[shabbatIso].overlap = guideName;
+        }
+    }
+    openSidePanel(currentEditingDate);
+    updateWeeklyBreakdownTable();
+};
+
+window.selectGuideWithOverride = function(guideName, role, isBlocked) {
+    if (!currentEditingDate) return;
+    
+    // אם המדריך חסום, בדוק אם Manual Override מופעל
+    if (isBlocked) {
+        const overrideCheckbox = document.getElementById('manual-override-checkbox');
+        if (!overrideCheckbox?.checked) {
+            alert('מדריך זה חסום ביום זה. הפעל Manual Override כדי לשבץ אותו.');
+            return;
+        }
+        
+        // אישור נוסף מהרכז
+        if (!confirm(`האם אתה בטוח שברצונך לשבץ את ${guideName} למרות החסימות?\nזה עוקף את כל חוקי השיבוץ!`)) {
+            return;
+        }
+        
+        // שמור שזה manual override ברמת התא
+        if (!manualShibutz[currentEditingDate]) manualShibutz[currentEditingDate] = {overlap:"",regular:"",motzash:"", manualOverrides: {}};
+        if (!manualShibutz[currentEditingDate].manualOverrides) manualShibutz[currentEditingDate].manualOverrides = {};
+        manualShibutz[currentEditingDate].manualOverrides[guideName] = true;
+    }
+    
+    if (!manualShibutz[currentEditingDate]) manualShibutz[currentEditingDate] = {overlap:"",regular:"",motzash:""};
+    
+    if (role === 'overlap' || role === 'regular') {
+        // שיבוץ ספציפי
+        manualShibutz[currentEditingDate][role] = guideName;
+        
+        // אם זה שישי של שבת סגורה, עדכן גם את שבת
+        let d = new Date(currentEditingDate);
+        if (d.getDay() === 5 && role === 'overlap') {
+            let shabbat = new Date(d);
+            shabbat.setDate(d.getDate() + 1);
+            let shabbatIso = shabbat.toISOString().slice(0,10);
+            if (shabbatStatuses[shabbatIso] === 'סגורה') {
+                if (!manualShibutz[shabbatIso]) manualShibutz[shabbatIso] = {overlap:"",regular:"",motzash:""};
+                manualShibutz[shabbatIso].overlap = guideName;
+            }
+        }
+    } else {
+        // שיבוץ רגיל - בחר תפקיד
+        if (!manualShibutz[currentEditingDate].overlap) {
+            manualShibutz[currentEditingDate].overlap = guideName;
+        } else if (!manualShibutz[currentEditingDate].regular && manualShibutz[currentEditingDate].overlap !== guideName) {
+            manualShibutz[currentEditingDate].regular = guideName;
+        } else {
+            // אם שניהם תפוסים או מדריך כבר נבחר, החלף את החפיפה
+            manualShibutz[currentEditingDate].overlap = guideName;
+            if (manualShibutz[currentEditingDate].regular === guideName) {
+                manualShibutz[currentEditingDate].regular = "";
+            }
+        }
+    }
+    
+    openSidePanel(currentEditingDate);
+    updateWeeklyBreakdownTable();
+};
+
+window.selectGuide = function(guideName) {
+    if (!currentEditingDate) return;
+    if (!manualShibutz[currentEditingDate]) manualShibutz[currentEditingDate] = {overlap:"",regular:"",motzash:""};
+    
+    // בחר תפקיד - קודם חפיפה, אחר כך רגיל
+    if (!manualShibutz[currentEditingDate].overlap) {
+        manualShibutz[currentEditingDate].overlap = guideName;
+    } else if (!manualShibutz[currentEditingDate].regular && manualShibutz[currentEditingDate].overlap !== guideName) {
+        manualShibutz[currentEditingDate].regular = guideName;
+    } else {
+        // אם שניהם תפוסים או מדריך כבר נבחר, החלף את החפיפה
+        manualShibutz[currentEditingDate].overlap = guideName;
+        if (manualShibutz[currentEditingDate].regular === guideName) {
+            manualShibutz[currentEditingDate].regular = "";
+        }
+    }
+    
+    openSidePanel(currentEditingDate);
+};
+
+window.removeGuide = function(role) {
+    if (!currentEditingDate) return;
+    
+    if (role === 'overlap') {
+        manualShibutz[currentEditingDate].overlap = "";
+        // נקה גם את המדריך מרשימת ה-override אם הוא היה שם
+        if (manualShibutz[currentEditingDate].manualOverrides) {
+            Object.keys(manualShibutz[currentEditingDate].manualOverrides).forEach(guideName => {
+                if (guideName === manualShibutz[currentEditingDate].overlap) {
+                    delete manualShibutz[currentEditingDate].manualOverrides[guideName];
+                }
+            });
+        }
+    } else if (role === 'regular') {
+        manualShibutz[currentEditingDate].regular = "";
+        // נקה גם את המדריך מרשימת ה-override אם הוא היה שם
+        if (manualShibutz[currentEditingDate].manualOverrides) {
+            Object.keys(manualShibutz[currentEditingDate].manualOverrides).forEach(guideName => {
+                if (guideName === manualShibutz[currentEditingDate].regular) {
+                    delete manualShibutz[currentEditingDate].manualOverrides[guideName];
+                }
+            });
+        }
+    }
+    
+    // Refresh the side panel
+    openSidePanel(currentEditingDate);
+    updateWeeklyBreakdownTable();
+};
+
+window.saveSidePanelChanges = function() {
+    if (!currentEditingDate) return;
+    
+    // Close side panel
+    document.getElementById('side-panel-overlay').style.display = 'none';
+    document.getElementById('side-panel').classList.remove('open');
+    
+    // Re-render calendar
+    renderCalendarGrid();
+    updateWeeklyBreakdownTable();
+};
+
+// Close side panel when clicking overlay or close button
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('side-panel-overlay').addEventListener('click', function() {
+        document.getElementById('side-panel-overlay').style.display = 'none';
+        document.getElementById('side-panel').classList.remove('open');
+    });
+    
+    document.getElementById('side-panel-close').addEventListener('click', function() {
+        document.getElementById('side-panel-overlay').style.display = 'none';
+        document.getElementById('side-panel').classList.remove('open');
+    });
+});
+
+// ========== WEEKEND CONTROL ===========
+async function setWeekend(iso, val) {
+    weekendsState[iso] = val;
+    
+    // שמור למסד הנתונים
+    try {
+        await fetch('http://localhost:4000/api/shabbat-status', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                date: iso, 
+                status: val === 'closed' ? 'סגורה' : 'פתוחה' 
+            })
+        });
+    } catch (err) {
+        console.error('שגיאה בשמירת סטטוס שבת:', err);
+    }
+    
+    buildBlockedGuidesByDay();
+    renderCalendarGrid();
+}
+
+
+
+// ======================= חישוב משקל משמרת =======================
+function calculateShiftWeight(date, dayOfWeek, isShabbatClosed, role) {
+    // role: 'overlap' או 'regular'
+    // dayOfWeek: 0=ראשון, 1=שני, ... 5=שישי, 6=שבת
+    
+    if (dayOfWeek >= 0 && dayOfWeek <= 4) {
+        // ימי חול: ראשון-חמישי
+        // 8 שעות רגילות + 8 שעות לילה = 8*1.0 + 8*1.5 = 20 שעות עם פקטור
+        return 20;
+    }
+    
+    if (dayOfWeek === 5) { // שישי
+        if (isShabbatClosed && role === 'overlap') {
+            // כונן שבת סגורה: 10*0.3 + 5*0.6 = 3 + 3 = 6 שעות עם פקטור (חלק משישי)
+            return 6; // רק החלק של שישי, השבת תחושב בנפרד
+        } else {
+            // שישי רגיל: 8*1.0 + 8*1.5 = 20 שעות עם פקטור
+            return 20;
+        }
+    }
+    
+    if (dayOfWeek === 6) { // שבת
+        if (isShabbatClosed && role === 'overlap') {
+            // המשך כונן שבת סגורה: 17*0.6 = 10.2 שעות עם פקטור
+            return 10.2;
+        } else if (isShabbatClosed && role === 'regular') {
+            // מוצ"ש: 2*2.0 + 5*1.0 = 9 שעות עם פקטור
+            return 9;
+        } else {
+            // שבת פתוחה: 12*2.0 = 24 שעות עם פקטור
+            return 24;
+        }
+    }
+    
+    return 0; // ברירת מחדל
+}
+
+// ========== SHIBUTZ AUTO ===========
+async function runAutoShibutz() {
+    try {
+        console.log('Starting auto scheduling...');
+        
+        console.log('Checking variables:');
+        console.log('allRules:', allRules);
+        console.log('guides:', guides);
+        console.log('daysArray:', daysArray);
+        console.log('manualShibutz:', manualShibutz);
+        
+        if (!allRules.length) await fetchAllRules();
+        const manualOnlyIds = allRules.filter(r => r.type === 'manual_only').map(r => r.guide_id);
+        const noOncallIds = allRules.filter(r => r.type === 'no_oncall').map(r => r.guide_id);
+        const manualWeekendIds = allRules.filter(r => r.type === 'manual_weekend_consecutive').map(r => r.guide_id);
+        const noWeekendsIds = allRules.filter(r => r.type === 'no_weekends').map(r => r.guide_id);
+        const autoGuides = guides.filter(g => !manualOnlyIds.includes(g.id));
+        
+        console.log('Rules loaded:', {
+            manualOnly: manualOnlyIds.length,
+            noOncall: noOncallIds.length, 
+            manualWeekend: manualWeekendIds.length,
+            noWeekends: noWeekendsIds.length
+        });
+        console.log('Starting auto-assignment with spacing preference (not strict rule)');
+        
+        // נקה כל השיבוצים והתחל מחדש, אך שמור תאים עם Manual Override
+        daysArray.forEach(d => {
+            if (!d) return;
+            
+            // בדוק אם יש Manual Override בתא זה
+            const existingData = manualShibutz[d.iso];
+            const hasOverride = existingData?.manualOverrides && Object.keys(existingData.manualOverrides).length > 0;
+            
+            if (hasOverride) {
+                // שמור את התא הזה - לא לגעת בו בשיבוץ אוטומטי
+                console.log(`Preserving manual override for ${d.iso}:`, existingData);
+            } else {
+                // איפוס מלא - שיבוץ אוטומטי מתחיל מאפס
+                manualShibutz[d.iso] = {overlap:"", regular:"", motzash:""};
+            }
+        });
+        
+        let usedGuides = {}; // סך השעות עם פקטור לכל מדריך
+        let weekendShifts = {}; // מעקב אחר מספר שבתות (שישי-שבת)
+        let conanShifts = {}; // מעקב אחר משמרות כונן (שבת סגורה)
+        let weekdayShifts = {}; // מעקב אחר משמרות אמצע שבוע (ראשון-חמישי + מוצ"ש)
+        let lastWorkDay = {}; // מעקב אחר היום האחרון שכל מדריך עבד (למרווח)
+        autoGuides.forEach(g => {
+            usedGuides[g.name] = 0;
+            weekendShifts[g.name] = 0;
+            conanShifts[g.name] = 0;
+            weekdayShifts[g.name] = 0;
+            lastWorkDay[g.name] = -999; // יום רחוק בעבר
+        });
+        
+        console.log('✅ CODE UPDATED - Initial weekday shifts:', weekdayShifts);
+        console.log('✅ CODE UPDATED - Initial lastWorkDay:', lastWorkDay);
+        let problemDates = [];
+        console.log('Auto guides available:', autoGuides.map(g => g.name));
+        console.log('Days array length:', daysArray.length);
+        
+        // ספור ימי אמצע שבוע בחודש
+        const weekdayCount = daysArray.filter(d => d && d.dow >= 0 && d.dow <= 4).length;
+        const totalGuides = autoGuides.length;
+        console.log(`📊 Month stats: ${weekdayCount} weekdays, ${totalGuides} guides available`);
+        console.log(`📊 Math: ${weekdayCount} weekdays ÷ ${totalGuides} guides = ${(weekdayCount / totalGuides).toFixed(1)} weekdays per guide`);
+        
+        console.log('Manual shibutz object:', manualShibutz);
+        
+        // כל השיבוצים נוקו - התחלה נקייה מאפס
+        console.log('Starting fresh - all assignments cleared');
+    buildBlockedGuidesByDay();
+    
+    // פונקציה עזר לבדיקת כשירות מדריך ליום מסוים
+    function isGuideEligibleForDay(guide, dayObj, role) {
+        const guideId = String(guide.id);
+        const isWeekend = (dayObj.dow === 5 || dayObj.dow === 6);
+        const isShabbatClosed = weekendsState[dayObj.iso] === 'closed';
+        const isConan = (dayObj.dow === 5 && isShabbatClosed && role === 'overlap');
+        const isWeekday = (dayObj.dow >= 0 && dayObj.dow <= 4);
+        
+        // חוק: לא סופי שבוע באוטומטי
+        if (noWeekendsIds.includes(guideId) && isWeekend) {
+            console.log(`  ${guide.name} blocked by no_weekends rule`);
+            return false;
+        }
+        
+        // חוק: שיבוץ ידני בלבד בשישי-שבת רצוף
+        if (manualWeekendIds.includes(guideId) && isWeekend) {
+            console.log(`  ${guide.name} blocked by manual_weekend_consecutive rule`);
+            return false;
+        }
+        
+        // חוק: מקסימום 4 משמרות אמצע שבוע (היה 2, אבל זה חמוד מדי)
+        if (isWeekday && weekdayShifts[guide.name] >= 4) {
+            console.log(`  ${guide.name} blocked by max weekday shifts (has ${weekdayShifts[guide.name]})`);
+            return false;
+        }
+        
+        return true;
+    }
+    
+    // פונקציה עזר לחישוב "עונש" עבור מרווח קצר
+    function getSpacingPenalty(guide, dayObj) {
+        const isWeekday = (dayObj.dow >= 0 && dayObj.dow <= 4);
+        if (isWeekday && lastWorkDay[guide.name] >= 0) {
+            const daysSinceLastWork = dayObj.dow - lastWorkDay[guide.name];
+            if (daysSinceLastWork === 2) { // עבד לפני יומיים - עונש קל
+                return 100; // עונש בחישוב המיון
+            }
+        }
+        return 0;
+    }
+    
+    daysArray.forEach((d, idx) => {
+        if (!d) return;
+        if (!manualShibutz[d.iso]) manualShibutz[d.iso] = {overlap:"",regular:"",motzash:""};
+        
+        // בדוק אם התא הזה מוגן על ידי Manual Override
+        const hasOverride = manualShibutz[d.iso]?.manualOverrides && Object.keys(manualShibutz[d.iso].manualOverrides).length > 0;
+        if (hasOverride) {
+            console.log(`Skipping auto-assignment for ${d.iso} due to manual override`);
+            return; // דלג על היום הזה בשיבוץ האוטומטי
+        }
+        
+        buildBlockedGuidesByDay();
+        let blocked = (blockedGuidesByDay[d.iso] || []).map(b => String(b.guideId));
+        let availableGuides = autoGuides.filter(g => !blocked.includes(String(g.id)));
+        console.log(`Day ${d.iso} (${d.dow}): ${availableGuides.length} available guides:`, availableGuides.map(g => g.name));
+        // שישי - שבת סגורה (רק כונן)
+        if (d.dow === 5 && weekendsState[d.iso] === 'closed') {
+            if (!manualShibutz[d.iso].overlap) {
+                let candidates = availableGuides.filter(g => 
+                    !noOncallIds.includes(String(g.id)) && 
+                    isGuideEligibleForDay(g, d, 'overlap')
+                );
+                console.log(`  Conan candidates after filtering: ${candidates.length}`, candidates.map(g => g.name));
+                if (candidates.length > 0) {
+                    // מיון לפי עדיפות: תחילה כונן (משמרות כבדות), אחר כך שבתות, אחר כך כללי
+                    let g1 = candidates.sort((a, b) => {
+                        // עדיפות ראשונה: מעט משמרות כונן (שבת סגורה)
+                        let conanDiff = conanShifts[a.name] - conanShifts[b.name];
+                        if (conanDiff !== 0) return conanDiff;
+                        
+                        // עדיפות שנייה: מעט שבתות כללי
+                        let weekendDiff = weekendShifts[a.name] - weekendShifts[b.name];
+                        if (weekendDiff !== 0) return weekendDiff;
+                        
+                        // עדיפות שלישית: עונש עבור מרווח קצר
+                        let spacingDiff = getSpacingPenalty(a, d) - getSpacingPenalty(b, d);
+                        if (spacingDiff !== 0) return spacingDiff;
+                        
+                        // עדיפות רביעית: מעט משמרות כללי
+                        return usedGuides[a.name] - usedGuides[b.name];
+                    })[0].name;
+                    
+                    manualShibutz[d.iso].overlap = g1; 
+                    const weight1 = calculateShiftWeight(d.iso, d.dow, true, 'overlap');
+                    usedGuides[g1] += weight1;
+                    weekendShifts[g1]++;
+                    conanShifts[g1]++;
+                    // עדכן יום עבודה אחרון
+                    lastWorkDay[g1] = d.dow;
+                    
+                    // שבת (הבאה) — כונן זהה!
+                    let shabbat = new Date(d.date);
+                    shabbat.setDate(shabbat.getDate() + 1);
+                    let shabbatIso = shabbat.toISOString().slice(0,10);
+                    if (shabbatStatuses[shabbatIso] === 'סגורה') {
+                        if (!manualShibutz[shabbatIso]) manualShibutz[shabbatIso] = {overlap:"",regular:"",motzash:""};
+                        manualShibutz[shabbatIso].overlap = g1;
+                        
+                        // הוסף משקל לחלק השבת של הכונן
+                        const shabbatWeight = calculateShiftWeight(shabbatIso, 6, true, 'overlap');
+                        usedGuides[g1] += shabbatWeight;
+                        weekendShifts[g1]++; // ספור גם השבת
+                    }
+                }
+            }
+        } else if (d.dow === 6 && weekendsState[d.iso] === 'closed') {
+            // שבת סגורה: בחר מדריך נוסף (regular)
+            if (!manualShibutz[d.iso].regular) {
+                let candidates = availableGuides.filter(g => 
+                    g.name !== manualShibutz[d.iso].overlap && 
+                    isGuideEligibleForDay(g, d, 'regular')
+                );
+                console.log(`  Shabbat regular candidates for ${d.iso}: ${candidates.length}`, candidates.map(g => g.name));
+                
+                if (candidates.length > 0) {
+                    // מיון לפי איזון שבתות
+                    let g2 = candidates.sort((a, b) => {
+                        // עדיפות ראשונה: מעט שבתות
+                        let weekendDiff = weekendShifts[a.name] - weekendShifts[b.name];
+                        if (weekendDiff !== 0) return weekendDiff;
+                        
+                        // עדיפות שנייה: עונש עבור מרווח קצר
+                        let spacingDiff = getSpacingPenalty(a, d) - getSpacingPenalty(b, d);
+                        if (spacingDiff !== 0) return spacingDiff;
+                        
+                        // עדיפות שלישית: מעט משמרות כללי
+                        return usedGuides[a.name] - usedGuides[b.name];
+                    })[0].name;
+                    
+                    manualShibutz[d.iso].regular = g2; 
+                    const weight2 = calculateShiftWeight(d.iso, d.dow, true, 'regular');
+                    usedGuides[g2] += weight2;
+                    weekendShifts[g2]++;
+                    // עדכן יום עבודה אחרון 
+                    lastWorkDay[g2] = d.dow;
+                }
+            }
+        } else {
+            // שבת פתוחה/יום רגיל
+            if (!manualShibutz[d.iso].overlap) {
+                let candidates = availableGuides;
+                console.log(`  Regular day overlap candidates for ${d.iso}: ${candidates.length}`, candidates.map(g => g.name));
+                if (candidates.length > 0) {
+                    // מיון לפי איזון - לשבתות תן עדיפות גבוהה יותר
+                    let g1 = candidates.sort((a, b) => {
+                        if (d.dow === 5 || d.dow === 6) {
+                            // שבת פתוחה - עדיפות לאיזון שבתות
+                            let weekendDiff = weekendShifts[a.name] - weekendShifts[b.name];
+                            if (weekendDiff !== 0) return weekendDiff;
+                        }
+                        
+                        // עונש עבור מרווח קצר
+                        let spacingDiff = getSpacingPenalty(a, d) - getSpacingPenalty(b, d);
+                        if (spacingDiff !== 0) return spacingDiff;
+                        
+                        // משמרות רגילות או איזון כללי
+                        return usedGuides[a.name] - usedGuides[b.name];
+                    })[0].name;
+                    
+                    manualShibutz[d.iso].overlap = g1; 
+                    const weight1 = calculateShiftWeight(d.iso, d.dow, weekendsState[d.iso] === 'closed', 'overlap');
+                    usedGuides[g1] += weight1;
+                    if (d.dow === 5 || d.dow === 6) weekendShifts[g1]++;
+                    // ספור משמרות אמצע שבוע ועדכן יום אחרון
+                    if (d.dow >= 0 && d.dow <= 4) weekdayShifts[g1]++;
+                    lastWorkDay[g1] = d.dow;
+                }
+            }
+            if (!manualShibutz[d.iso].regular) {
+                let candidates = availableGuides.filter(g => 
+                    g.name !== manualShibutz[d.iso].overlap && 
+                    isGuideEligibleForDay(g, d, 'regular')
+                );
+                console.log(`  Regular day regular candidates for ${d.iso}: ${candidates.length}`, candidates.map(g => g.name));
+                
+                if (candidates.length > 0) {
+                    // מיון לפי איזון - לשבתות תן עדיפות גבוהה יותר
+                    let g2 = candidates.sort((a, b) => {
+                        if (d.dow === 5 || d.dow === 6) {
+                            // שבת פתוחה - עדיפות לאיזון שבתות
+                            let weekendDiff = weekendShifts[a.name] - weekendShifts[b.name];
+                            if (weekendDiff !== 0) return weekendDiff;
+                        }
+                        
+                        // עונש עבור מרווח קצר
+                        let spacingDiff = getSpacingPenalty(a, d) - getSpacingPenalty(b, d);
+                        if (spacingDiff !== 0) return spacingDiff;
+                        
+                        // משמרות רגילות או איזון כללי
+                        return usedGuides[a.name] - usedGuides[b.name];
+                    })[0].name;
+                    
+                    manualShibutz[d.iso].regular = g2; 
+                    const weight2 = calculateShiftWeight(d.iso, d.dow, weekendsState[d.iso] === 'closed', 'regular');
+                    usedGuides[g2] += weight2;
+                    if (d.dow === 5 || d.dow === 6) weekendShifts[g2]++;
+                    // ספור משמרות אמצע שבוע ועדכן יום אחרון
+                    if (d.dow >= 0 && d.dow <= 4) weekdayShifts[g2]++;
+                    lastWorkDay[g2] = d.dow;
+                }
+            }
+        }
+        
+        // בדיקה לחורים אחרי השיבוץ
+        console.log(`Checking day ${d.iso}: overlap='${manualShibutz[d.iso].overlap}', regular='${manualShibutz[d.iso].regular}'`);
+        
+        let hasHoles = false;
+        let missingRoles = [];
+        
+        // בדיקה לפי סוג היום
+        if (d.dow === 6 && weekendsState[d.iso] === 'closed') {
+            // שבת סגורה - כונן מהשישי + מדריך נוסף
+            if (!manualShibutz[d.iso].overlap) {
+                // אין כונן - זה בעיה רק אם גם בשישי לא שובץ
+                const prevDay = daysArray[daysArray.indexOf(d) - 1];
+                if (!prevDay || prevDay.dow !== 5 || !manualShibutz[prevDay.iso]?.overlap) {
+                    missingRoles.push('כונן');
+                    hasHoles = true;
+                }
+            }
+            if (!manualShibutz[d.iso].regular) {
+                missingRoles.push('מדריך נוסף');
+                hasHoles = true;
+            }
+            if (hasHoles) {
+                problemDates.push({
+                    date: d.iso,
+                    label: d.label,
+                    issue: `שבת סגורה - חסר: ${missingRoles.join(', ')}`,
+                    severity: missingRoles.includes('מדריך נוסף') && missingRoles.length === 1 ? 'warning' : 'error'
+                });
+            }
+        } else if (d.dow === 5 && weekendsState[d.iso] === 'closed') {
+            // שישי של שבת סגורה - רק כונן נדרש
+            if (!manualShibutz[d.iso].overlap) {
+                problemDates.push({
+                    date: d.iso,
+                    label: d.label,
+                    issue: 'שישי שבת סגורה - חסר כונן',
+                    severity: 'error'
+                });
+            }
+        } else {
+            // יום רגיל או שבת פתוחה - שני מדריכים נדרשים
+            if (!manualShibutz[d.iso].overlap) missingRoles.push('חפיפה');
+            if (!manualShibutz[d.iso].regular) missingRoles.push('רגיל');
+            
+            if (missingRoles.length > 0) {
+                problemDates.push({
+                    date: d.iso,
+                    label: d.label,
+                    issue: `חסר: ${missingRoles.join(', ')}`,
+                    severity: 'error'
+                });
+            }
+        }
+    });
+    
+        // הצג התרעות אם יש חורים
+        console.log('Problem dates found:', problemDates);
+        renderCalendarGrid();
+        displayAutoScheduleResults(problemDates, usedGuides, weekendShifts, conanShifts);
+        
+    } catch (error) {
+        console.error('Error in runAutoShibutz:', error);
+        alert('שגיאה בשיבוץ אוטומטי: ' + error.message);
+    }
+}
+
+function calculateDetailedStats(usedGuides) {
+    // אתחל סטטיסטיקות לכל מדריך
+    const stats = {};
+    Object.keys(usedGuides).forEach(name => {
+        stats[name] = {
+            name: name,
+            totalFactored: usedGuides[name], // זה כבר מכיל שעות עם פקטור
+            shifts: 0, // נספור משמרות
+            regular: 0,
+            night: 0,
+            shabbat: 0,
+            conan: 0,
+            conan_shabbat: 0,
+            motzash: 0,
+            totalHours: 0
+        };
+    });
+
+    // עבור על כל יום וספור משמרות בלבד (השעות עם פקטור כבר מחושבות)
+    daysArray.forEach((d, idx) => {
+        if (!d || !manualShibutz[d.iso]) return;
+        
+        const guide1 = manualShibutz[d.iso].overlap;
+        const guide2 = manualShibutz[d.iso].regular;
+        
+        // ספור משמרות
+        if (guide1 && stats[guide1]) {
+            stats[guide1].shifts++;
+        }
+        if (guide2 && stats[guide2]) {
+            stats[guide2].shifts++;
+        }
+    });
+
+    // מיין לפי שעות עם פקטור
+    return Object.values(stats).sort((a,b) => b.totalFactored - a.totalFactored);
+}
+
+function updateWeeklyBreakdownTable() {
+    const div = document.getElementById('weekly-breakdown');
+    if (!div) {
+        console.log('weekly-breakdown div not found');
+        return;
+    }
+    
+    try {
+        const tableHtml = createWeeklyBreakdownTable();
+        div.innerHTML = tableHtml;
+        console.log('Weekly breakdown table updated successfully');
+    } catch (error) {
+        console.error('Error updating weekly breakdown table:', error);
+    }
+    
+    // עדכן גם את טבלת הסטטיסטיקות
+    updateHoursStatistics();
+}
+
+function updateHoursStatistics() {
+    const div = document.getElementById('hours-statistics');
+    if (!div) {
+        console.log('hours-statistics div not found');
+        return;
+    }
+    
+    try {
+        const tableHtml = createHoursStatisticsTable();
+        div.innerHTML = tableHtml;
+        console.log('Hours statistics table updated successfully');
+    } catch (error) {
+        console.error('Error updating hours statistics table:', error);
+    }
+}
+
+function createWeeklyBreakdownTable() {
+    if (!daysArray || !daysArray.length) return '';
+    
+    // חלק את החודש לשבועות (ראשון-ראשון)
+    const weeks = [];
+    let currentWeek = [];
+    
+    daysArray.forEach(d => {
+        if (!d) {
+            if (currentWeek.length === 0) return; // ריק בתחילה
+            currentWeek.push(null); // ריק באמצע
+            return;
+        }
+        
+        if (d.dow === 0 && currentWeek.length > 0) {
+            // ראשון חדש - סיים שבוע קודם
+            weeks.push([...currentWeek]);
+            currentWeek = [d];
+            } else {
+            currentWeek.push(d);
+        }
+    });
+    
+    // הוסף שבוע אחרון
+    if (currentWeek.length > 0) {
+        weeks.push(currentWeek);
+    }
+    
+    // אתחל נתוני מדריכים
+    const guideData = {};
+    const allGuideNames = new Set();
+    
+    // עבור על כל הימים וספור משמרות לפי שבוע וסוג
+    weeks.forEach((week, weekIndex) => {
+        week.forEach(d => {
+            if (!d || !manualShibutz[d.iso]) return;
+            
+            const overlap = manualShibutz[d.iso].overlap;
+            const regular = manualShibutz[d.iso].regular;
+            const motzash = manualShibutz[d.iso].motzash;
+            
+            [overlap, regular, motzash].forEach(guideName => {
+                if (!guideName) return;
+                allGuideNames.add(guideName);
+                
+                if (!guideData[guideName]) {
+                    guideData[guideName] = {
+                        weeks: weeks.map(() => ({ weekday: 0, weekend: 0 })),
+                        totalWeekday: 0,
+                        totalWeekend: 0,
+                        totalConan: 0
+                    };
+                }
+                
+                const isWeekend = (d.dow === 5 || d.dow === 6);
+                const isConan = (d.dow === 5 && weekendsState[d.iso] === 'closed' && guideName === overlap);
+                const isMotzash = (guideName === motzash);
+                
+                if (isConan) {
+                    guideData[guideName].totalConan++;
+                } else if (isWeekend) {
+                    guideData[guideName].weeks[weekIndex].weekend++;
+                    guideData[guideName].totalWeekend++;
+                } else if (isMotzash || (!isWeekend)) {
+                    // מוצ"ש או אמצע שבוע רגיל
+                    guideData[guideName].weeks[weekIndex].weekday++;
+                    guideData[guideName].totalWeekday++;
+                }
+            });
+        });
+    });
+    
+    // בנה HTML של הטבלה
+    let html = '<div style="margin-top:15px;">';
+    html += '<h4 style="margin:0 0 8px 0; color:#495057;">פירוט שבועי של משמרות:</h4>';
+    html += '<table style="width:100%; border-collapse:collapse; font-size:0.85em; margin-top:8px;">';
+    
+    // כותרות
+    html += '<thead><tr style="background:#f8f9fa;">';
+    html += '<th style="border:1px solid #dee2e6; padding:6px; text-align:right;">מדריך</th>';
+    
+    weeks.forEach((week, i) => {
+        html += `<th colspan="2" style="border:1px solid #dee2e6; padding:6px; text-align:center; background:#e3f2fd;">שבוע ${i + 1}</th>`;
+    });
+    
+    html += '<th style="border:1px solid #dee2e6; padding:6px; text-align:center; background:#d4edda;">סה״כ רגילות</th>';
+    html += '<th style="border:1px solid #dee2e6; padding:6px; text-align:center; background:#fff3cd;">סה״כ סופ״ש</th>';
+    html += '<th style="border:1px solid #dee2e6; padding:6px; text-align:center; background:#ffeaa7;">סה״כ כונן</th>';
+    html += '</tr>';
+    
+    // תת-כותרות
+    html += '<tr style="background:#f8f9fa;">';
+    html += '<th style="border:1px solid #dee2e6; padding:4px;"></th>';
+    
+    weeks.forEach(() => {
+        html += '<th style="border:1px solid #dee2e6; padding:4px; text-align:center; font-size:0.8em;">אמצע</th>';
+        html += '<th style="border:1px solid #dee2e6; padding:4px; text-align:center; font-size:0.8em;">סופ״ש</th>';
+    });
+    
+    html += '<th style="border:1px solid #dee2e6; padding:4px;"></th>';
+    html += '<th style="border:1px solid #dee2e6; padding:4px;"></th>';
+    html += '<th style="border:1px solid #dee2e6; padding:4px;"></th>';
+    html += '</tr></thead><tbody>';
+    
+    // נתוני מדריכים
+    Array.from(allGuideNames).sort().forEach(guideName => {
+        const data = guideData[guideName];
+        if (!data) return;
+        
+        html += '<tr>';
+        html += `<td style="border:1px solid #dee2e6; padding:6px; font-weight:600;">${guideName}</td>`;
+        
+        // נתונים שבועיים
+        data.weeks.forEach(week => {
+            html += `<td style="border:1px solid #dee2e6; padding:6px; text-align:center;">${week.weekday}</td>`;
+            html += `<td style="border:1px solid #dee2e6; padding:6px; text-align:center;">${week.weekend}</td>`;
+        });
+        
+        // סיכומים
+        html += `<td style="border:1px solid #dee2e6; padding:6px; text-align:center; font-weight:600; background:#d4edda;">${data.totalWeekday}</td>`;
+        html += `<td style="border:1px solid #dee2e6; padding:6px; text-align:center; font-weight:600; background:#fff3cd;">${data.totalWeekend}</td>`;
+        html += `<td style="border:1px solid #dee2e6; padding:6px; text-align:center; font-weight:600; background:#ffeaa7;">${data.totalConan}</td>`;
+        html += '</tr>';
+    });
+    
+    html += '</tbody></table>';
+    html += '<div style="margin-top:8px; font-size:12px; color:#6c757d;">💡 אמצע = ראשון-חמישי + מוצ״ש | סופ״ש = שישי-שבת | כונן = שישי-שבת סגור</div>';
+    html += '</div>';
+    
+    return html;
+}
+
+function createHoursStatisticsTable() {
+    if (!daysArray || !daysArray.length) return '';
+    
+    const guideStats = {};
+    const allGuideNames = new Set();
+    
+    // חשב סטטיסטיקות לכל מדריך
+    daysArray.forEach(d => {
+        if (!d || !manualShibutz[d.iso]) return;
+        
+        const overlap = manualShibutz[d.iso].overlap;
+        const regular = manualShibutz[d.iso].regular;
+        const motzash = manualShibutz[d.iso].motzash;
+        const isShabbatClosed = weekendsState[d.iso] === 'closed';
+        
+        [overlap, regular, motzash].forEach(guideName => {
+            if (!guideName) return;
+            allGuideNames.add(guideName);
+            
+            if (!guideStats[guideName]) {
+                guideStats[guideName] = {
+                    totalHours: 0,
+                    totalFactored: 0,
+                    regular: 0,
+                    night: 0,
+                    shabbat: 0,
+                    conan: 0,
+                    motzashHours: 0,
+                    shifts: 0
+                };
+            }
+            
+            guideStats[guideName].shifts++;
+            
+            // חישוב שעות לפי סוג המשמרת
+            if (d.dow >= 0 && d.dow <= 4) { // יום חול
+                if (guideName === motzash) { // מוצ"ש
+                    guideStats[guideName].motzashHours += 7; // 2 שעות שבת + 5 רגילות
+                    guideStats[guideName].totalHours += 7;
+                    guideStats[guideName].totalFactored += 7; // פקטור 1
+                } else if (guideName === overlap) { // משמרת עם חפיפה (25 שעות)
+                    guideStats[guideName].regular += 17; // 15 + 2
+                    guideStats[guideName].night += 8;
+                    guideStats[guideName].totalHours += 25;
+                    guideStats[guideName].totalFactored += 29; // 17*1 + 8*1.5
+                } else { // משמרת ללא חפיפה (24 שעות)
+                    guideStats[guideName].regular += 16; // 15 + 1
+                    guideStats[guideName].night += 8;
+                    guideStats[guideName].totalHours += 24;
+                    guideStats[guideName].totalFactored += 28; // 16*1 + 8*1.5
+                }
+                         } else if (d.dow === 5) { // שישי
+                if (isShabbatClosed && guideName === overlap) { // כונן
+                    guideStats[guideName].conan += 10; // שישי 09:00-19:00
+                    guideStats[guideName].totalHours += 10;
+                    guideStats[guideName].totalFactored += 3; // 10*0.3
+                } else if (guideName === overlap) { // שישי עם חפיפה (25 שעות)
+                    guideStats[guideName].regular += 10; // 09:00-19:00
+                    guideStats[guideName].shabbat += 15; // 19:00-10:00 (שבת)
+                    guideStats[guideName].totalHours += 25;
+                    guideStats[guideName].totalFactored += 40; // 10*1 + 15*2
+                } else { // שישי ללא חפיפה (24 שעות)
+                    guideStats[guideName].regular += 10; // 09:00-19:00
+                    guideStats[guideName].shabbat += 14; // 19:00-09:00 (שבת)
+                    guideStats[guideName].totalHours += 24;
+                    guideStats[guideName].totalFactored += 38; // 10*1 + 14*2
+                }
+            } else if (d.dow === 6) { // שבת
+                if (isShabbatClosed && guideName === overlap) { // המשך כונן
+                    guideStats[guideName].conan += 22; // שבת 19:00(שישי) - 17:00(שבת)
+                    guideStats[guideName].totalHours += 22;
+                    guideStats[guideName].totalFactored += 13.2; // 22*0.6
+                } else if (isShabbatClosed && guideName === regular) { // מוצ"ש
+                    guideStats[guideName].motzashHours += 7; // 17:00-24:00 (2 שבת + 5 רגילות)
+                    guideStats[guideName].totalHours += 7;
+                    guideStats[guideName].totalFactored += 9; // 2*2 + 5*1
+                } else if (guideName === overlap) { // שבת עם חפיפה (25 שעות)
+                    guideStats[guideName].shabbat += 10; // 09:00-19:00
+                    guideStats[guideName].regular += 6; // 19:00-24:00 + 09:00-10:00
+                    guideStats[guideName].night += 9; // 00:00-09:00
+                    guideStats[guideName].totalHours += 25;
+                    guideStats[guideName].totalFactored += 39.5; // 10*2 + 6*1 + 9*1.5
+                } else { // שבת ללא חפיפה (24 שעות)
+                    guideStats[guideName].shabbat += 10; // 09:00-19:00
+                    guideStats[guideName].regular += 6; // 19:00-24:00 + 08:00-09:00
+                    guideStats[guideName].night += 8; // 00:00-08:00
+                    guideStats[guideName].totalHours += 24;
+                    guideStats[guideName].totalFactored += 38; // 10*2 + 6*1 + 8*1.5
+                }
+            }
+        });
+    });
+    
+    if (allGuideNames.size === 0) {
+        return '<div style="margin-top:15px; padding:10px; background:#f8f9fa; border-radius:8px; text-align:center; color:#6c757d;">אין נתונים להצגה</div>';
+    }
+    
+    let html = '<div style="margin-top:15px;">';
+    html += '<h4 style="margin:0 0 8px 0; color:#495057;">סיכום שעות ופקטורים:</h4>';
+    html += '<table style="width:100%; border-collapse:collapse; font-size:0.85em; margin-top:8px;">';
+    html += '<thead><tr style="background:#f8f9fa;">';
+    html += '<th style="border:1px solid #dee2e6; padding:6px; text-align:right;">מדריך</th>';
+    html += '<th style="border:1px solid #dee2e6; padding:6px; text-align:center;">משמרות</th>';
+    html += '<th style="border:1px solid #dee2e6; padding:6px; text-align:center;">שעות נטו</th>';
+    html += '<th style="border:1px solid #dee2e6; padding:6px; text-align:center; background:#d4edda;">שעות עם פקטור</th>';
+    html += '<th style="border:1px solid #dee2e6; padding:6px; text-align:center;">רגיל</th>';
+    html += '<th style="border:1px solid #dee2e6; padding:6px; text-align:center;">לילה</th>';
+    html += '<th style="border:1px solid #dee2e6; padding:6px; text-align:center;">שבת</th>';
+    html += '<th style="border:1px solid #dee2e6; padding:6px; text-align:center;">כונן</th>';
+    html += '<th style="border:1px solid #dee2e6; padding:6px; text-align:center;">מוצ"ש</th>';
+    html += '</tr></thead><tbody>';
+    
+    Array.from(allGuideNames).sort().forEach(guideName => {
+        const stats = guideStats[guideName];
+        if (!stats) return;
+        
+        html += '<tr>';
+        html += `<td style="border:1px solid #dee2e6; padding:6px; font-weight:600;">${guideName}</td>`;
+        html += `<td style="border:1px solid #dee2e6; padding:6px; text-align:center;">${stats.shifts}</td>`;
+        html += `<td style="border:1px solid #dee2e6; padding:6px; text-align:center;">${stats.totalHours}</td>`;
+        html += `<td style="border:1px solid #dee2e6; padding:6px; text-align:center; font-weight:600; background:#d4edda;">${stats.totalFactored.toFixed(1)}</td>`;
+        html += `<td style="border:1px solid #dee2e6; padding:6px; text-align:center;">${stats.regular}</td>`;
+        html += `<td style="border:1px solid #dee2e6; padding:6px; text-align:center;">${stats.night}</td>`;
+        html += `<td style="border:1px solid #dee2e6; padding:6px; text-align:center;">${stats.shabbat}</td>`;
+        html += `<td style="border:1px solid #dee2e6; padding:6px; text-align:center;">${stats.conan}</td>`;
+        html += `<td style="border:1px solid #dee2e6; padding:6px; text-align:center;">${stats.motzashHours}</td>`;
+        html += '</tr>';
+    });
+    
+    html += '</tbody></table>';
+    html += '<div style="margin-top:8px; font-size:12px; color:#6c757d;">💡 פקטורים: רגיל=1.0, לילה=1.5, שבת=2.0, כונן=0.3-0.6</div>';
+    html += '</div>';
+    
+    return html;
+}
+
+function displayAutoScheduleResults(problemDates, usedGuides, weekendShifts, conanShifts) {
+    const resultDiv = document.getElementById('auto-result');
+    console.log('displayAutoScheduleResults called, resultDiv:', resultDiv);
+    console.log('problemDates:', problemDates);
+    if (!resultDiv) {
+        console.error('auto-result div not found!');
+        return;
+    }
+    
+    let html = '<div style="margin-top:15px; padding:15px; border-radius:8px; background:#f8f9fa;">';
+    html += '<h3 style="margin:0 0 10px 0; color:#1a365d;">תוצאות שיבוץ אוטומטי</h3>';
+    
+    if (problemDates.length === 0) {
+        html += '<div style="color:#155724; background:#d4edda; padding:8px; border-radius:5px; margin-bottom:10px;">✅ השיבוץ הושלם בהצלחה ללא חורים!</div>';
+    } else {
+        html += '<div style="color:#721c24; background:#f8d7da; padding:8px; border-radius:5px; margin-bottom:10px;">';
+        html += `⚠️ נמצאו ${problemDates.length} ימים עם חורים שדורשים טיפול ידני:</div>`;
+        
+        html += '<ul style="margin:5px 0; padding-right:20px;">';
+        problemDates.forEach(problem => {
+            const color = problem.severity === 'error' ? '#dc3545' : '#ff9800';
+            html += `<li style="color:${color}; margin:3px 0;">${problem.label}: ${problem.issue}</li>`;
+        });
+        html += '</ul>';
+        
+        html += '<div style="margin-top:10px; font-size:0.9em; color:#6c757d;">יש לשבץ את הימים הללו באופן ידני או לבדוק אילוצים/חופשות.</div>';
+    }
+    
+    // הצג סטטיסטיקות שימוש במדריכים עם חישוב שעות
+    const guideStats = calculateDetailedStats(usedGuides);
+    if (guideStats.length > 0) {
+        html += '<div style="margin-top:15px;">';
+        html += '<h4 style="margin:0 0 8px 0; color:#495057;">התפלגות שיבוצים ושעות:</h4>';
+        html += '<table style="width:100%; border-collapse:collapse; font-size:0.85em; margin-top:8px;">';
+        html += '<thead><tr style="background:#f8f9fa;">';
+        html += '<th style="border:1px solid #dee2e6; padding:6px; text-align:right;">מדריך</th>';
+        html += '<th style="border:1px solid #dee2e6; padding:6px; text-align:center; background:#e3f2fd;">שעות עם פקטור</th>';
+        html += '<th style="border:1px solid #dee2e6; padding:6px; text-align:center;">משמרות</th>';
+        html += '</tr></thead><tbody>';
+        
+        guideStats.forEach(stat => {
+            html += '<tr>';
+            html += `<td style="border:1px solid #dee2e6; padding:6px; font-weight:600;">${stat.name}</td>`;
+            html += `<td style="border:1px solid #dee2e6; padding:6px; text-align:center; font-weight:600; color:#28a745; background:#e8f5e8;">${stat.totalFactored.toFixed(1)}</td>`;
+            html += `<td style="border:1px solid #dee2e6; padding:6px; text-align:center;">${stat.shifts}</td>`;
+            html += '</tr>';
+        });
+        
+        html += '</tbody></table>';
+        html += '</div>';
+    }
+    
+    // עדכן טבלת פירוט שבועי
+    updateWeeklyBreakdownTable();
+    
+    html += '</div>';
+    resultDiv.innerHTML = html;
+}
+
+// ========== DRAFTS ===========
+async function saveDraft() {
+    if (!allGuides.length) await fetchAllGuides();
+    await loadShabbatStatusesForMonth(selectedMonth); // <-- קריטי
+    const draft = daysArray
+        .filter(d => d)
+        .map(d => {
+            const guide1Name = manualShibutz[d.iso]?.overlap || "";
+            const guide2Name = manualShibutz[d.iso]?.regular || "";
+            const guide1_id = guide1Name ? allGuides.find(g => g.name === guide1Name)?.id || null : null;
+            const guide2_id = guide2Name ? allGuides.find(g => g.name === guide2Name)?.id || null : null;
+            return {
+                date: d.iso,
+                weekday: ["ראשון","שני","שלישי","רביעי","חמישי","שישי","שבת"][d.dow],
+                type: (d.dow === 5 ? (weekendsState[d.iso]==='closed' ? 'שבת סגורה' : 'שבת פתוחה') : (d.dow === 6 ? (weekendsState[d.iso]==='closed' ? 'שבת סגורה' : 'שבת פתוחה') : "רגיל")),
+                guide1_id: guide1_id,
+                guide2_id: guide2_id
+            };
+        });
+    fetch('http://localhost:4000/api/schedule-draft', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(draft)
+    })
+    .then(res => res.json())
+    .then(data => {
+        alert("טיוטה נשמרה בהצלחה!");
+    })
+    .catch(err => alert("שגיאה בשמירת טיוטה"));
+}
+
+// ========== NAMED DRAFTS ===========
+async function saveDraftWithName() {
+    const draftName = document.getElementById('draftNameInput').value.trim();
+    if (!draftName) {
+        alert("יש להזין שם לטיוטה");
+        return;
+    }
+    if (!allGuides.length) await fetchAllGuides();
+    await loadShabbatStatusesForMonth(selectedMonth); // <-- קריטי
+    const draft = daysArray
+        .filter(d => d)
+        .map(d => {
+            const guide1Name = manualShibutz[d.iso]?.overlap || "";
+            const guide2Name = manualShibutz[d.iso]?.regular || "";
+            const guide1_id = guide1Name ? allGuides.find(g => g.name === guide1Name)?.id || null : null;
+            const guide2_id = guide2Name ? allGuides.find(g => g.name === guide2Name)?.id || null : null;
+            return {
+                date: d.iso,
+                weekday: ["ראשון","שני","שלישי","רביעי","חמישי","שישי","שבת"][d.dow],
+                type: (d.dow === 5 ? (weekendsState[d.iso]==='closed' ? 'שבת סגורה' : 'שבת פתוחה') : (d.dow === 6 ? (weekendsState[d.iso]==='closed' ? 'שבת סגורה' : 'שבת פתוחה') : "רגיל")),
+                guide1_id: guide1_id,
+                guide2_id: guide2_id
+            };
+        });
+    try {
+        const response = await fetch('http://localhost:4000/api/schedule-draft', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ name: draftName, data: draft })
+        });
+        if (response.ok) {
+            alert(`טיוטה "${draftName}" נשמרה בהצלחה!`);
+            document.getElementById('draftNameInput').value = '';
+            await loadDraftsList();
+        } else {
+            alert("שגיאה בשמירת טיוטה");
+        }
+    } catch (err) {
+        alert("שגיאה בשמירת טיוטה");
+    }
+}
+
+async function loadDraftsList() {
+    try {
+        console.log('Loading drafts list...');
+        const response = await fetch('http://localhost:4000/api/schedule-drafts');
+        const drafts = await response.json();
+        console.log('Received drafts:', drafts);
+        
+        const select = document.getElementById('draftSelect');
+        if (!select) {
+            console.log('draftSelect element not found, skipping...');
+            // האלמנט עדיין לא קיים בדף (לפני טעינת הקלנדר)
+            return;
+        }
+        
+        select.innerHTML = '<option value="">בחר טיוטה</option>';
+        
+        drafts.forEach(draftName => {
+            const option = document.createElement('option');
+            option.value = draftName;
+            option.textContent = draftName;
+            select.appendChild(option);
+        });
+    } catch (err) {
+        console.error('שגיאה בטעינת רשימת טיוטאות:', err);
+    }
+}
+
+async function loadSelectedDraft() {
+    const draftName = document.getElementById('draftSelect').value;
+    if (!draftName) {
+        alert("יש לבחור טיוטה מהרשימה");
+        return;
+    }
+
+    try {
+        const response = await fetch(`http://localhost:4000/api/schedule-draft?name=${encodeURIComponent(draftName)}`);
+        if (!response.ok) {
+            alert("טיוטה לא נמצאה");
+            return;
+        }
+        const draftData = await response.json();
+        if (!draftData || !draftData.length) {
+            alert("הטיוטה ריקה או לא תקינה");
+            return;
+        }
+        // מצא את החודש מהטיוטה ובנה את הלוח
+        const firstDate = draftData[0].date;
+        selectedMonth = firstDate.slice(0, 7); // YYYY-MM
+        await loadShabbatStatusesForMonth(selectedMonth); // <-- קריטי
+        await generateDaysList();
+        // נקה את השיבוץ הנוכחי
+        daysArray.forEach(d => {
+            if (d) {
+                manualShibutz[d.iso] = { overlap: "", regular: "", motzash: "" };
+            }
+        });
+        if (!allGuides.length) await fetchAllGuides();
+        draftData.forEach(entry => {
+            const guide1Name = entry.guide1_id ? allGuides.find(g => g.id === entry.guide1_id)?.name || "" : "";
+            const guide2Name = entry.guide2_id ? allGuides.find(g => g.id === entry.guide2_id)?.name || "" : "";
+            if (!manualShibutz[entry.date]) {
+                manualShibutz[entry.date] = { overlap: "", regular: "", motzash: "" };
+            }
+            manualShibutz[entry.date].overlap = guide1Name;
+            manualShibutz[entry.date].regular = guide2Name;
+        });
+        buildBlockedGuidesByDay();
+        renderCalendarGrid();
+        updateWeeklyBreakdownTable();
+        alert(`טיוטה "${draftName}" נטענה בהצלחה!`);
+    } catch (err) {
+        alert("שגיאה בטעינת טיוטה");
+    }
+}
+
+async function deleteSelectedDraft() {
+    const draftName = document.getElementById('draftSelect').value;
+    if (!draftName) {
+        alert("יש לבחור טיוטה מהרשימה");
+        return;
+    }
+
+    if (!confirm(`האם אתה בטוח שברצונך למחוק את הטיוטה "${draftName}"?`)) {
+        return;
+    }
+
+    try {
+        const response = await fetch(`http://localhost:4000/api/schedule-draft?name=${encodeURIComponent(draftName)}`, {
+            method: 'DELETE'
+        });
+        
+        if (response.ok) {
+            alert(`טיוטה "${draftName}" נמחקה בהצלחה!`);
+            await loadDraftsList(); // רענן את הרשימה
+        } else {
+            alert("שגיאה במחיקת טיוטה");
+        }
+    } catch (err) {
+        alert("שגיאה במחיקת טיוטה");
+    }
+}
+
+// ייצוא טבלת השיבוץ לאקסל
+function exportScheduleToExcel() {
+    if (!daysArray || !daysArray.length) {
+        alert('אין נתונים לייצוא');
+        return;
+    }
+
+    let csvContent = "data:text/csv;charset=utf-8,\uFEFF"; // BOM for Hebrew
+    
+    // כותרות
+    csvContent += "תאריך,יום,מדריך ראשון,מדריך שני,מוצ\"ש\n";
+    
+    // נתונים
+    daysArray.forEach(d => {
+        if (!d) return;
+        
+        const dayName = ['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'][d.dow];
+        const dateStr = d.iso.split('-').reverse().join('/'); // DD/MM/YYYY
+        const overlap = manualShibutz[d.iso]?.overlap || '';
+        const regular = manualShibutz[d.iso]?.regular || '';
+        const motzash = manualShibutz[d.iso]?.motzash || '';
+        
+        csvContent += `${dateStr},${dayName},${overlap},${regular},${motzash}\n`;
+    });
+    
+    // הורדה
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `שיבוץ_${selectedMonth.year}_${selectedMonth.month}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    alert("קובץ הורד בהצלחה! ניתן לפתוח באקסל");
+}
+
+async function sendDraftForApproval() {
+    if (!allGuides.length) await fetchAllGuides();
+    await loadShabbatStatusesForMonth(selectedMonth); // <-- קריטי
+    const draft = daysArray
+        .filter(d => d)
+        .map(d => {
+            const guide1Name = manualShibutz[d.iso]?.overlap || "";
+            const guide2Name = manualShibutz[d.iso]?.regular || "";
+            const guide1_id = guide1Name ? allGuides.find(g => g.name === guide1Name)?.id || null : null;
+            const guide2_id = guide2Name ? allGuides.find(g => g.name === guide2Name)?.id || null : null;
+            return {
+                date: d.iso,
+                weekday: ["ראשון","שני","שלישי","רביעי","חמישי","שישי","שבת"][d.dow],
+                type: (d.dow === 5 ? (weekendsState[d.iso]==='closed' ? 'שבת סגורה' : 'שבת פתוחה') : (d.dow === 6 ? (weekendsState[d.iso]==='closed' ? 'שבת סגורה' : 'שבת פתוחה') : "רגיל")),
+                guide1_id: guide1_id,
+                guide2_id: guide2_id
+            };
+        });
+    try {
+        await fetch('http://localhost:4000/api/schedule-draft', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(draft)
+        });
+        const userName = localStorage.getItem('name') || 'משתמש';
+        const monthName = selectedMonth;
+        alert(`הטיוטה נשמרה ונשלחה לאישור הרכז לחודש ${monthName}!`);
+    } catch (err) {
+        alert("שגיאה בשליחת הטיוטה לאישור");
+    }
+}
+
+async function approveFinalSchedule() {
+    await loadShabbatStatusesForMonth(selectedMonth); // <-- קריטי
+    const schedule = daysArray
+        .filter(d => d)
+        .map(d => ({
+            date: d.iso,
+            weekday: ["ראשון","שני","שלישי","רביעי","חמישי","שישי","שבת"][d.dow],
+            type: (d.dow === 5 ? (weekendsState[d.iso]==='closed' ? 'שבת סגורה' : 'שבת פתוחה') : (d.dow === 6 ? (weekendsState[d.iso]==='closed' ? 'שבת סגורה' : 'שבת פתוחה') : "רגיל")),
+            guide1: manualShibutz[d.iso]?.overlap || "",
+            guide2: manualShibutz[d.iso]?.regular || ""
+        }));
+    fetch('http://localhost:4000/api/schedule', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(schedule)
+    })
+    .then(res => res.json())
+    .then(data => {
+        alert("הסידור נשמר כסופי בהצלחה!");
+        window.location.href = "schedule.html";
+    })
+    .catch(err => alert("שגיאה בשמירת הסידור הסופי"));
+}
+
+function resetScheduler() {
+    if (confirm('האם אתה בטוח שאתה רוצה לאפס את הסידור ולהתחיל מהתחלה?')) {
+        weekendsState = {};
+        daysArray = [];
+        manualShibutz = {};
+        selectedMonth = null;
+        showMonthPicker();
+    }
+}
+
+// Helper function to check if a date is שבת סגורה
+function isShabbatClosed(date) {
+    const isoDate = date.slice(0, 10);
+    return weekendsState[isoDate] === 'closed';
+}
+</script>
+    <script src="header-functions.js"></script>
+</body>
+</html> 

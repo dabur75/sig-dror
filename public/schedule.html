@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>לוח שיבוץ חודשי - סיגלית</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+            background: #f8fafc;
+            min-height: 100vh;
+            padding: 20px 20px 80px 20px; /* Added bottom padding for footer */
+            direction: rtl;
+            color: #334155;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 20px auto 0 auto; /* Added top margin for header */
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+        }
+
+        .header {
+            background: #7c3aed;
+            color: white;
+            padding: 32px 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            font-size: 1rem;
+            opacity: 0.8;
+            font-weight: 400;
+        }
+
+        .calendar-nav {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 24px;
+            padding: 24px 40px;
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .nav-button {
+            background: #8b5cf6;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .nav-button:hover {
+            background: #7c3aed;
+            transform: translateY(-1px);
+        }
+
+        .nav-button:disabled {
+            background: #cbd5e1;
+            color: #94a3b8;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .current-month {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #7c3aed;
+        }
+
+        .calendar-wrapper {
+            padding: 32px 40px 40px;
+            background: white;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 1px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+        }
+
+        .day-header {
+            background: #a855f7;
+            color: white;
+            padding: 16px 12px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .day-cell {
+            background: white;
+            min-height: 110px;
+            padding: 12px;
+            border-right: 1px solid #f1f5f9;
+            border-bottom: 1px solid #f1f5f9;
+            transition: all 0.15s ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .day-cell:hover {
+            background: #f8fafc;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .day-cell.weekend {
+            background: #fafafa;
+        }
+
+        .day-cell.saturday {
+            background: #f8fafc;
+        }
+
+        .day-cell.weekend-open {
+            background: #f0f9ff;
+            border-left: 3px solid #0ea5e9;
+        }
+
+        .day-cell.weekend-closed {
+            background: #fef2f2;
+            border-left: 3px solid #ef4444;
+        }
+
+        .day-number {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 6px;
+            text-align: right;
+        }
+
+        .weekend-badge {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .weekend-badge.open {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        .weekend-badge.closed {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .guide-item {
+            background: #8b5cf6;
+            color: white;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            text-align: center;
+            transition: all 0.15s ease;
+        }
+
+        .guide-item:hover {
+            background: #7c3aed;
+            transform: translateY(-1px);
+        }
+
+        .guide-item.overlap {
+            background: #a855f7;
+        }
+
+        .guide-item.overlap:hover {
+            background: #9333ea;
+        }
+
+        /* Highlight current user's shifts */
+        .guide-item.my-shift {
+            background: #10b981 !important;
+            color: white !important;
+            border: 2px solid #059669 !important;
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3) !important;
+            font-weight: 600 !important;
+            position: relative !important;
+        }
+
+        .guide-item.my-shift:hover {
+            background: #059669 !important;
+            transform: translateY(-1px) !important;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4) !important;
+        }
+
+        .guide-item.overlap.my-shift {
+            background: #10b981 !important;
+            color: white !important;
+            border: 2px solid #059669 !important;
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3) !important;
+            font-weight: 600 !important;
+            position: relative !important;
+        }
+
+        .guide-item.overlap.my-shift:hover {
+            background: #059669 !important;
+            transform: translateY(-1px) !important;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4) !important;
+        }
+        
+        /* Additional specificity to override any existing styles */
+        .calendar-grid .day-cell .guide-item.my-shift {
+            background: #10b981 !important;
+            color: white !important;
+            border: 3px solid #059669 !important;
+            transform: scale(1.05) !important;
+            z-index: 10 !important;
+        }
+        
+        .calendar-grid .day-cell .guide-item.overlap.my-shift {
+            background: #10b981 !important;
+            color: white !important;
+            border: 3px solid #059669 !important;
+            transform: scale(1.05) !important;
+            z-index: 10 !important;
+        }
+
+        .edit-button {
+            background: transparent;
+            color: #8b5cf6;
+            border: 1px solid #c4b5fd;
+            border-radius: 4px;
+            padding: 4px 8px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            margin-top: auto;
+        }
+
+        .edit-button:hover {
+            background: #f3f4f6;
+            color: #7c3aed;
+            border-color: #8b5cf6;
+        }
+
+        .replacement-indicator {
+            background: #fbbf24;
+            color: #92400e;
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            padding: 20px;
+            background: #f8fafc;
+            margin-top: 24px;
+            border-radius: 8px;
+            flex-wrap: wrap;
+            border: 1px solid #e2e8f0;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #7c3aed;
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 3px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .status-indicator {
+            position: absolute;
+            top: 20px;
+            right: 40px;
+            background: #f0f9ff;
+            border: 1px solid #0ea5e9;
+            border-radius: 6px;
+            padding: 8px 16px;
+            color: #0c4a6e;
+            font-weight: 500;
+            font-size: 0.85rem;
+            display: none;
+        }
+
+        .status-indicator.finalized {
+            display: block;
+        }
+
+        /* Clean scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        @media (max-width: 1200px) {
+            .container {
+                margin: 10px;
+                border-radius: 8px;
+            }
+            
+            .calendar-wrapper {
+                padding: 20px;
+            }
+            
+            .day-cell {
+                min-height: 90px;
+                padding: 8px;
+            }
+            
+            .guide-item {
+                font-size: 0.8rem;
+                padding: 5px 8px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            #user-schedule-indicator {
+                font-size: 0.8rem;
+                padding: 6px 12px;
+                margin-top: 8px;
+            }
+            
+            .calendar-nav {
+                padding: 15px 20px;
+                gap: 15px;
+            }
+            
+            .current-month {
+                font-size: 1.2rem;
+            }
+            
+            .day-cell {
+                min-height: 70px;
+                padding: 6px;
+            }
+            
+            .guide-item {
+                font-size: 0.75rem;
+                padding: 4px 6px;
+            }
+            
+            .legend {
+                gap: 20px;
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div id="main-header"></div>
+    
+    <div class="container">
+        <div class="status-indicator" id="schedule-status">
+            🔒 הלוח מאושר ולא ניתן לשינוי
+        </div>
+        
+        <div class="header">
+            <h1>לוח שיבוץ חודשי</h1>
+            <p>מערכת ניהול משמרות - סיגלית</p>
+            <div id="user-schedule-indicator" style="display: none; margin-top: 10px; padding: 8px 16px; background: rgba(16, 185, 129, 0.2); border: 1px solid #10b981; border-radius: 6px; font-size: 0.9rem;">
+                👤 צפייה במשמרות שלי - המשמרות שלך מסומנות בצבע ירוק
+            </div>
+        </div>
+
+        <div class="calendar-nav">
+            <button class="nav-button" id="prev-month-btn">חודש קודם</button>
+            <div class="current-month" id="current-month-label">אוגוסט 2025</div>
+            <button class="nav-button" id="next-month-btn">חודש הבא</button>
+        </div>
+
+        <div class="calendar-wrapper">
+            <div class="calendar-grid" id="calendar">
+                <!-- Calendar content will be generated by JavaScript -->
+            </div>
+
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #8b5cf6;"></div>
+                    <span>מדריך רגיל</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #a855f7;"></div>
+                    <span>מדריך חפיפה</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #f0f9ff; border-color: #0ea5e9;"></div>
+                    <span>שבת פתוחה</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #fef2f2; border-color: #ef4444;"></div>
+                    <span>שבת סגורה</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #fbbf24;"></div>
+                    <span>החלפה נדרשת</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #10b981;"></div>
+                    <span>המשמרות שלי</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div id="main-footer"></div>
+
+    <script>
+        // Load header and footer
+        fetch('header.html')
+            .then(res => res.text())
+            .then(html => {
+                document.getElementById('main-header').innerHTML = html;
+                renderHeaderUser();
+            });
+        
+        fetch('footer.html')
+            .then(res => res.text())
+            .then(html => {
+                document.getElementById('main-footer').innerHTML = html;
+            });
+
+        // Global variables
+        const monthsHe = ["ינואר", "פברואר", "מרץ", "אפריל", "מאי", "יוני", "יולי", "אוגוסט", "ספטמבר", "אוקטובר", "נובמבר", "דצמבר"];
+        const dayNames = ["ראשון","שני","שלישי","רביעי","חמישי","שישי","שבת"];
+
+        let selectedYear, selectedMonth;
+        let allSchedule = [];
+        let guides = [];  // נטען מהשרת
+        let weekendTypes = {}; // Store weekend types from backend
+        // =============== BLOCKED GUIDES (constraints, vacations, logic) ===============
+        let blockedGuidesByDay = {};
+
+        function buildBlockedGuidesByDay() {
+            blockedGuidesByDay = {};
+            let daysArray = getDaysArray();
+            daysArray.forEach((d, idx) => {
+                if (!d) return;
+                let arr = [];
+                guides.forEach(g => {
+                    // One-time constraints (user_id)
+                    (window.constraints||[]).forEach(c => {
+                        if (c.date === d.iso && String(c.user_id) === String(g.id)) {
+                            arr.push({ guideId: c.user_id, type: "חד פעמי", note: c.note || c.details || "" });
+                        }
+                    });
+                    // Fixed constraints (guideId)
+                    (window.fixedConstraints||[]).forEach(fc => {
+                        if (Number(fc.weekday) === d.dow && String(fc.guideId) === String(g.id)) {
+                            arr.push({ guideId: fc.guideId, type: "קבוע", note: fc.note || "" });
+                        }
+                    });
+                    // Vacations (guideId)
+                    (window.vacations||[]).forEach(vac => {
+                        if (vac.status === 'approved' && vac.dateStart <= d.iso && vac.dateEnd >= d.iso && String(vac.guideId) === String(g.id)) {
+                            arr.push({ guideId: vac.guideId, type: "חופשה", note: vac.note || "" });
+                        }
+                    });
+                    // Logic block (consecutive days) is already handled inside buildBlockedGuidesByDay
+                });
+                blockedGuidesByDay[d.iso] = arr;
+            });
+        }
+
+        function getUrlMonth() {
+            const today = new Date();
+            return [today.getFullYear(), today.getMonth() + 1];
+        }
+        function pad2(n){ return n<10 ? '0'+n : ''+n; }
+
+        function setMonth(y, m) {
+            console.log('setMonth called with:', y, m);
+            selectedYear = y;
+            selectedMonth = m;
+            document.getElementById('current-month-label').innerText = `${monthsHe[m-1]} ${y}`;
+            Promise.all([
+                fetch(`http://localhost:4000/api/schedule?month=${y}-${pad2(m)}`).then(res=>res.json()),
+                fetch(`http://localhost:4000/api/guides/enhanced`).then(res=>res.json()),
+                fetch('http://localhost:4000/api/constraints').then(res=>res.json()),
+                fetch('http://localhost:4000/api/fixed-constraints').then(res=>res.json()),
+                fetch('http://localhost:4000/api/vacations').then(res=>res.json()),
+                fetch(`http://localhost:4000/api/weekend-types/${y}/${m}`).then(res=>res.json()).catch(() => ({ weekendTypes: {} }))
+            ])
+            .then(([schedule, guidesData, constraintsData, fixedData, vacsData, weekendData]) => {
+                allSchedule = schedule || [];
+                guides = guidesData || [];
+                window.constraints = constraintsData || [];
+                window.fixedConstraints = fixedData || [];
+                window.vacations = vacsData || [];
+                weekendTypes = weekendData.weekendTypes || {};
+                console.log('Loaded weekend types:', weekendTypes);
+                
+                // Load official schedule if available
+                fetch(`http://localhost:4000/api/workflow/status/${y}-${pad2(m)}`)
+                    .then(res => res.json())
+                    .then(workflowData => {
+                        const statusDiv = document.getElementById('schedule-status');
+                        const statusText = document.getElementById('status-text');
+                        
+                        if (workflowData.isFinalized) {
+                            // Show approved status
+                            statusDiv.style.display = 'block';
+                            statusDiv.classList.add('finalized');
+                            
+                            // Load official schedule
+                            fetch(`http://localhost:4000/api/schedule/official/${y}-${pad2(m)}`)
+                                .then(res => res.json())
+                                .then(officialSchedule => {
+                                    if (officialSchedule && officialSchedule.length > 0) {
+                                        allSchedule = officialSchedule;
+                                    }
+                                    buildBlockedGuidesByDay();
+                                    renderCalendarGrid();
+                                    updateCalendarForFinalizedStatus();
+                                })
+                                .catch(() => {
+                                    buildBlockedGuidesByDay();
+                                    renderCalendarGrid();
+                                });
+                        } else {
+                            // Hide status indicator
+                            statusDiv.style.display = 'none';
+                            statusDiv.classList.remove('finalized');
+                            buildBlockedGuidesByDay();
+                            renderCalendarGrid();
+                        }
+                    })
+                    .catch(() => {
+                        // Hide status indicator on error
+                        document.getElementById('schedule-status').style.display = 'none';
+                        document.getElementById('schedule-status').classList.remove('finalized');
+                        buildBlockedGuidesByDay();
+                        renderCalendarGrid();
+                    });
+                guides = guidesData.filter(g=>g.role==="מדריך");
+                window.constraints = constraintsData;
+                window.fixedConstraints = fixedData;
+                window.vacations = vacsData;
+                
+                // Log the schedule data for debugging
+                console.log('Loaded schedule data:', allSchedule);
+                console.log('Loaded guides:', guides);
+                console.log('Loaded weekend types:', weekendTypes);
+                
+                // Debug: Log first few schedule items to see the format
+                if (allSchedule && allSchedule.length > 0) {
+                    console.log('First 3 schedule items:', allSchedule.slice(0, 3));
+                }
+            })
+            .catch((err) => {
+                console.error('setMonth fetch error:', err);
+                allSchedule = [];
+                document.getElementById('calendar').innerHTML = `<div style="color:red;text-align:center;font-size:1.3em;">שגיאה בטעינת השיבוץ</div>`;
+            });
+        }
+
+        function nextMonth() {
+            let y = selectedYear, m = selectedMonth + 1;
+            if (m > 12) { m = 1; y++; }
+            setMonth(y, m);
+        }
+        function prevMonth() {
+            let y = selectedYear, m = selectedMonth - 1;
+            if (m < 1) { m = 12; y--; }
+            setMonth(y, m);
+        }
+
+        // פונקציה לקביעת סוג השבת לפי תאריך
+        function getWeekendType(date) {
+            // First check if we have weekend type data from the backend
+            if (weekendTypes && weekendTypes[date]) {
+                console.log(`Weekend type for ${date}: ${weekendTypes[date]} (from backend)`);
+                return weekendTypes[date];
+            }
+            
+            // Fallback to hardcoded logic for specific months
+            const [year, month, day] = date.split('-').map(Number);
+            
+            // לוגיקה לקביעת סוגי השבת - ניתן לעדכן לפי הצורך
+            if (month === 8 && year === 2025) {
+                // אוגוסט 2025 - השבת השנייה היא סגורה
+                const dayOfMonth = day;
+                const firstSaturday = 2; // 2 באוגוסט
+                const secondSaturday = 9; // 9 באוגוסט
+                const thirdSaturday = 16; // 16 באוגוסט
+                const fourthSaturday = 23; // 23 באוגוסט
+                const fifthSaturday = 30; // 30 באוגוסט
+                
+                if (day === secondSaturday) {
+                    return "שבת סגורה";
+                } else if (day === firstSaturday || day === thirdSaturday || day === fourthSaturday || day === fifthSaturday) {
+                    return "שבת פתוחה";
+                }
+            }
+            
+            // ברירת מחדל - שבת פתוחה
+            return "שבת פתוחה";
+        }
+
+        // Function to check if a Friday is part of a closed Saturday weekend
+        function getFridayWeekendType(fridayDate) {
+            // Calculate the next day (Saturday)
+            const friday = new Date(fridayDate);
+            const saturday = new Date(friday);
+            saturday.setDate(friday.getDate() + 1);
+            const saturdayDate = saturday.toISOString().slice(0, 10);
+            
+            // Check if the Saturday is closed
+            const saturdayWeekendType = getWeekendType(saturdayDate);
+            if (saturdayWeekendType === "שבת סגורה") {
+                return "שבת סגורה";
+            }
+            
+            // Check if we have backend data for the Saturday
+            if (weekendTypes && weekendTypes[saturdayDate] === "שבת סגורה") {
+                return "שבת סגורה";
+            }
+            
+            return "שבת פתוחה";
+        }
+
+        // Function to fetch weekend types from backend
+        async function fetchWeekendTypes(year, month) {
+            try {
+                const response = await fetch(`http://localhost:4000/api/weekend-types/${year}/${month}`);
+                const result = await response.json();
+                weekendTypes = result.weekendTypes || {};
+                return weekendTypes;
+            } catch (error) {
+                console.error('Error fetching weekend types:', error);
+                return {};
+            }
+        }
+
+        function getDayByIso(iso) {
+            return getDaysArray().find(d=>d && d.iso===iso) || {};
+        }
+
+        // טבלת לוח שנה
+        function renderCalendarGrid() {
+            let daysArray = getDaysArray();
+            let html = '';
+            
+            // Add day headers
+            dayNames.forEach(dayName => {
+                html += `<div class="day-header">${dayName}</div>`;
+            });
+            
+            // Add day cells
+            for (let i = 0; i < daysArray.length; i += 7) {
+                for (let j = 0; j < 7; j++) {
+                    let d = daysArray[i + j];
+                    if (!d) {
+                        html += `<div class="day-cell"><div class="day-number"></div></div>`;
+                    } else {
+                        let sched = allSchedule.find(x=>x.date===d.iso) || {};
+                        
+                        // Determine weekend type and styling
+                        let weekendType = "";
+                        let weekendClass = "";
+                        let weekendLabel = "";
+                        let tdClass = "";
+                        
+                        if (d.dow === 5) { // Friday
+                            tdClass = "weekend";
+                            // For Friday, check if the next day (Saturday) is closed
+                            const fridayWeekendType = getFridayWeekendType(d.iso);
+                            const weekendTypeFromSchedule = fridayWeekendType || sched.type;
+                            console.log(`Friday ${d.iso}: fridayWeekendType = "${fridayWeekendType}", sched.type = "${sched.type}", final = "${weekendTypeFromSchedule}"`);
+                            if (weekendTypeFromSchedule === "שבת פתוחה") {
+                                weekendType = "weekend-open";
+                                weekendLabel = "פתוח";
+                            } else if (weekendTypeFromSchedule === "שבת סגורה") {
+                                weekendType = "weekend-closed";
+                                weekendLabel = "סגור";
+                            } else {
+                                // Default for Friday - show weekend type
+                                weekendType = "weekend-open";
+                                weekendLabel = "פתוח";
+                            }
+                        } else if (d.dow === 6) { // Saturday
+                            tdClass = "saturday";
+                            // Get weekend type - prioritize backend weekend types over schedule type
+                            const backendWeekendType = getWeekendType(d.iso);
+                            const weekendTypeFromSchedule = backendWeekendType || sched.type;
+                            console.log(`Saturday ${d.iso}: backendWeekendType = "${backendWeekendType}", sched.type = "${sched.type}", final = "${weekendTypeFromSchedule}"`);
+                            if (weekendTypeFromSchedule === "שבת פתוחה") {
+                                weekendType = "weekend-open";
+                                weekendLabel = "פתוח";
+                            } else if (weekendTypeFromSchedule === "שבת סגורה") {
+                                weekendType = "weekend-closed";
+                                weekendLabel = "סגור";
+                            } else {
+                                weekendType = "shabat";
+                                weekendLabel = "שבת";
+                            }
+                        }
+                        
+                        // Handle new schedule format from enhanced system
+                        let guide1 = "";
+                        let guide2 = "";
+                        let replacementIndicator = "";
+                        
+                        if (sched.guides && sched.guides.length > 0) {
+                            // New format: sched.guides array
+                            guide1 = sched.guides[0] || "";
+                            guide2 = sched.guides[1] || "";
+                        } else if (sched.guide1_name || sched.guide2_name) {
+                            // Enhanced format: sched.guide1_name, sched.guide2_name
+                            guide1 = sched.guide1_name || "";
+                            guide2 = sched.guide2_name || "";
+                        } else if (sched.guide1 || sched.guide2) {
+                            // Standard format: sched.guide1, sched.guide2 (from /api/schedule)
+                            guide1 = sched.guide1 || "";
+                            guide2 = sched.guide2 || "";
+                        } else {
+                            // Fallback
+                            guide1 = "";
+                            guide2 = "";
+                        }
+                        
+                        // Check if current user is assigned to this shift
+                        let userData = getCurrentUserData();
+                        let isGuide1MyShift = false;
+                        let isGuide2MyShift = false;
+                        
+                        if (userData.role === "מדריך" && userData.name) {
+                            isGuide1MyShift = guide1 === userData.name;
+                            isGuide2MyShift = guide2 === userData.name;
+                            
+                            // Debug logging for the first few days
+                            if (d.iso <= '2025-08-05') {
+                                console.log(`Day ${d.iso}: guide1="${guide1}", guide2="${guide2}", user="${userData.name}", isGuide1MyShift=${isGuide1MyShift}, isGuide2MyShift=${isGuide2MyShift}`);
+                            }
+                        }
+                        
+                        if (sched.needReplacement) {
+                            replacementIndicator = `<div class="replacement-indicator">🔄 החלפה נדרשת</div>`;
+                        }
+                        
+                        let showButton = false;
+                        let buttonText = "ערוך";
+                        let buttonClass = "edit-button";
+                        let isScheduleFinalized = document.getElementById('schedule-status').style.display !== 'none';
+                        
+                        if (userData.role === "רכז") {
+                            showButton = true;
+                        } else if (userData.role === "מדריך") {
+                            showButton = guide1 === userData.name || guide2 === userData.name;
+                            if (showButton) {
+                                buttonText = "🔄";
+                                buttonClass = "edit-button replacement-btn";
+                            }
+                        }
+                        
+                        // Disable buttons if schedule is finalized
+                        if (isScheduleFinalized) {
+                            buttonClass += " disabled";
+                        }
+                        
+                        let buttonHtml = showButton ? 
+                            `<button class="${buttonClass}" onclick="${isScheduleFinalized ? 'return false;' : `openDayEditor('${d.iso}')`}">${buttonText}</button>` : 
+                            "";
+                        
+                        // Create guide display elements with highlighting
+                        let guide1Class = "guide-item";
+                        let guide2Class = "guide-item overlap";
+                        
+                        if (isGuide1MyShift) {
+                            guide1Class += " my-shift";
+                            console.log(`Adding my-shift class to guide1: ${guide1}`);
+                        }
+                        if (isGuide2MyShift) {
+                            guide2Class += " my-shift";
+                            console.log(`Adding my-shift class to guide2: ${guide2}`);
+                        }
+                        
+                        let guide1Html = guide1 ? `<div class="${guide1Class}">${guide1}${isGuide1MyShift ? ' 👤' : ''}</div>` : "";
+                        let guide2Html = guide2 ? `<div class="${guide2Class}">${guide2}${isGuide2MyShift ? ' 👤' : ''}</div>` : "";
+                        let weekendBadgeHtml = weekendLabel ? `<div class="weekend-badge ${weekendLabel === 'סגור' ? 'closed' : 'open'}">${weekendLabel}</div>` : "";
+                        
+                        // Extract day number from label
+                        let dayNumber = d.label.split(',')[1].trim().split('.')[0];
+                        
+                        // Debug weekend type rendering
+                        if (d.dow === 5 || d.dow === 6) {
+                            console.log(`${d.iso} (${d.dow === 5 ? 'Friday' : 'Saturday'}): weekendType="${weekendType}", weekendLabel="${weekendLabel}", weekendBadgeHtml="${weekendBadgeHtml}"`);
+                        }
+                        
+                        html += `<div class="day-cell ${tdClass} ${weekendType}">
+                            <div class="day-number">${dayNumber}</div>
+                            ${weekendBadgeHtml}
+                            ${guide1Html}
+                            ${guide2Html}
+                            ${replacementIndicator}
+                            ${buttonHtml}
+                        </div>`;
+                    }
+                }
+            }
+            
+            document.getElementById('calendar').innerHTML = html;
+            
+            // Update user schedule indicator after rendering
+            updateUserScheduleIndicator();
+        }
+
+        // INIT
+        document.addEventListener('DOMContentLoaded', function() {
+            // Attach event listeners
+            document.getElementById('prev-month-btn').onclick = prevMonth;
+            document.getElementById('next-month-btn').onclick = nextMonth;
+
+            // Show user schedule indicator if guide is logged in
+            updateUserScheduleIndicator();
+            
+            // Debug: Show user data for testing
+            const userData = getCurrentUserData();
+            if (userData.role === "מדריך") {
+                console.log('Current user data for highlighting:', userData);
+                // Uncomment the next line for testing to see user data
+                // alert(`User: ${userData.name}, Role: ${userData.role}, ID: ${userData.guideId}`);
+            }
+
+            // Ensure calendar loads on page load
+            const [initYear, initMonth] = getUrlMonth();
+            setMonth(initYear, initMonth);
+        });
+
+        window.openDayEditor = openDayEditor;
+
+        // Function to update calendar when status changes
+        function updateCalendarForFinalizedStatus() {
+            renderCalendarGrid();
+        }
+
+        // Function to refresh weekend types and update calendar
+        async function refreshWeekendTypes() {
+            const [year, month] = [selectedYear, selectedMonth];
+            await fetchWeekendTypes(year, month);
+            renderCalendarGrid();
+        }
+
+        // Function to check if schedule is finalized
+        function isScheduleFinalized() {
+            return document.getElementById('schedule-status').style.display !== 'none';
+        }
+
+        // Helper functions
+        function getDaysArray() {
+            const year = selectedYear, month = selectedMonth;
+            const daysInMonth = new Date(year, month, 0).getDate();
+            const firstDayOfWeek = new Date(year, month-1, 1).getDay();
+            let daysArray = [];
+            for (let i = 0; i < firstDayOfWeek; i++) daysArray.push(null);
+            for(let day=1; day<=daysInMonth; day++) {
+                let d = new Date(year, month-1, day);
+                // השתמש בתאריך מקומי במקום UTC כדי למנוע בעיות אזור זמן
+                let iso = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                let dow = d.getDay();
+                let label = `${dayNames[dow]}, ${day}.${month}.${year}`;
+                daysArray.push({iso, dow, label});
+            }
+            return daysArray;
+        }
+
+        function getCurrentUserData() {
+            const userData = {
+                role: localStorage.getItem('role'),
+                guideId: Number(localStorage.getItem('guideId')),
+                name: localStorage.getItem('name') || localStorage.getItem('guide') || "משתמש"
+            };
+            
+            // Debug logging
+            console.log('getCurrentUserData:', userData);
+            
+            return userData;
+        }
+
+        function openDayEditor(date) {
+            const role = localStorage.getItem('role');
+            if (role !== 'רכז' && role !== 'רכזת') return;
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.style.cssText = 'position:fixed;inset:0;background:#00000066;display:flex;align-items:center;justify-content:center;z-index:9999;';
+            modal.innerHTML = `
+              <div class="modal-content" style="width:860px;max-width:95%;background:#fff;border-radius:12px;box-shadow:0 10px 30px #0000001a;overflow:hidden;">
+                <div class="modal-header" style="display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid #eef2f7;background:#f8fafc;">
+                  <h2 style="margin:0;font-size:18px;">עריכת יום ${date}</h2>
+                  <button onclick="this.closest('.modal').remove()" style="background:#e2e8f0;border:none;border-radius:8px;padding:6px 10px;cursor:pointer;">סגור</button>
+                </div>
+                <div class="modal-body" style="display:flex;gap:16px;padding:16px;">
+                  <div style="flex:1;min-width:320px;">
+                    <h3 style="margin-bottom:8px;font-size:14px;color:#475569;">שיבוצים נוכחיים</h3>
+                    <div class="selected-guides-container"></div>
+                    <div class="assignment-status" style="margin-top:8px;"></div>
+                    <div style="margin-top:12px;display:flex;gap:8px;">
+                      <input id="reserve-guide-input" placeholder="מדריך מילואים (טקסט חופשי)" style="flex:1;border:1px solid #cbd5e1;border-radius:8px;padding:8px;">
+                      <button id="reserve-add-btn" class="nav-button" style="padding:8px 12px;">הוסף מילואים</button>
+                    </div>
+                  </div>
+                  <div style="flex:1.3;min-width:320px;">
+                    <h3 style="margin-bottom:8px;font-size:14px;color:#475569;">זמינות להחלפות</h3>
+                    <div class="guides-list" id="avail-list" style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;max-height:420px;overflow:auto;border:1px solid #eef2f7;border-radius:8px;padding:8px;"></div>
+                  </div>
+                </div>
+                <div class="modal-footer" style="padding:12px 16px;border-top:1px solid #eef2f7;display:flex;gap:8px;justify-content:flex-end;">
+                  <button class="nav-button" id="save-manual-btn" style="background:#10b981;">שמור ידני</button>
+                </div>
+              </div>`;
+            document.body.appendChild(modal);
+
+            // current schedule for day
+            fetch(`http://localhost:4000/api/schedule?month=${date.slice(0,7)}`).then(r=>r.json()).then(month=>{
+              const day = month.find(d=>d.date===date) || {};
+              if (typeof updateSelectedGuidesDisplay === 'function') {
+                updateSelectedGuidesDisplay(day);
+              } else {
+                const c = modal.querySelector('.selected-guides-container');
+                c.innerHTML = `<div>${day.guide1_name||day.guide1||''}</div>${day.guide2_name||day.guide2?`<div>${day.guide2_name||day.guide2}</div>`:''}`;
+              }
+            });
+            // availability
+            fetch(`http://localhost:4000/api/guides/availability/${date}`).then(r=>r.json()).then(av=>{
+              const list = modal.querySelector('#avail-list');
+              list.innerHTML = '';
+              (av||[]).filter(a=>a.available).forEach(a=>{
+                const btn = document.createElement('button');
+                btn.className = 'nav-button';
+                btn.style.margin='2px';
+                btn.textContent = `${a.guide_name}`;
+                btn.onclick = ()=>{
+                  window.selectedGuides = Array.from(new Set([...(window.selectedGuides||[]), a.guide_name]));
+                  if (typeof updateSelectedGuidesFromArray === 'function') updateSelectedGuidesFromArray();
+                };
+                list.appendChild(btn);
+              });
+            });
+
+            modal.querySelector('#reserve-add-btn').onclick = ()=>{
+              const name = modal.querySelector('#reserve-guide-input').value.trim();
+              if (!name) return;
+              window.selectedGuides = Array.from(new Set([...(window.selectedGuides||[]), name]));
+              if (typeof updateSelectedGuidesFromArray === 'function') updateSelectedGuidesFromArray();
+            };
+
+            modal.querySelector('#save-manual-btn').onclick = async ()=>{
+              const names = window.selectedGuides||[];
+              if (names.length===0) { alert('בחר/י לפחות מדריך אחד'); return; }
+              const mapNameToId = (nm)=>{ const g = (window.guides||[]).find(x=>x.name===nm); return g?g.id:null; };
+              const payload = {
+                date,
+                type: 'רגיל',
+                guide1_id: mapNameToId(names[0]),
+                guide2_id: mapNameToId(names[1]),
+                guide1_name: mapNameToId(names[0])?null:names[0],
+                guide2_name: mapNameToId(names[1])?null:names[1],
+                created_by: (localStorage.getItem('name')||'coordinator')
+              };
+              const resp = await fetch('http://localhost:4000/api/schedule/manual', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)});
+              const result = await resp.json();
+              if (result.success) { modal.remove(); setMonth(selectedYear, selectedMonth); }
+              else { alert(result.error||'שגיאת שמירה'); }
+            };
+        }
+
+        // Function to count user's shifts in current month
+        function countUserShifts() {
+            const userData = getCurrentUserData();
+            if (userData.role !== "מדריך" || !userData.name) {
+                return 0;
+            }
+
+            let count = 0;
+            allSchedule.forEach(day => {
+                let guide1 = "";
+                let guide2 = "";
+                
+                if (day.guides && day.guides.length > 0) {
+                    guide1 = day.guides[0] || "";
+                    guide2 = day.guides[1] || "";
+                } else if (day.guide1_name || day.guide2_name) {
+                    guide1 = day.guide1_name || "";
+                    guide2 = day.guide2_name || "";
+                } else if (day.guide1 || day.guide2) {
+                    guide1 = day.guide1 || "";
+                    guide2 = day.guide2 || "";
+                } else {
+                    guide1 = "";
+                    guide2 = "";
+                }
+                
+                if (guide1 === userData.name || guide2 === userData.name) {
+                    count++;
+                }
+            });
+            
+            return count;
+        }
+
+        // Function to update user schedule indicator with shift count
+        function updateUserScheduleIndicator() {
+            const userData = getCurrentUserData();
+            const indicator = document.getElementById('user-schedule-indicator');
+            
+            if (userData.role === "מדריך" && indicator) {
+                const shiftCount = countUserShifts();
+                if (shiftCount > 0) {
+                    indicator.innerHTML = `👤 צפייה במשמרות שלי - יש לך ${shiftCount} משמרות בחודש זה (מסומנות בצבע ירוק)`;
+                    indicator.style.display = 'block';
+                } else {
+                    indicator.innerHTML = `👤 צפייה במשמרות שלי - אין לך משמרות בחודש זה`;
+                    indicator.style.display = 'block';
+                }
+            }
+        }
+    </script>
+    <script src="header-functions.js"></script>
+</body>
+</html>

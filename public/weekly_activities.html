@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>לו״ז שבועי גמיש - סיגלית</title>
+  <style>
+    body {
+      font-family: Heebo, Arial, sans-serif;
+      background: #f6f9fc;
+      margin: 0;
+      padding: 0;
+    }
+    .header {
+      background: #fff;
+      padding: 18px 28px 12px 28px;
+      box-shadow: 0 2px 10px #dbeafe33;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1.7px solid #e6eaf0;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      font-size: 1.25em;
+      font-weight: bold;
+      color: #36b;
+      letter-spacing: 0.6px;
+    }
+    .menu {
+      display: flex;
+      gap: 30px;
+      font-size: 1.05em;
+    }
+    .menu a {
+      color: #444;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.15s;
+      border-bottom: 2.5px solid transparent;
+      padding-bottom: 2px;
+    }
+    .menu a.active, .menu a:hover {
+      color: #36b;
+      border-bottom: 2.5px solid #53b2e2;
+    }
+    h2 {
+      margin: 30px 0 0 0;
+      text-align: center;
+      font-size: 2.1em;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+    table {
+      width: 98%;
+      border-collapse: separate;
+      border-spacing: 18px 0;
+      margin: 28px auto 0 auto;
+      background: none;
+    }
+    th {
+      background: none;
+      font-size: 1.25em;
+      color: #425366;
+      font-weight: bold;
+      padding: 0 0 8px 0;
+      border: none;
+    }
+    td {
+      background: #fff;
+      border-radius: 20px;
+      min-width: 200px;
+      vertical-align: top;
+      box-shadow: 0 3px 18px #dbeafe33;
+      border: none;
+      padding: 19px 13px 25px 13px;
+    }
+    .activity {
+      margin-bottom: 18px;
+      padding: 14px 13px 12px 13px;
+      background: linear-gradient(98deg, #e3e8ff 60%, #f5faff 100%);
+      border-radius: 14px;
+      box-shadow: 0 1px 4px #e5edfa33;
+      min-height: 52px;
+      line-height: 1.5;
+      word-break: break-word;
+      display: flex;
+      flex-direction: row-reverse;
+      align-items: flex-start;
+      gap: 11px;
+    }
+    .activity .actions {
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: row;
+      gap: 6px;
+      margin-left: 0;
+      margin-top: 0;
+    }
+    .activity .actions .btn {
+      background: none;
+      border: none;
+      color: #8fa6c5;
+      font-size: 1.15em;
+      padding: 2px 4px;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: background 0.12s, color 0.13s;
+    }
+    .activity .actions .btn:hover {
+      background: #e3e8ff;
+      color: #3778c2;
+    }
+    .activity > div:not(.actions) {
+      flex: 1;
+    }
+    .facilitator-label {
+      font-size: 1.07em;
+      color: #254b77;
+      font-weight: 600;
+      margin-top: 2px;
+      margin-bottom: 2px;
+      letter-spacing: 0.1px;
+    }
+    .category {
+      display: inline-block;
+      margin-top: 3px;
+      margin-bottom: 2px;
+      padding: 3px 12px;
+      border-radius: 11px;
+      font-size: 0.98em;
+      font-weight: 600;
+      letter-spacing: 0.2px;
+      box-shadow: 0 0 2px #bbb;
+    }
+    .טיפולית { background: #53b2e2; }
+    .פיזית { background: #ffe97c; color: #4d4d4d; }
+    .אומנות { background: #b580fa; }
+    .אחר { background: #919ba7; }
+    .add-btn {
+      margin-top: 10px;
+      background: #18b972;
+      color: #fff;
+      padding: 6px 21px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 1em;
+      transition: background 0.2s;
+      box-shadow: 0 1px 5px #b7f5ce2c;
+    }
+    .add-btn:hover {
+      background: #24d484;
+    }
+    .form-popup {
+      background: #fff;
+      border: 1.7px solid #a9d3fd;
+      border-radius: 18px;
+      padding: 23px 22px 13px 24px;
+      box-shadow: 0 10px 40px #bfdcff90;
+      position: fixed;
+      top: 13%;
+      right: 38vw;
+      z-index: 99;
+      min-width: 270px;
+    }
+    .form-popup label {
+      display: block;
+      margin-bottom: 12px;
+      font-size: 1em;
+    }
+    .form-popup input, .form-popup select {
+      margin-right: 8px;
+      border-radius: 7px;
+      border: 1px solid #d1e1f5;
+      padding: 5px 8px;
+      font-size: 1em;
+      outline: none;
+    }
+    .form-popup input:focus, .form-popup select:focus {
+      border: 1.5px solid #53b2e2;
+      background: #eef6fc;
+    }
+    .close-form {
+      position: absolute;
+      top: 7px;
+      left: 14px;
+      background: #e9e9e9;
+      border: none;
+      border-radius: 6px;
+      font-size: 1.2em;
+      cursor: pointer;
+      color: #868686;
+      padding: 0 9px;
+    }
+    /* overrides style */
+    .overrides-list {
+      margin: 42px auto 22px auto;
+      max-width: 1150px;
+    }
+    .override-card {
+      background: #f5f7ff;
+      border-radius: 14px;
+      box-shadow: 0 2px 8px #dde6fa36;
+      padding: 13px 18px 10px 14px;
+      display: flex;
+      align-items: center;
+      gap: 17px;
+      margin-bottom: 12px;
+    }
+    .override-card .del-btn {
+      margin-right: auto;
+      background: #e9b3b7;
+      border: none;
+      border-radius: 6px;
+      color: #741c29;
+      font-size: 1em;
+      padding: 5px 14px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.17s;
+    }
+    .override-card .del-btn:hover {
+      background: #ffb6be;
+    }
+    @media (max-width: 1100px) {
+      table { font-size: 0.9em; }
+      th, td { min-width: 110px; padding: 9px 5px 11px 5px; }
+      .form-popup { right: 8vw; }
+      .header { flex-direction: column; gap: 12px; }
+      .overrides-list { max-width: 99vw;}
+    }
+  </style>
+</head>
+<body>
+    <div id="main-header"></div>
+  <h2>לו״ז שבועי גמיש - סיגלית</h2>
+  <div id="schedule"></div>
+  <div id="formContainer"></div>
+
+  <!-- הכפתור וטופס ההוספה מעל רשימת השינויים -->
+  <button onclick="openOverrideForm()" class="add-btn" style="margin-top:16px;">הוסף שינוי חד פעמי</button>
+  <div id="overrideFormContainer"></div>
+
+  <!-- כאן תופיע רשימת השינויים החד פעמיים -->
+  <div id="overrides-list" class="overrides-list"></div>
+  
+  <div id="main-footer"></div>
+
+  <script>
+    const weekdays = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי'];
+    const categories = [
+      {name: 'טיפולית', color: 'טיפולית'},
+      {name: 'פיזית', color: 'פיזית'},
+      {name: 'אומנות', color: 'אומנות'},
+      {name: 'אחר', color: 'אחר'}
+    ];
+
+    async function fetchActivities() {
+      const res = await fetch('http://localhost:4000/api/weekly-activities');
+      return await res.json();
+    }
+
+    async function fetchOverrides() {
+      const res = await fetch('http://localhost:4000/api/weekly-overrides');
+      return await res.json();
+    }
+
+    async function render() {
+      const data = await fetchActivities();
+      let html = '<table><tr>' +
+        weekdays.map(w => `<th>${w}</th>`).join('') +
+        '</tr><tr>';
+
+      weekdays.forEach(day => {
+        html += `<td>`;
+        const acts = data.filter(a => a.weekday === day)
+                         .sort((a, b) => (a.time > b.time ? 1 : -1));
+        if (acts.length === 0) {
+          html += '<div style="color:#aaa; font-size:0.9em;">אין פעילויות</div>';
+        }
+        acts.forEach(act => {
+          html += `<div class="activity">
+            <div class="actions">
+              <button class="btn edit" title="ערוך" onclick="openForm('edit', ${act.id})">✏️</button>
+              <button class="btn delete" title="מחק" onclick="deleteActivity(${act.id})">🗑️</button>
+            </div>
+            <div>
+              <div>
+                <b>${act.time}${act.duration ? ` (${act.duration})` : ''}</b> - ${act.title}
+              </div>
+              <div class="facilitator-label">${act.facilitator || ''}</div>
+              <div><span class="category ${act.category || 'אחר'}">${act.category || ''}</span></div>
+            </div>
+          </div>`;
+        });
+        html += `<button class="add-btn" onclick="openForm('add', null, '${day}')">+ פעילויות</button>`;
+        html += `</td>`;
+      });
+      html += '</tr></table>';
+      document.getElementById('schedule').innerHTML = html;
+
+      renderOverrides();
+    }
+
+    async function deleteActivity(id) {
+      if (!confirm('למחוק פעילות זו?')) return;
+      await fetch('http://localhost:4000/api/weekly-activities/' + id, { method: 'DELETE' });
+      render();
+    }
+
+    function openForm(mode, id, weekday) {
+      let formHtml = '';
+      let activity = { weekday, time:'', duration:'', title:'', category:'טיפולית', facilitator:'' };
+      if (mode === 'edit') {
+        fetch('http://localhost:4000/api/weekly-activities')
+          .then(res => res.json())
+          .then(list => {
+            activity = list.find(a => a.id === id);
+            showForm();
+          });
+      } else {
+        showForm();
+      }
+
+      function showForm() {
+        formHtml = `
+          <div class="form-popup" id="formPopup">
+            <button class="close-form" onclick="closeForm()">✖</button>
+            <form onsubmit="return submitForm(event, '${mode}', ${id||null})">
+              <label>יום:
+                <select name="weekday" required>
+                  ${weekdays.map(w => `<option${activity.weekday===w?' selected':''}>${w}</option>`).join('')}
+                </select>
+              </label>
+              <label>שעה:
+                <input type="time" name="time" value="${activity.time||''}" required />
+              </label>
+              <label>משך (לא חובה):
+                <input type="text" name="duration" value="${activity.duration||''}" placeholder="01:30" style="width:60px;" />
+              </label>
+              <label>שם פעילות:
+                <input name="title" value="${activity.title||''}" required />
+              </label>
+              <label>קטגוריה:
+                <select name="category">
+                  ${categories.map(c => `<option${activity.category===c.name?' selected':''}>${c.name}</option>`).join('')}
+                </select>
+              </label>
+              <label>מנחה:
+                <input name="facilitator" value="${activity.facilitator||''}" />
+              </label>
+              <button class="btn" type="submit">${mode==='edit'?'עדכן':'הוסף'}</button>
+            </form>
+          </div>
+        `;
+        document.getElementById('formContainer').innerHTML = formHtml;
+      }
+    }
+
+    window.closeForm = function() {
+      document.getElementById('formContainer').innerHTML = '';
+    }
+
+    window.submitForm = async function(e, mode, id) {
+      e.preventDefault();
+      const f = e.target;
+      const obj = {
+        weekday: f.weekday.value,
+        time: f.time.value,
+        duration: f.duration.value,
+        title: f.title.value,
+        category: f.category.value,
+        facilitator: f.facilitator.value
+      };
+      if (mode === 'edit') {
+        await fetch('http://localhost:4000/api/weekly-activities/' + id, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(obj)
+        });
+      } else {
+        await fetch('http://localhost:4000/api/weekly-activities', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(obj)
+        });
+      }
+      closeForm();
+      render();
+    }
+
+    window.openForm = openForm;
+    window.deleteActivity = deleteActivity;
+
+    // --- רנדר שינויים חד פעמיים ---
+    async function renderOverrides() {
+      const overrides = await fetchOverrides();
+      const now = new Date();
+      const futureOverrides = overrides
+        .filter(o => {
+          const dateTime = new Date(o.date + 'T' + (o.time || '00:00'));
+          return dateTime >= now;
+        })
+        .sort((a, b) => (a.date+a.time > b.date+b.time ? 1 : -1));
+
+      let html = '';
+      if (futureOverrides.length > 0) {
+        html += `<h3 style="margin:38px 0 15px 0; font-size:1.15em; color:#336;">שינויים חד פעמיים קרובים:</h3>`;
+        futureOverrides.forEach(o => {
+          const dt = new Date(o.date + 'T' + (o.time || '00:00'));
+          const day = dt.toLocaleDateString('he-IL', {weekday:'long'});
+          const dateStr = dt.toLocaleDateString('he-IL');
+          html += `
+            <div class="override-card">
+              <span style="font-size:1.07em;">
+                <b>בתאריך ${day} ${dateStr} בשעה ${o.time} </b>
+                תהיה <b>"${o.title}"</b> במקום הפעילות השבועית הקבועה.
+                ${o.facilitator ? `<span style="color:#254b77; font-weight:600;">(מנחה: ${o.facilitator})</span>` : ''}
+              </span>
+              <button onclick="deleteOverride(${o.id})" class="del-btn">מחק</button>
+            </div>
+          `;
+        });
+      } else {
+        html = `<div style="margin:36px 0 8px 0; color:#aaa;">אין שינויים חד פעמיים קרובים.</div>`;
+      }
+      document.getElementById('overrides-list').innerHTML = html;
+    }
+
+    window.deleteOverride = async function(id) {
+      if (!confirm('למחוק את השינוי החד-פעמי הזה?')) return;
+      await fetch('http://localhost:4000/api/weekly-overrides/' + id, { method: 'DELETE' });
+      renderOverrides();
+    }
+
+    // ====== טופס הוספת שינוי חד פעמי ======
+    function openOverrideForm() {
+      document.getElementById('overrideFormContainer').innerHTML = `
+        <div class="form-popup" id="overrideFormPopup">
+          <button class="close-form" onclick="closeOverrideForm()">✖</button>
+          <form onsubmit="return submitOverrideForm(event)">
+            <label>תאריך:
+              <input type="date" name="date" required>
+            </label>
+            <label>שעה:
+              <input type="time" name="time" required>
+            </label>
+            <label>שם פעילות:
+              <input name="title" required>
+            </label>
+            <label>קטגוריה:
+              <select name="category">
+                ${categories.map(c => `<option value="${c.name}">${c.name}</option>`).join('')}
+              </select>
+            </label>
+            <label>מנחה:
+              <input name="facilitator">
+            </label>
+            <button class="btn" type="submit">הוסף שינוי</button>
+          </form>
+        </div>
+      `;
+    }
+    window.openOverrideForm = openOverrideForm;
+    window.closeOverrideForm = function() {
+      document.getElementById('overrideFormContainer').innerHTML = '';
+    }
+    window.submitOverrideForm = async function(e) {
+      e.preventDefault();
+      const f = e.target;
+      const obj = {
+        date: f.date.value,
+        time: f.time.value,
+        title: f.title.value,
+        category: f.category.value,
+        facilitator: f.facilitator.value
+      };
+      await fetch('http://localhost:4000/api/weekly-overrides', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(obj)
+      });
+      closeOverrideForm();
+      renderOverrides();
+    }
+
+    render();
+    // HEADER
+    fetch('header.html')
+      .then(res => res.text())
+      .then(html => {
+        const headerElement = document.getElementById('main-header');
+        if (headerElement) {
+          headerElement.innerHTML = html;
+          renderHeaderUser();
+        }
+      })
+      .catch(err => console.log('Error loading header:', err));
+    // FOOTER
+    fetch('footer.html')
+      .then(res => res.text())
+      .then(html => {
+        const footerElement = document.getElementById('main-footer');
+        if (footerElement) {
+          footerElement.innerHTML = html;
+        }
+      })
+      .catch(err => console.log('Error loading footer:', err));
+  </script>
+    <script src="header-functions.js"></script>
+</body>
+</html>

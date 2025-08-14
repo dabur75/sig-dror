@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>ברוך הבא לסיגלית!</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { background: #f7fafd; font-family: 'Heebo', Arial, sans-serif; }
+        .login-box {
+            background: #fff; max-width: 420px; margin: 40px auto;
+            border-radius: 22px; box-shadow: 0 4px 24px #d7e3ed55;
+            padding: 36px 32px 28px 32px; text-align: center;
+        }
+        h2 { color: #3682c6; margin-bottom: 18px; }
+        input[type="text"], input[type="password"] {
+            width: 90%; margin: 10px auto 18px auto; padding: 10px; font-size: 17px; border-radius: 8px; border: 1px solid #b4cae5;
+            display: block; background: #f9fcfe;
+        }
+        .pass-row { position: relative; margin-bottom: 18px;}
+        .pass-row input { width: 100%; }
+        .eye-btn {
+            position: absolute; left: 15px; top: 8px; background: none; border: none; cursor: pointer; font-size: 19px;
+        }
+        .forgot-link { display: block; margin-bottom: 17px; color: #297abb; text-decoration: underline; cursor: pointer;}
+        button[type="submit"] {
+            width: 96%; margin: 0 auto; background: #4891ca; color: #fff;
+            font-size: 22px; padding: 12px 0; border: none; border-radius: 10px; cursor: pointer;
+        }
+        button[type="submit"]:hover { background: #3476a5; }
+        @media (max-width: 600px) {
+            .login-box { max-width: 98vw; padding: 12vw 2vw; }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-box">
+        <h2>ברוך הבא לסיגלית!</h2>
+        <form id="loginForm" autocomplete="off">
+            <input type="text" id="username" required placeholder="שם משתמש (אימייל או שם)">
+            <div class="pass-row">
+                <input type="password" id="password" required placeholder="סיסמה">
+                <button type="button" class="eye-btn" tabindex="-1" onclick="togglePassword()">👁️</button>
+            </div>
+            <a href="#" class="forgot-link">שכחתי סיסמה</a>
+            <button type="submit">התחבר</button>
+        </form>
+    </div>
+    <script>
+    let guidesList = [];
+
+    async function loadGuides() {
+        const res = await fetch('http://localhost:4000/api/guides');
+        guidesList = await res.json();
+    }
+
+    function togglePassword() {
+        const pass = document.getElementById('password');
+        pass.type = pass.type === "password" ? "text" : "password";
+    }
+
+    document.getElementById('loginForm').onsubmit = async function(e) {
+        e.preventDefault();
+        const username = document.getElementById('username').value.trim();
+        const password = document.getElementById('password').value;
+        if (!guidesList.length) await loadGuides();
+
+        // אפשר לזהות לפי אימייל או שם פרטי, מה שמוזן
+        let user = guidesList.find(g =>
+            g.email?.toLowerCase() === username.toLowerCase() ||
+            g.name?.toLowerCase() === username.toLowerCase()
+        );
+        if (!user) {
+            alert('שם משתמש לא נמצא');
+            return;
+        }
+        // שלח בקשת התחברות לשרת
+        const res = await fetch('http://localhost:4000/api/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ role: user.role, password, guide: user.name })
+        });
+        const data = await res.json();
+        if (!res.ok || !data.ok) {
+            alert(data.error || 'שגיאת התחברות');
+            return;
+        }
+        // שמור session בדפדפן
+        localStorage.setItem('role', data.role);
+        localStorage.setItem('guide', data.name);
+        localStorage.setItem('guideId', data.userId); // תוקן: guideId במקום guide_id
+        localStorage.setItem('userId', data.userId); // חדש: userId לשימוש בשיחות
+        localStorage.setItem('name', data.name);
+        window.location.href = "dashboard.html";
+    };
+
+    // שכחתי סיסמה (דמו)
+    document.querySelector('.forgot-link').onclick = function() {
+        alert('פנה לרכז לעדכון סיסמה.');
+        return false;
+    };
+
+    loadGuides();
+    </script>
+</body>
+</html>

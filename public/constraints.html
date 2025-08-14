@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>ניהול אילוצים - סיגלית</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { font-family: 'Heebo', Arial, sans-serif; background: #f8fafd;}
+    .container { max-width: 950px; margin: 36px auto; background: #fff; border-radius: 16px; box-shadow: 0 4px 18px #e4e6eb44; padding: 34px;}
+    h2 { color: #3084bb;}
+    .tab-bar { display: flex; gap: 10px; margin-bottom: 24px;}
+    .tab-btn { padding: 8px 22px; border-radius: 7px 7px 0 0; background: #e3f1fb; color: #2460b2; font-size: 16px; border: none; cursor: pointer;}
+    .tab-btn.active { background: #4891ca; color: #fff; font-weight: bold;}
+    table { width: 100%; border-collapse: collapse; margin-top: 8px;}
+    th, td { border: 1px solid #d9e4ee; padding: 8px 7px; text-align: right;}
+    th { background: #e3f1fb;}
+    .btn { background: #4891ca; color: #fff; padding: 6px 17px; border: none; border-radius: 8px; cursor: pointer;}
+    .btn:hover { background: #3077b8;}
+    .modal { display: none; position:fixed; top:0;right:0;left:0;bottom:0; background:#0004; z-index:99; align-items:center; justify-content:center;}
+    .modal .form-content {background:#fff;padding:22px 34px;max-width:400px;border-radius:15px;box-shadow:0 2px 20px #356aad44;}
+    .status-approved { color: #228d46; font-weight: bold;}
+    .status-pending { color: #b78c04; font-weight: bold;}
+    .status-declined { color: #d03d3d; font-weight: bold;}
+    .vacation-constraint { background: #f0f8ff !important; }
+    .vacation-constraint td { color: #2e7d32; }
+    @media (max-width: 700px) {
+      .container { max-width: 99%; padding: 7px;}
+      table, th, td { font-size: 15px;}
+      .tab-bar { flex-direction: column; gap: 4px;}
+    }
+  </style>
+</head>
+<body>
+    <div id="main-header"></div>
+<div class="container">
+  <h2>ניהול אילוצים</h2>
+  <div class="tab-bar">
+    <button class="tab-btn active" id="tab-monthly" onclick="switchTab('monthly')">אילוצים חודשיים</button>
+    <button class="tab-btn" id="tab-fixed" onclick="switchTab('fixed')">אילוצים קבועים</button>
+    <button class="tab-btn" id="tab-vacation" onclick="switchTab('vacation')">חופשות</button>
+  </div>
+
+  <!-- אילוצים חודשיים -->
+  <div id="monthly-section">
+    <button class="btn" onclick="openConstraintForm()">הוסף אילוץ חודשי</button>
+    <table>
+      <thead>
+        <tr>
+          <th>שם מדריך</th>
+          <th>תאריך</th>
+          <th>משעה</th>
+          <th>עד שעה</th>
+          <th>הערה</th>
+          <th>פעולות</th>
+        </tr>
+      </thead>
+      <tbody id="constraints-tbody">
+        <tr><td colspan="6" style="text-align:center;">טוען...</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- אילוצים קבועים -->
+  <div id="fixed-section" style="display:none;">
+    <button class="btn" onclick="openFixedForm()" id="addFixedBtn" style="display:none;">הוסף אילוץ קבוע</button>
+    <table>
+      <thead>
+        <tr>
+          <th>שם מדריך</th>
+          <th>יום בשבוע</th>
+          <th>משעה</th>
+          <th>עד שעה</th>
+          <th>הערה</th>
+          <th>פעולות</th>
+        </tr>
+      </thead>
+      <tbody id="fixed-tbody">
+        <tr><td colspan="6" style="text-align:center;">טוען...</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- לשונית חופשות -->
+  <div id="vacation-section" style="display:none;">
+    <button class="btn" onclick="openVacationForm()">הגש בקשת חופשה</button>
+    <table>
+      <thead>
+        <tr>
+          <th>שם מדריך</th>
+          <th>מתאריך</th>
+          <th>עד תאריך</th>
+          <th>הערה</th>
+          <th>סטטוס</th>
+          <th>הערת רכז</th>
+          <th>פעולות</th>
+        </tr>
+      </thead>
+      <tbody id="vacation-tbody">
+        <tr><td colspan="7" style="text-align:center;">טוען...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- טופס הוספת/עריכת אילוץ חודשי -->
+<div class="modal" id="constraint-form-modal">
+  <div class="form-content">
+    <h3 id="constraint-form-title">הוסף אילוץ חודשי</h3>
+    <form id="constraint-form">
+      <div>
+        <label>מדריך:
+          <select id="guideId"></select>
+        </label>
+      </div>
+      <div>
+        <label>תאריך: <input id="dateStart" type="date" required></label>
+      </div>
+      <div style="margin:7px 0 7px 0;">
+        <label style="font-size:0.97em;">
+          <input type="checkbox" id="rangeCheckbox" onchange="toggleDateRange()"> טווח תאריכים
+        </label>
+      </div>
+      <div id="dateEndDiv" style="display:none;">
+        <label>עד תאריך: <input id="dateEnd" type="date"></label>
+      </div>
+      <div>
+        <label>הערה: <input id="note" maxlength="50"></label>
+      </div>
+      <div style="margin:7px 0 10px 0; color:#666; font-size:0.95em;">
+        ניתן לבחור תאריך בודד או לסמן טווח תאריכים. יווצר אילוץ לכל יום בטווח.
+      </div>
+      <div style="margin-top:10px;text-align:left;">
+        <button class="btn" type="submit">שמור</button>
+        <button type="button" class="btn" style="background:#ccc;color:#222;" onclick="closeConstraintForm()">X</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- טופס הוספת/עריכת אילוץ קבוע -->
+<div class="modal" id="fixed-form-modal">
+  <div class="form-content">
+    <h3 id="fixed-form-title">הוסף אילוץ קבוע</h3>
+    <form id="fixed-form">
+      <div>
+        <label>מדריך:
+          <select id="fixed-guideId"></select>
+        </label>
+      </div>
+      <div>
+        <label>יום בשבוע:
+          <select id="weekday">
+            <option value="0">ראשון</option>
+            <option value="1">שני</option>
+            <option value="2">שלישי</option>
+            <option value="3">רביעי</option>
+            <option value="4">חמישי</option>
+            <option value="5">שישי</option>
+            <option value="6">שבת</option>
+          </select>
+        </label>
+      </div>
+      <div>
+        <label>משעה: <input id="fixed-hourStart" type="time"></label>
+      </div>
+      <div>
+        <label>עד שעה: <input id="fixed-hourEnd" type="time"></label>
+      </div>
+      <div>
+        <label>הערה: <input id="fixed-note" maxlength="50"></label>
+      </div>
+      <div style="margin-top:10px;text-align:left;">
+        <button class="btn" type="submit">שמור</button>
+        <button type="button" class="btn" style="background:#ccc;color:#222;" onclick="closeFixedForm()">X</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- טופס בקשת חופשה -->
+<div class="modal" id="vacation-form-modal">
+  <div class="form-content">
+    <h3 id="vacation-form-title">הגש בקשת חופשה</h3>
+    <form id="vacation-form">
+      <div>
+        <label>מדריך:
+          <select id="vac-guideId"></select>
+        </label>
+      </div>
+      <div>
+        <label>מתאריך: <input id="vac-dateStart" type="date" required></label>
+      </div>
+      <div>
+        <label>עד תאריך: <input id="vac-dateEnd" type="date" required></label>
+      </div>
+      <div>
+        <label>הערה: <input id="vac-note" maxlength="50"></label>
+      </div>
+      <div style="margin-top:10px;text-align:left;">
+        <button class="btn" type="submit">שלח</button>
+        <button type="button" class="btn" style="background:#ccc;color:#222;" onclick="closeVacationForm()">X</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- טופס רכז - אישור/דחייה -->
+<div class="modal" id="approve-modal">
+  <div class="form-content">
+    <h3 id="approve-form-title">אשר/דחה חופשה</h3>
+    <form id="approve-form">
+      <div style="margin-bottom:7px;">
+        <label>סטטוס:
+          <select id="approve-status">
+            <option value="approved">מאושר</option>
+            <option value="declined">נדחה</option>
+          </select>
+        </label>
+      </div>
+      <div>
+        <label>הערת רכז: <input id="approve-note" maxlength="60"></label>
+      </div>
+      <div style="margin-top:10px;text-align:left;">
+        <button class="btn" type="submit">שמור</button>
+        <button type="button" class="btn" style="background:#ccc;color:#222;" onclick="closeApproveModal()">X</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+const weekdays = ["ראשון", "שני", "שלישי", "רביעי", "חמישי", "שישי", "שבת"];
+    
+    // פונקציה לקבלת הנתונים הנוכחיים
+    function getCurrentUserData() {
+        return {
+            role: localStorage.getItem('role'),
+            guideId: Number(localStorage.getItem('guideId')),
+            name: localStorage.getItem('name')
+        };
+    }
+    
+    // בדיקה - הדפס את הנתונים לקונסול
+    const userData = getCurrentUserData();
+    console.log('User Data:', userData);
+
+    // אתחול ראשוני
+    document.addEventListener("DOMContentLoaded", function() {
+        renderConstraints();
+        renderFixedConstraints();
+        renderVacations();
+    });
+    
+    // וודא שהפונקציה renderHeaderUser נקראת אחרי שהכל נטען
+    window.addEventListener('load', function() {
+        console.log('Window loaded, calling renderHeaderUser...');
+        setTimeout(() => {
+          renderHeaderUser();
+        }, 500);
+    });
+
+// --- אילוצים חודשיים ---
+async function fetchGuides() {
+  const res = await fetch('http://localhost:4000/api/guides');
+  return await res.json();
+}
+async function fetchConstraints() {
+  const res = await fetch('http://localhost:4000/api/constraints');
+  return await res.json();
+}
+async function renderConstraints() {
+  const constraints = await fetchConstraints();
+  const guides = await fetchGuides();
+  const tbody = document.getElementById('constraints-tbody');
+  const userData = getCurrentUserData();
+  let list = constraints;
+  if (userData.role === "מדריך") {
+    list = constraints.filter(c=>c.guideId==userData.guideId);
+  }
+  
+  // הצג מידע על מספר האילוצים למדריך
+  let constraintInfo = "";
+  if (userData.role === "מדריך") {
+    const currentMonth = new Date().toISOString().slice(0,7); // YYYY-MM
+    const monthlyConstraints = list.filter(c => c.date && c.date.startsWith(currentMonth));
+    const constraintCount = monthlyConstraints.length;
+    const maxConstraints = 14;
+    constraintInfo = `<div style="margin-bottom:10px; padding:8px; background:#f0f8ff; border-radius:6px; font-size:0.9em;">
+      <strong>אילוצים חודשיים:</strong> ${constraintCount}/${maxConstraints} 
+      ${constraintCount >= maxConstraints ? '<span style="color:#d32f2f;">(הגעת למגבלה!)</span>' : ''}
+    </div>`;
+  }
+  
+  if (!list.length) {
+    tbody.innerHTML = constraintInfo + `<tr><td colspan="6" style="text-align:center;">אין אילוצים</td></tr>`;
+    return;
+  }
+  
+  tbody.innerHTML = constraintInfo;
+  list.forEach(c => {
+    let g = guides.find(g=>g.id==c.guideId) || {name:"[לא ידוע]"};
+    let isVacation = c.type === "vacation" || c.note?.includes("חופשה מאושרת");
+    let rowClass = isVacation ? 'class="vacation-constraint"' : '';
+    let actions = "";
+    
+    // אם זה אילוץ חופשה, אל תאפשר עריכה/מחיקה
+    if (isVacation) {
+      actions = `<span style="color:#888; font-size:0.9em;">חופשה מאושרת</span>`;
+    } else {
+      actions = `
+        <button class="btn" onclick="editConstraint(${c.id})">ערוך</button>
+        <button class="btn" style="background:#eee;color:#444;" onclick="deleteConstraint(${c.id})">מחק</button>
+      `;
+    }
+    
+    tbody.innerHTML += `
+    <tr ${rowClass}>
+      <td>${g.name}</td>
+      <td>${c.date}</td>
+      <td>${c.hourStart||"-"}</td>
+      <td>${c.hourEnd||"-"}</td>
+      <td>${c.note||""}</td>
+      <td>${actions}</td>
+    </tr>`;
+  });
+}
+
+// --- אילוצים קבועים ---
+async function fetchFixedConstraints() {
+  const res = await fetch('http://localhost:4000/api/fixed-constraints');
+  return await res.json();
+}
+async function renderFixedConstraints() {
+  const fixed = await fetchFixedConstraints();
+  const guides = await fetchGuides();
+  const tbody = document.getElementById('fixed-tbody');
+  const userData = getCurrentUserData();
+  
+  // הצג/הסתר כפתור הוספת אילוץ קבוע לפי התפקיד
+  const addFixedBtn = document.getElementById('addFixedBtn');
+  if (addFixedBtn) {
+    addFixedBtn.style.display = userData.role === "רכז" ? "inline-block" : "none";
+  }
+  
+  // אם מדריך, הצג רק אילוצים שלו
+  let list = fixed;
+  if (userData.role === "מדריך") {
+    list = fixed.filter(f => f.guideId == userData.guideId);
+  }
+  
+  if (!list.length) {
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;">אין אילוצים קבועים</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = "";
+  list.forEach(c => {
+    let g = guides.find(g=>g.id==c.guideId) || {name:"[לא ידוע]"};
+    let actions = "";
+    // רק רכז יכול לערוך/למחוק אילוצים קבועים
+    if (userData.role === "רכז") {
+      actions = `
+        <button class="btn" onclick="editFixed(${c.id})">ערוך</button>
+        <button class="btn" style="background:#eee;color:#444;" onclick="deleteFixed(${c.id})">מחק</button>
+      `;
+    } else {
+      actions = `<span style="color:#888; font-size:0.9em;">לקריאה בלבד</span>`;
+    }
+    
+    tbody.innerHTML += `
+    <tr>
+      <td>${g.name}</td>
+      <td>${weekdays[Number(c.weekday)]}</td>
+      <td>${c.hourStart||"-"}</td>
+      <td>${c.hourEnd||"-"}</td>
+      <td>${c.note||""}</td>
+      <td>${actions}</td>
+    </tr>`;
+  });
+}
+
+// --- חופשות ---
+async function fetchVacations() {
+  const res = await fetch('http://localhost:4000/api/vacations');
+  return await res.json();
+}
+async function renderVacations() {
+  const vacations = await fetchVacations();
+  const guides = await fetchGuides();
+  const tbody = document.getElementById('vacation-tbody');
+  const userData = getCurrentUserData();
+  let list = vacations;
+  if (userData.role === "מדריך") {
+    list = vacations.filter(v=>v.guideId==userData.guideId);
+  }
+  if (!list.length) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;">אין חופשות</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = "";
+  list.forEach(v => {
+    let g = guides.find(g=>g.id==v.guideId) || {name:"[לא ידוע]"};
+    let statusClass = "status-" + (v.status || "pending");
+    let statusLabel = v.status === "approved" ? "מאושר" :
+                      v.status === "declined" ? "נדחה" : "ממתין";
+    let actions = "";
+if (userData.role === "רכז" && v.status === "pending") {
+  actions += `<button class="btn" onclick="approveVacation(${v.id})">אשר/דחה</button> `;
+}
+if (userData.role === "רכז") {
+  actions += `<button class="btn" style="background:#eee;color:#444;margin-right:6px;" onclick="deleteVacation(${v.id})">מחק</button>`;
+    }
+    tbody.innerHTML += `
+    <tr>
+      <td>${g.name}</td>
+      <td>${v.dateStart}</td>
+      <td>${v.dateEnd}</td>
+      <td>${v.note||""}</td>
+      <td class="${statusClass}">${statusLabel}</td>
+      <td>${v.responseNote||""}</td>
+      <td>${actions}</td>
+    </tr>`;
+  });
+}
+
+// --- טאבים ---
+function switchTab(tab) {
+  document.getElementById('monthly-section').style.display = tab === 'monthly' ? '' : 'none';
+  document.getElementById('fixed-section').style.display = tab === 'fixed' ? '' : 'none';
+  document.getElementById('vacation-section').style.display = tab === 'vacation' ? '' : 'none';
+  document.getElementById('tab-monthly').classList.toggle('active', tab === 'monthly');
+  document.getElementById('tab-fixed').classList.toggle('active', tab === 'fixed');
+  document.getElementById('tab-vacation').classList.toggle('active', tab === 'vacation');
+}
+
+function toggleDateRange() {
+  const checked = document.getElementById('rangeCheckbox').checked;
+  document.getElementById('dateEndDiv').style.display = checked ? '' : 'none';
+  if (!checked) document.getElementById('dateEnd').value = '';
+}
+// --- טופס אילוץ חודשי ---
+function openConstraintForm(constraint=null) {
+  document.getElementById('constraint-form-modal').style.display='flex';
+  document.getElementById('constraint-form-title').textContent = constraint ? 'ערוך אילוץ חודשי' : 'הוסף אילוץ חודשי';
+  fetchGuides().then(guides=>{
+    let select = document.getElementById('guideId');
+    select.innerHTML = "";
+    const userData = getCurrentUserData();
+    guides.forEach(g=>{
+      let selected = (constraint && g.id==constraint.guideId) || (userData.role==="מדריך" && g.id==userData.guideId) ? "selected" : "";
+      select.innerHTML += `<option value="${g.id}" ${selected}>${g.name}</option>`;
+    });
+    select.disabled = (userData.role==="מדריך");
+  });
+  document.getElementById('dateStart').value = constraint ? constraint.date : '';
+  document.getElementById('note').value = constraint ? constraint.note||'' : '';
+  document.getElementById('rangeCheckbox').checked = false;
+  toggleDateRange();
+  document.getElementById('constraint-form').onsubmit = async function(e){
+    e.preventDefault();
+    const userData = getCurrentUserData();
+    // בדיקת מגבלת אילוצים למדריך
+    if (userData.role === "מדריך" && !constraint) {
+      const constraints = await fetchConstraints();
+      const currentMonth = new Date().toISOString().slice(0,7);
+      const monthlyConstraints = constraints.filter(c => 
+        c.guideId == userData.guideId && c.date && c.date.startsWith(currentMonth)
+      );
+      if (monthlyConstraints.length >= 14) {
+        alert("הגעת למגבלה של 14 אילוצים בחודש. לא ניתן להוסיף אילוץ נוסף.");
+        return;
+      }
+    }
+    const guideId = Number(document.getElementById('guideId').value);
+    const dateStart = document.getElementById('dateStart').value;
+    const note = document.getElementById('note').value;
+    const isRange = document.getElementById('rangeCheckbox').checked;
+    let days = [];
+    if (!dateStart) {
+      alert('יש לבחור תאריך');
+      return;
+    }
+    if (isRange) {
+      const dateEnd = document.getElementById('dateEnd').value;
+      if (!dateEnd || dateEnd < dateStart) {
+        alert('יש לבחור טווח תאריכים תקין');
+        return;
+      }
+      let current = new Date(dateStart);
+      const end = new Date(dateEnd);
+      while (current <= end) {
+        days.push(current.toISOString().slice(0,10));
+        current.setDate(current.getDate() + 1);
+      }
+    } else {
+      days = [dateStart];
+    }
+    for (let d of days) {
+      await fetch('http://localhost:4000/api/constraints', {
+        method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({
+          guideId,
+          date: d,
+          note
+        })
+      });
+    }
+    closeConstraintForm();
+    renderConstraints();
+  }
+}
+function closeConstraintForm() { document.getElementById('constraint-form-modal').style.display='none'; }
+async function editConstraint(id) {
+  const constraints = await fetchConstraints();
+  const c = constraints.find(x=>x.id==id);
+  if (c) openConstraintForm(c);
+}
+async function deleteConstraint(id) {
+  if (!confirm("למחוק את האילוץ?")) return;
+  await fetch('http://localhost:4000/api/constraints/'+id, {method:'DELETE'});
+  renderConstraints();
+}
+
+// --- טופס אילוץ קבוע (רק רכז) ---
+function openFixedForm(fixed=null) {
+  const userData = getCurrentUserData();
+  if (userData.role==="מדריך") return;
+  document.getElementById('fixed-form-modal').style.display='flex';
+  document.getElementById('fixed-form-title').textContent = fixed ? 'ערוך אילוץ קבוע' : 'הוסף אילוץ קבוע';
+  fetchGuides().then(guides=>{
+    let select = document.getElementById('fixed-guideId');
+    select.innerHTML = "";
+    guides.forEach(g=>{
+      let selected = (fixed && g.id==fixed.guideId) ? "selected" : "";
+      select.innerHTML += `<option value="${g.id}" ${selected}>${g.name}</option>`;
+    });
+    select.disabled = false;
+  });
+  document.getElementById('weekday').value = fixed ? fixed.weekday : '0';
+  document.getElementById('fixed-hourStart').value = fixed ? fixed.hourStart||'' : '';
+  document.getElementById('fixed-hourEnd').value = fixed ? fixed.hourEnd||'' : '';
+  document.getElementById('fixed-note').value = fixed ? fixed.note||'' : '';
+  document.getElementById('fixed-form').onsubmit = async function(e){
+    e.preventDefault();
+    const obj = {
+  guideId: Number(document.getElementById('fixed-guideId').value),
+  weekday: Number(document.getElementById('weekday').value),
+  hourStart: document.getElementById('fixed-hourStart').value,
+  hourEnd: document.getElementById('fixed-hourEnd').value,
+  note: document.getElementById('fixed-note').value
+  };
+
+    if (fixed && fixed.id) {
+      await fetch('http://localhost:4000/api/fixed-constraints/'+fixed.id, {
+        method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify(obj)
+      });
+    } else {
+      await fetch('http://localhost:4000/api/fixed-constraints', {
+        method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(obj)
+      });
+    }
+    closeFixedForm();
+    renderFixedConstraints();
+  }
+}
+function closeFixedForm() { document.getElementById('fixed-form-modal').style.display='none'; }
+async function editFixed(id) {
+  const fixed = await fetchFixedConstraints();
+  const f = fixed.find(x=>x.id==id);
+  if (f) openFixedForm(f);
+}
+async function deleteFixed(id) {
+  if (!confirm("למחוק את האילוץ?")) return;
+  await fetch('http://localhost:4000/api/fixed-constraints/'+id, {method:'DELETE'});
+  renderFixedConstraints();
+}
+
+// --- טופס חופשה ---
+function openVacationForm(vacation=null) {
+  document.getElementById('vacation-form-modal').style.display='flex';
+  document.getElementById('vacation-form-title').textContent = vacation ? 'ערוך בקשת חופשה' : 'הגש בקשת חופשה';
+  fetchGuides().then(guides=>{
+    let select = document.getElementById('vac-guideId');
+    select.innerHTML = "";
+    const userData = getCurrentUserData();
+    guides.forEach(g=>{
+      let selected = (vacation && g.id==vacation.guideId) || (userData.role==="מדריך" && g.id==userData.guideId) ? "selected" : "";
+      select.innerHTML += `<option value="${g.id}" ${selected}>${g.name}</option>`;
+    });
+    select.disabled = (userData.role==="מדריך");
+  });
+  document.getElementById('vac-dateStart').value = vacation ? vacation.dateStart : '';
+  document.getElementById('vac-dateEnd').value = vacation ? vacation.dateEnd : '';
+  document.getElementById('vac-note').value = vacation ? vacation.note||'' : '';
+  document.getElementById('vacation-form').onsubmit = async function(e){
+    e.preventDefault();
+    const obj = {
+      guideId: Number(document.getElementById('vac-guideId').value),
+      dateStart: document.getElementById('vac-dateStart').value,
+      dateEnd: document.getElementById('vac-dateEnd').value,
+      note: document.getElementById('vac-note').value,
+      status: "pending"
+    };
+    if (vacation && vacation.id) {
+      await fetch('http://localhost:4000/api/vacations/'+vacation.id, {
+        method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify(obj)
+      });
+    } else {
+      await fetch('http://localhost:4000/api/vacations', {
+        method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(obj)
+      });
+    }
+    closeVacationForm();
+    await renderVacations();
+  }
+}
+function closeVacationForm() { document.getElementById('vacation-form-modal').style.display='none'; }
+async function approveVacation(id) {
+  const vacations = await fetchVacations();
+  const vac = vacations.find(x=>x.id==id);
+  if (!vac) return;
+  document.getElementById('approve-modal').style.display = 'flex';
+  document.getElementById('approve-status').value = vac.status === "approved" ? "approved" : "declined";
+  document.getElementById('approve-note').value = vac.responseNote || '';
+  document.getElementById('approve-form').onsubmit = async function(e){
+    e.preventDefault();
+    const newStatus = document.getElementById('approve-status').value;
+    vac.status = newStatus;
+    vac.responseNote = document.getElementById('approve-note').value;
+    
+    // אם החופשה אושרה, הוסף אותה כאילוצים
+    if (newStatus === "approved") {
+      const guides = await fetchGuides();
+      const guide = guides.find(g => g.id == vac.guideId);
+      if (guide) {
+        // הוסף אילוץ לכל יום בחופשה
+        const startDate = new Date(vac.dateStart);
+        const endDate = new Date(vac.dateEnd);
+        
+        for (let date = new Date(startDate); date <= endDate; date.setDate(date.getDate() + 1)) {
+          const dateStr = date.toISOString().slice(0,10);
+          const vacationConstraint = {
+            guideId: vac.guideId,
+            date: dateStr,
+            hourStart: "00:00",
+            hourEnd: "23:59",
+            note: `חופשה מאושרת: ${vac.note || ""}`,
+            type: "vacation"
+          };
+          
+          await fetch('http://localhost:4000/api/constraints', {
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify(vacationConstraint)
+          });
+        }
+      }
+    }
+    
+    await fetch('http://localhost:4000/api/vacations/'+vac.id, {
+      method:'PUT',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(vac)
+    });
+    closeApproveModal();
+    renderVacations();
+    renderConstraints(); // רענן גם את רשימת האילוצים
+  }
+}
+function closeApproveModal() {
+  document.getElementById('approve-modal').style.display='none';
+}
+
+async function deleteVacation(id) {
+  if (!confirm("למחוק את בקשת החופשה?")) return;
+  await fetch('http://localhost:4000/api/vacations/' + id, { method: 'DELETE' });
+  renderVacations();
+}
+
+
+</script>
+    <div id="main-footer"></div>
+    <script src="header-functions.js"></script>
+    <script>
+    // HEADER
+    fetch('header.html')
+      .then(res => res.text())
+      .then(html => {
+        document.getElementById('main-header').innerHTML = html;
+        // וודא שהאלמנטים קיימים לפני קריאת הפונקציה
+        setTimeout(() => {
+          console.log('Header loaded, calling renderHeaderUser...');
+          console.log('header-user element:', document.getElementById('header-user'));
+          console.log('header-role element:', document.getElementById('header-role'));
+          renderHeaderUser();
+        }, 100);
+      });
+    // FOOTER
+    fetch('footer.html')
+      .then(res => res.text())
+      .then(html => {
+        document.getElementById('main-footer').innerHTML = html;
+      });
+    </script>
+</body>
+</html>

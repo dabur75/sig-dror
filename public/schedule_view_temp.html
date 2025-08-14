@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>שיבוץ מדריכים - סיגלית (פיתוח)</title>
+    <style>
+        body { font-family: 'Heebo', Arial, sans-serif; background: #f8fafd; }
+        h2 { text-align: center; color: #2b76c6; }
+        table {
+            border-collapse: collapse;
+            width: 96%;
+            margin: 32px auto;
+            background: #fff;
+            box-shadow: 0 2px 20px #d8e3f540;
+            border-radius: 18px;
+            overflow: hidden;
+        }
+        th, td {
+            border-bottom: 1px solid #e2ecf5;
+            padding: 16px 8px;
+            text-align: center;
+            font-size: 1.15rem;
+        }
+        th { background: #e3f1fb; color: #2576c4; }
+        tr:last-child td { border-bottom: none; }
+        .open-shabbat { background: #d3f6e7; }
+        .closed-shabbat { background: #ffe7e7; }
+        .conan { color: #db5252; font-weight: bold;}
+        .regular { color: #2786c2;}
+        .roles { font-size: 1rem; }
+    </style>
+</head>
+<body>
+    <h2>שיבוץ מדריכים - סיגלית (לצרכי פיתוח)</h2>
+    <table id="schedule-table">
+        <thead>
+            <tr>
+                <th>תאריך</th>
+                <th>יום</th>
+                <th>סוג שבת</th>
+                <th>מדריכים</th>
+                <th>תפקידים</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <script>
+    // טען את ה-schedule.json
+    fetch('schedule.json')
+        .then(r => r.json())
+        .then(data => {
+            const tbody = document.querySelector("#schedule-table tbody");
+            data.forEach(day => {
+                let tr = document.createElement('tr');
+                if (day.weekendType === "שבת פתוחה") tr.className = "open-shabbat";
+                if (day.weekendType === "שבת סגורה") tr.className = "closed-shabbat";
+                tr.innerHTML = `
+                    <td>${day.date}</td>
+                    <td>${day.weekday}</td>
+                    <td>${day.weekendType || ""}</td>
+                    <td>
+                        ${day.guides.map((g,i)=>`<span class="${(day.roles && day.roles[i]==='כונן') ? 'conan' : 'regular'}">${g}</span>`).join(" , ")}
+                    </td>
+                    <td>
+                        ${(day.roles||[]).join(" , ")}
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        })
+        .catch(()=>{ document.querySelector("#schedule-table tbody").innerHTML='<tr><td colspan="5">לא נמצא קובץ schedule.json</td></tr>'; });
+    </script>
+</body>
+</html>
