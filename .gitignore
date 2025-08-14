@@ -52,3 +52,10 @@ coverage/
 # Backup files
 backups/
 *.tar.gz
+
+# Fly.io deployment files (keep these in repo)
+# fly.toml
+# Dockerfile
+# .dockerignore
+# deploy-fly.sh
+# FLY-DEPLOYMENT.md
