@@ -4,13 +4,15 @@
   background: #ede7f6; /* רקע סגול בהיר */
   box-shadow: 0 2px 12px #e4e6eb33;
     border-radius: 0 0 18px 18px;
-    padding: 0 0 0 0;
+    padding: 0 32px;
   margin-bottom: 32px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     min-height: 64px;
   direction: rtl;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
 }
 #main-navbar .logo {
     display: flex;
@@ -33,13 +35,18 @@
   color: #254b77;
   background: #f1f4fa;
   border-radius: 18px;
-  padding: 8px 20px;
+  padding: 10px 20px;
     font-size: 1.08em;
   font-weight: 500;
     text-decoration: none;
     margin: 0 2px;
     transition: background 0.15s, color 0.15s;
     border: 1.5px solid #fff0;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    touch-action: manipulation;
 }
 #main-navbar nav a:hover, #main-navbar nav a.active {
   background: #e3f1fb;
@@ -78,7 +85,7 @@
   color: #d84315;
     border: none;
   border-radius: 10px;
-    padding: 7px 18px;
+    padding: 10px 20px;
   font-weight: 600;
     font-size: 1em;
     margin-right: 10px;
@@ -86,16 +93,175 @@
   box-shadow: 0 1px 4px #e4e6eb33;
     transition: background 0.15s, color 0.15s;
   border: 1.5px solid #fbe9e7;
+    min-height: 44px;
+    touch-action: manipulation;
 }
 #main-navbar .logout-btn:hover {
   background: #d84315;
     color: #fff;
 }
-@media (max-width: 700px) {
-    #main-navbar { flex-direction: column; align-items: flex-start; padding: 8px 0; }
-    #main-navbar .logo { margin-right: 10px; }
-    #main-navbar nav { flex-wrap: wrap; gap: 0.2em; }
-    #main-navbar .user-info { margin-left: 10px; margin-top: 7px; }
+/* ========== RESPONSIVE DESIGN ========== */
+
+/* Tablet and small desktop */
+@media (max-width: 1024px) {
+    #main-navbar {
+        padding: 0 16px;
+        margin-bottom: 24px;
+    }
+    #main-navbar .logo {
+        margin-right: 20px;
+    }
+    #main-navbar .logo img {
+        height: 80px;
+        width: 80px;
+    }
+    #main-navbar nav a {
+        padding: 6px 16px;
+        font-size: 1em;
+    }
+    #main-navbar .user-info {
+        margin-left: 20px;
+    }
+}
+
+/* Mobile landscape */
+@media (max-width: 900px) {
+    #main-navbar {
+        flex-direction: column;
+        align-items: center;
+        padding: 12px 16px;
+        gap: 16px;
+        margin-bottom: 20px;
+    }
+    #main-navbar .logo {
+        margin-right: 0;
+        margin-bottom: 8px;
+    }
+    #main-navbar .logo img {
+        height: 70px;
+        width: 70px;
+    }
+    #main-navbar nav {
+        flex-wrap: wrap;
+        gap: 8px;
+        justify-content: center;
+        max-width: 100%;
+    }
+    #main-navbar nav a {
+        padding: 8px 16px;
+        font-size: 0.95em;
+        min-width: 80px;
+        text-align: center;
+    }
+    #main-navbar .user-info {
+        margin-left: 0;
+        margin-top: 8px;
+        flex-direction: column;
+        gap: 8px;
+        align-items: center;
+    }
+    #main-navbar .user-info span {
+        text-align: center;
+        min-width: 120px;
+    }
+    #main-navbar .logout-btn {
+        margin-right: 0;
+        width: 100%;
+        max-width: 200px;
+    }
+}
+
+/* Mobile portrait */
+@media (max-width: 600px) {
+    #main-navbar {
+        padding: 8px 12px;
+        gap: 12px;
+        margin-bottom: 16px;
+        border-radius: 0 0 12px 12px;
+    }
+    #main-navbar .logo img {
+        height: 60px;
+        width: 60px;
+    }
+    #main-navbar nav {
+        gap: 6px;
+        width: 100%;
+        justify-content: center;
+    }
+    #main-navbar nav a {
+        padding: 10px 12px;
+        font-size: 0.9em;
+        min-width: 70px;
+        border-radius: 12px;
+    }
+    #main-navbar .user-info {
+        gap: 6px;
+        width: 100%;
+    }
+    #main-navbar .user-info span {
+        padding: 6px 10px;
+        font-size: 0.9em;
+        min-width: 100px;
+    }
+    #main-navbar .logout-btn {
+        padding: 8px 16px;
+        font-size: 0.9em;
+        border-radius: 8px;
+    }
+}
+
+/* Extra small mobile */
+@media (max-width: 400px) {
+    #main-navbar {
+        padding: 6px 8px;
+        gap: 10px;
+    }
+    #main-navbar .logo img {
+        height: 50px;
+        width: 50px;
+    }
+    #main-navbar nav {
+        gap: 4px;
+    }
+    #main-navbar nav a {
+        padding: 8px 10px;
+        font-size: 0.85em;
+        min-width: 60px;
+    }
+    #main-navbar .user-info span {
+        padding: 5px 8px;
+        font-size: 0.85em;
+        min-width: 90px;
+    }
+    #main-navbar .logout-btn {
+        padding: 6px 12px;
+        font-size: 0.85em;
+    }
+}
+
+/* Landscape orientation improvements */
+@media (max-height: 500px) and (orientation: landscape) {
+    #main-navbar {
+        padding: 6px 12px;
+        gap: 8px;
+        margin-bottom: 12px;
+    }
+    #main-navbar .logo img {
+        height: 50px;
+        width: 50px;
+    }
+    #main-navbar nav a {
+        padding: 6px 12px;
+        font-size: 0.85em;
+    }
+}
+
+/* High DPI displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    #main-navbar nav a,
+    #main-navbar .logout-btn {
+        border-width: 0.5px;
+    }
 }
 </style>
 <div id="main-navbar">

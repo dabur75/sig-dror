@@ -20,6 +20,8 @@
     bottom: 0;
     z-index: 100;
   direction: rtl;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
 }
 body { padding-bottom: 60px !important; }
 #main-footer .footer-icon {
@@ -28,8 +30,86 @@ body { padding-bottom: 60px !important; }
   color: #4891ca;
   filter: drop-shadow(0 0 2px #e3f1fb);
 }
-@media (max-width: 700px) {
-    #main-footer { font-size: 0.98em; padding: 12px 0 7px 0; }
+/* ========== RESPONSIVE DESIGN ========== */
+
+/* Tablet and small desktop */
+@media (max-width: 1024px) {
+    #main-footer {
+        padding: 16px 0 8px 0;
+        font-size: 1em;
+    }
+    #main-footer .footer-icon {
+        font-size: 1.2em;
+        margin-left: 6px;
+    }
+}
+
+/* Mobile landscape */
+@media (max-width: 900px) {
+    #main-footer {
+        padding: 14px 0 8px 0;
+        font-size: 0.95em;
+        border-radius: 12px 12px 0 0;
+    }
+    #main-footer .footer-icon {
+        font-size: 1.1em;
+        margin-left: 5px;
+    }
+}
+
+/* Mobile portrait */
+@media (max-width: 600px) {
+    #main-footer {
+        padding: 12px 0 6px 0;
+        font-size: 0.9em;
+        border-radius: 10px 10px 0 0;
+        box-shadow: 0 -1px 8px #e4e6eb33;
+    }
+    #main-footer .footer-icon {
+        font-size: 1em;
+        margin-left: 4px;
+    }
+    body {
+        padding-bottom: 50px !important;
+    }
+}
+
+/* Extra small mobile */
+@media (max-width: 400px) {
+    #main-footer {
+        padding: 10px 0 5px 0;
+        font-size: 0.85em;
+        border-radius: 8px 8px 0 0;
+    }
+    #main-footer .footer-icon {
+        font-size: 0.9em;
+        margin-left: 3px;
+    }
+    body {
+        padding-bottom: 45px !important;
+    }
+}
+
+/* Landscape orientation improvements */
+@media (max-height: 500px) and (orientation: landscape) {
+    #main-footer {
+        padding: 8px 0 4px 0;
+        font-size: 0.8em;
+    }
+    #main-footer .footer-icon {
+        font-size: 0.85em;
+        margin-left: 2px;
+    }
+    body {
+        padding-bottom: 35px !important;
+    }
+}
+
+/* High DPI displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    #main-footer {
+        box-shadow: 0 -0.5px 6px #e4e6eb33;
+    }
 }
 </style>
 <div id="main-footer">
