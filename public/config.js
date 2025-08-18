@@ -5,9 +5,9 @@ const API_BASE_URL = (() => {
 	if (window.location.hostname.includes('fly.dev')) {
 		return '';
 	}
-	// If we're on localhost, use localhost:8080
+	// If we're on localhost, use localhost:4000
 	if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-		return 'http://localhost:8080';
+		return 'http://localhost:4000';
 	}
 	// Default to relative URLs for other production environments
 	return '';
@@ -27,8 +27,8 @@ function apiUrl(endpoint) {
 		const originalFetch = window.fetch.bind(window);
 		window.fetch = (input, init) => {
 			try {
-							if (typeof input === 'string' && input.startsWith('http://localhost:4000')) {
-				const rewritten = input.replace('http://localhost:4000', 'http://localhost:8080');
+							if (typeof input === 'string' && input.startsWith('http://localhost:8080')) {
+				const rewritten = input.replace('http://localhost:8080', 'http://localhost:4000');
 				return originalFetch(rewritten, init);
 			}
 			} catch (_) {}
