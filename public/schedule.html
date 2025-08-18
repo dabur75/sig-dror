@@ -410,8 +410,10 @@
             }
         }
     </style>
+    </style>
 </head>
 <body>
+    <script src="config.js"></script>
     <!-- Header -->
     <div id="main-header"></div>
     
@@ -477,6 +479,9 @@
             .then(res => res.text())
             .then(html => {
                 document.getElementById('main-header').innerHTML = html;
+                // Mark Schedule tab as active to unify navbar styling
+                const navLink = document.querySelector('#main-navbar nav a[href="schedule.html"]');
+                if (navLink) navLink.classList.add('active');
                 renderHeaderUser();
             });
         
@@ -1082,5 +1087,6 @@
         }
     </script>
     <script src="header-functions.js"></script>
+    <script src="config.js"></script>
 </body>
 </html>

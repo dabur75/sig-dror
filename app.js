@@ -3,12 +3,9 @@ const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
 const app = express();
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 8080;
 const Database = require('better-sqlite3');
-
-// Use Fly.io data directory for production, local directory for development
-const dbPath = process.env.NODE_ENV === 'production' ? '/data/sigalit.db' : 'sigalit.db';
-const db = new Database(dbPath);
+const db = new Database('sigalit.db');
 
 // Enable CORS
 app.use(cors());
@@ -423,9 +420,6 @@ db.prepare(`
   CREATE TABLE IF NOT EXISTS shift_types (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
-    description TEXT,
-    guides_required INTEGER DEFAULT 2,
-    roles_required TEXT,
     start_time TEXT,
     end_time TEXT,
     duration_hours DECIMAL(4,2),
@@ -3124,34 +3118,6 @@ app.get('/health', (req, res) => {
     timestamp: new Date().toISOString(),
     uptime: process.uptime()
   });
-});
-
-// Health check endpoint for Fly.io
-app.get('/health', (req, res) => {
-    try {
-        // Check if database is accessible
-        const result = db.prepare('SELECT 1 as test').get();
-        if (result && result.test === 1) {
-            res.status(200).json({ 
-                status: 'healthy', 
-                timestamp: new Date().toISOString(),
-                database: 'connected',
-                environment: process.env.NODE_ENV || 'development'
-            });
-        } else {
-            res.status(500).json({ 
-                status: 'unhealthy', 
-                database: 'error',
-                timestamp: new Date().toISOString()
-            });
-        }
-    } catch (error) {
-        res.status(500).json({ 
-            status: 'unhealthy', 
-            error: error.message,
-            timestamp: new Date().toISOString()
-        });
-    }
 });
 
 // Serve main page

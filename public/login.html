@@ -45,11 +45,12 @@
             <button type="submit">התחבר</button>
         </form>
     </div>
+    <script src="config.js"></script>
     <script>
     let guidesList = [];
 
     async function loadGuides() {
-        const res = await fetch('http://localhost:4000/api/guides');
+        const res = await fetch(apiUrl('/api/guides'));
         guidesList = await res.json();
     }
 
@@ -74,7 +75,7 @@
             return;
         }
         // שלח בקשת התחברות לשרת
-        const res = await fetch('http://localhost:4000/api/login', {
+        const res = await fetch(apiUrl('/api/login'), {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ role: user.role, password, guide: user.name })

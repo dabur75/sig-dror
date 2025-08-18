@@ -1,8 +1,8 @@
-# Use Node.js 18 Alpine for smaller image size
-FROM node:18-alpine
+# Use Node.js 20 Alpine for better-sqlite3 compatibility
+FROM node:20-alpine
 
-# Install SQLite and other dependencies
-RUN apk add --no-cache sqlite
+# Install SQLite, Python, and build dependencies for better-sqlite3
+RUN apk add --no-cache sqlite python3 make g++ sqlite-dev
 
 # Set working directory
 WORKDIR /app
