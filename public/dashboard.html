@@ -5,7 +5,13 @@
     <title>סיגלית - דאשבורד</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body { font-family: 'Heebo', Arial, sans-serif; background: #f8fafd; margin: 0; padding: 0; }
+        body { 
+            font-family: 'Heebo', Arial, sans-serif; 
+            background: #f8fafd; 
+            margin: 0; 
+            padding: 0; 
+            overflow-x: hidden;
+        }
         .container { 
             max-width: 1200px; 
             margin: 20px auto; 
@@ -16,6 +22,7 @@
             display: grid;
             grid-template-columns: 2fr 1fr;
             gap: 20px;
+            box-sizing: border-box;
         }
         .left-column {
             display: flex;
@@ -41,13 +48,17 @@
         .btn { 
             background: #4891ca; 
             color: #fff; 
-            padding: 6px 12px; 
+            padding: 8px 16px; 
             border: none; 
             border-radius: 6px; 
             cursor: pointer;
             font-size: 0.9em;
+            min-height: 44px;
+            transition: background-color 0.2s ease;
+            touch-action: manipulation;
         }
         .btn:hover { background: #3872a4; }
+        .btn:active { background: #2d5a7a; }
         #tasks-list { list-style: none; margin:0; padding:0; }
         #tasks-list li { 
             background: #f7fafc; 
@@ -62,21 +73,64 @@
         }
         .task-actions { display: flex; gap: 5px; }
         .move-date-popup {
-            display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: #0005; align-items: center; justify-content: center; z-index: 99;
+            display: none; 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100vw; 
+            height: 100vh;
+            background: #0005; 
+            align-items: center; 
+            justify-content: center; 
+            z-index: 99;
+            padding: 20px;
+            box-sizing: border-box;
         }
         .move-date-popup-inner {
-            background: #fff; padding: 20px; border-radius: 15px; box-shadow: 0 2px 18px #357aad33; min-width: 230px; text-align: center;
+            background: #fff; 
+            padding: 20px; 
+            border-radius: 15px; 
+            box-shadow: 0 2px 18px #357aad33; 
+            min-width: 280px; 
+            max-width: 90vw;
+            text-align: center;
+            box-sizing: border-box;
         }
         .daily-controls {
-            display: flex; align-items: center; gap: 8px; justify-content: flex-end; margin-bottom: 10px;
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+            justify-content: flex-end; 
+            margin-bottom: 10px;
+            flex-wrap: wrap;
         }
         .daily-controls input[type="date"] {
-            font-size: 0.9em; padding: 4px 6px; border-radius: 6px; border: 1.2px solid #bdd9f6; background: #fff;
+            font-size: 0.9em; 
+            padding: 6px 8px; 
+            border-radius: 6px; 
+            border: 1.2px solid #bdd9f6; 
+            background: #fff;
+            min-width: 140px;
         }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px;}
-        th, td { border: 1px solid #d9e4ee; padding: 6px; text-align: right; font-size: 0.85em;}
-        th { background: #e3f1fb;}
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin-top: 10px;
+            overflow-x: auto;
+            display: block;
+        }
+        th, td { 
+            border: 1px solid #d9e4ee; 
+            padding: 8px 6px; 
+            text-align: right; 
+            font-size: 0.85em;
+            min-width: 80px;
+        }
+        th { 
+            background: #e3f1fb;
+            position: sticky;
+            top: 0;
+        }
         .category {
             display: inline-block;
             margin-top: 2px;
@@ -127,22 +181,204 @@
             justify-content: space-between;
             font-size: 0.9em;
         }
+        /* ========== RESPONSIVE DESIGN ========== */
+        
+        /* Tablet and small desktop */
+        @media (max-width: 1024px) {
+            .container { 
+                max-width: 95%; 
+                margin: 15px auto;
+                padding: 15px;
+            }
+            .guide-cards { 
+                gap: 10px; 
+                justify-content: center;
+            }
+            .guide-card { 
+                min-width: 100px; 
+                padding: 10px 6px;
+            }
+        }
+        
+        /* Mobile landscape */
         @media (max-width: 900px) {
             .container { 
                 grid-template-columns: 1fr; 
                 max-width: 100%; 
+                margin: 10px;
                 padding: 12px; 
             }
             .left-column, .right-column {
                 gap: 15px;
             }
-            .container { max-width: 100%; padding: 8px; }
-            .block { min-width: 0; padding: 8px; }
-            table, th, td { font-size: 13px; }
-            h2 { font-size: 18px; }
-            .guide-cards { gap: 5px; }
-            .guide-card { min-width: 80px; padding: 8px 4px;}
-            #shift-title { font-size: 0.9em;}
+            .block { 
+                min-width: 0; 
+                padding: 12px; 
+            }
+            table, th, td { 
+                font-size: 13px; 
+            }
+            h2 { 
+                font-size: 18px; 
+            }
+            .guide-cards { 
+                gap: 8px; 
+                justify-content: center;
+            }
+            .guide-card { 
+                min-width: 90px; 
+                padding: 10px 6px;
+            }
+            #shift-title { 
+                font-size: 0.95em;
+                text-align: center;
+            }
+            .daily-controls {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 8px;
+            }
+            .daily-controls input[type="date"] {
+                width: 100%;
+                text-align: center;
+            }
+            .daily-controls button {
+                width: 100%;
+                margin: 0;
+            }
+        }
+        
+        /* Mobile portrait */
+        @media (max-width: 600px) {
+            .container { 
+                margin: 5px;
+                padding: 8px; 
+                border-radius: 12px;
+            }
+            .block { 
+                padding: 10px; 
+                border-radius: 10px;
+            }
+            h2 { 
+                font-size: 16px; 
+                text-align: center;
+            }
+            .guide-cards { 
+                gap: 6px; 
+                justify-content: center;
+            }
+            .guide-card { 
+                min-width: 80px; 
+                padding: 8px 4px;
+                min-height: 50px;
+            }
+            .guide-emoji { 
+                font-size: 1.4em; 
+            }
+            .guide-name { 
+                font-size: 0.8em; 
+            }
+            #tasks-list li, #referrals-list li, #messages-list li {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 8px;
+                text-align: center;
+            }
+            .task-actions, .referral-actions {
+                justify-content: center;
+                gap: 8px;
+            }
+            #add-task-form, #add-referral-form, #send-message-form {
+                flex-direction: column;
+                gap: 8px;
+            }
+            #add-task-form input, #add-referral-form input, #add-referral-form select, #send-message-form input, #send-message-form select {
+                width: 100% !important;
+                margin: 0 !important;
+                text-align: center;
+            }
+            .btn {
+                padding: 8px 16px;
+                font-size: 0.95em;
+                width: 100%;
+            }
+            .move-date-popup-inner {
+                margin: 20px;
+                min-width: auto;
+                width: calc(100vw - 40px);
+            }
+            .move-date-popup-inner input[type="date"] {
+                width: 100%;
+                margin: 12px 0;
+            }
+            .move-date-popup-inner button {
+                width: 100%;
+                margin: 8px 0 !important;
+            }
+            table {
+                font-size: 12px;
+            }
+            th, td {
+                padding: 4px 2px;
+            }
+            .category {
+                font-size: 0.7em;
+                padding: 1px 6px;
+            }
+        }
+        
+        /* Extra small mobile */
+        @media (max-width: 400px) {
+            .container { 
+                margin: 2px;
+                padding: 6px; 
+            }
+            .block { 
+                padding: 8px; 
+            }
+            h2 { 
+                font-size: 15px; 
+            }
+            .guide-card { 
+                min-width: 70px; 
+                padding: 6px 3px;
+                min-height: 45px;
+            }
+            .guide-emoji { 
+                font-size: 1.2em; 
+            }
+            .guide-name { 
+                font-size: 0.75em; 
+            }
+            .btn {
+                padding: 6px 12px;
+                font-size: 0.9em;
+            }
+        }
+        
+        /* Landscape orientation improvements */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .container {
+                margin: 5px auto;
+                padding: 10px;
+            }
+            .block {
+                padding: 8px;
+            }
+            .guide-cards {
+                gap: 4px;
+            }
+            .guide-card {
+                min-height: 40px;
+                padding: 6px 4px;
+            }
+        }
+        
+        /* High DPI displays */
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+            .btn, input, select {
+                border-width: 0.5px;
+            }
         }
     </style>
 </head>
@@ -156,8 +392,8 @@
         <div class="block">
             <h2>משימות</h2>
             <ul id="tasks-list"></ul>
-                <form id="add-task-form" style="margin-top:12px;">
-                    <input type="text" id="task-input" placeholder="כתוב משימה חדשה..." required style="width:66%;padding:6px;border-radius:6px;border:1px solid #bdd9f6;font-size:0.9em;">
+                <form id="add-task-form" style="margin-top:12px; display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                    <input type="text" id="task-input" placeholder="כתוב משימה חדשה..." required style="flex:1; min-width:200px; padding:8px; border-radius:6px; border:1px solid #bdd9f6; font-size:0.9em; box-sizing:border-box;">
                 <button class="btn" type="submit">הוסף</button>
             </form>
         </div>
@@ -187,13 +423,13 @@
 
     <ul id="referrals-list" style="list-style:none; padding:0;"></ul>
 
-                <form id="add-referral-form" style="margin-top: 12px;">
+                <form id="add-referral-form" style="margin-top: 12px; display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
         <input type="text" id="patient-name" placeholder="שם המטופל" required
-                           style="width:22%; padding:6px; border-radius:6px; border:1px solid #bdd9f6; margin-left:8px;font-size:0.9em;">
+                           style="flex:1; min-width:120px; padding:8px; border-radius:6px; border:1px solid #bdd9f6; font-size:0.9em; box-sizing:border-box;">
         <input type="text" id="referral-reason" placeholder="סיבת הפנייה" required
-                           style="width:30%; padding:6px; border-radius:6px; border:1px solid #bdd9f6; margin-left:8px;font-size:0.9em;">
+                           style="flex:2; min-width:150px; padding:8px; border-radius:6px; border:1px solid #bdd9f6; font-size:0.9em; box-sizing:border-box;">
         <select id="referral-doctor"
-                            style="padding:6px; border-radius:6px; border:1px solid #bdd9f6;font-size:0.9em;">
+                            style="flex:1; min-width:100px; padding:8px; border-radius:6px; border:1px solid #bdd9f6; font-size:0.9em; box-sizing:border-box;">
             <option value="ד\"ר קרן">ד"ר אורית</option>
             <option value="ד\"ר שלמה">ד"ר מיסם</option>
         </select>
@@ -247,11 +483,11 @@
                 <div class="block" id="messages-block">
                     <h2>הודעות</h2>
                     <ul id="messages-list" style="list-style:none; padding:0;"></ul>
-                                    <form id="send-message-form" style="margin-top:10px; display:flex; gap:6px; align-items:center;">
-                    <select id="msg-to" required style="width:18%;padding:6px;border-radius:6px;border:1px solid #bdd9f6;font-size:0.9em;">
+                                    <form id="send-message-form" style="margin-top:10px; display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                    <select id="msg-to" required style="flex:1; min-width:120px; padding:8px; border-radius:6px; border:1px solid #bdd9f6; font-size:0.9em; box-sizing:border-box;">
                         <option value="">בחר נמען...</option>
                     </select>
-                    <input type="text" id="msg-text" placeholder="כתוב הודעה..." required style="width:60%;padding:6px;border-radius:6px;border:1px solid #bdd9f6;font-size:0.9em;">
+                    <input type="text" id="msg-text" placeholder="כתוב הודעה..." required style="flex:2; min-width:200px; padding:8px; border-radius:6px; border:1px solid #bdd9f6; font-size:0.9em; box-sizing:border-box;">
                     <button class="btn" type="submit">שלח</button>
                 </form>
                 </div>
