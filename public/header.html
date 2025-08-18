@@ -1,287 +1,478 @@
-<!-- Modern Clean Header -->
+<!-- Modern Responsive Header with Hamburger Menu -->
 <style>
 #main-navbar {
   background: #ede7f6; /* רקע סגול בהיר */
   box-shadow: 0 2px 12px #e4e6eb33;
-    border-radius: 0 0 18px 18px;
-    padding: 0 32px;
+  border-radius: 0 0 18px 18px;
+  padding: 0 20px;
   margin-bottom: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    min-height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 64px;
   direction: rtl;
   box-sizing: border-box;
   transition: all 0.3s ease;
+  position: relative;
 }
+
+/* Logo Section */
 #main-navbar .logo {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
   gap: 14px;
-  margin-right: 32px;
+  z-index: 1001;
 }
+
 #main-navbar .logo img {
-  height: 90px;
-  width: 90px;
+  height: 70px;
+  width: 70px;
   border-radius: 0;
   background: none;
   box-shadow: none;
+  transition: all 0.3s ease;
 }
+
+/* Hamburger Menu Button */
+.hamburger-menu {
+  display: none;
+  flex-direction: column;
+  justify-content: space-around;
+  width: 30px;
+  height: 30px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 1001;
+  transition: all 0.3s ease;
+}
+
+.hamburger-menu span {
+  width: 100%;
+  height: 3px;
+  background: #254b77;
+  border-radius: 2px;
+  transition: all 0.3s ease;
+  transform-origin: center;
+}
+
+.hamburger-menu.active span:nth-child(1) {
+  transform: rotate(45deg) translate(6px, 6px);
+}
+
+.hamburger-menu.active span:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger-menu.active span:nth-child(3) {
+  transform: rotate(-45deg) translate(6px, -6px);
+}
+
+/* Navigation Menu */
 #main-navbar nav {
-    display: flex;
-    gap: 0.5em;
+  display: flex;
+  gap: 0.5em;
+  transition: all 0.3s ease;
 }
+
 #main-navbar nav a {
   color: #254b77;
   background: #f1f4fa;
   border-radius: 18px;
   padding: 10px 20px;
-    font-size: 1.08em;
+  font-size: 1.08em;
   font-weight: 500;
-    text-decoration: none;
-    margin: 0 2px;
-    transition: background 0.15s, color 0.15s;
-    border: 1.5px solid #fff0;
-    min-height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    touch-action: manipulation;
+  text-decoration: none;
+  margin: 0 2px;
+  transition: background 0.15s, color 0.15s;
+  border: 1.5px solid #fff0;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: manipulation;
 }
+
 #main-navbar nav a:hover, #main-navbar nav a.active {
   background: #e3f1fb;
   color: #4891ca;
   border: 1.5px solid #4891ca;
 }
+
+/* User Info Section */
 #main-navbar .user-info {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  margin-left: 32px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
   color: #254b77;
-    font-size: 1.08em;
+  font-size: 1.08em;
   font-weight: 500;
+  z-index: 1001;
 }
+
 #main-navbar .user-info span#header-user {
   background: #e3f1fb;
   color: #4891ca;
   border-radius: 10px;
-    padding: 5px 13px;
-    font-weight: 700;
-    margin-left: 4px;
+  padding: 5px 13px;
+  font-weight: 700;
+  margin-left: 4px;
   box-shadow: 0 1px 4px #e3f1fb44;
 }
+
 #main-navbar .user-info span#header-role {
   background: #f7fafc;
   color: #254b77;
   border-radius: 10px;
-    padding: 5px 13px;
-    font-weight: 700;
-    margin-left: 4px;
+  padding: 5px 13px;
+  font-weight: 700;
+  margin-left: 4px;
   box-shadow: 0 1px 4px #e3f1fb44;
 }
+
 #main-navbar .logout-btn {
   background: #fbe9e7;
   color: #d84315;
-    border: none;
+  border: none;
   border-radius: 10px;
-    padding: 10px 20px;
+  padding: 10px 20px;
   font-weight: 600;
-    font-size: 1em;
-    margin-right: 10px;
-    cursor: pointer;
+  font-size: 1em;
+  cursor: pointer;
   box-shadow: 0 1px 4px #e4e6eb33;
-    transition: background 0.15s, color 0.15s;
+  transition: background 0.15s, color 0.15s;
   border: 1.5px solid #fbe9e7;
-    min-height: 44px;
-    touch-action: manipulation;
+  min-height: 44px;
+  touch-action: manipulation;
 }
+
 #main-navbar .logout-btn:hover {
   background: #d84315;
-    color: #fff;
+  color: #fff;
 }
+
+#main-navbar .logout-btn:active {
+  background: #2d5a7a;
+}
+
 /* ========== RESPONSIVE DESIGN ========== */
 
 /* Tablet and small desktop */
 @media (max-width: 1024px) {
-    #main-navbar {
-        padding: 0 16px;
-        margin-bottom: 24px;
-    }
-    #main-navbar .logo {
-        margin-right: 20px;
-    }
-    #main-navbar .logo img {
-        height: 80px;
-        width: 80px;
-    }
-    #main-navbar nav a {
-        padding: 6px 16px;
-        font-size: 1em;
-    }
-    #main-navbar .user-info {
-        margin-left: 20px;
-    }
+  #main-navbar {
+    padding: 0 16px;
+    margin-bottom: 24px;
+  }
+  #main-navbar .logo img {
+    height: 65px;
+    width: 65px;
+  }
+  #main-navbar nav a {
+    padding: 8px 16px;
+    font-size: 1em;
+  }
 }
 
-/* Mobile landscape */
+/* Mobile landscape - Show hamburger */
 @media (max-width: 900px) {
-    #main-navbar {
-        flex-direction: column;
-        align-items: center;
-        padding: 12px 16px;
-        gap: 16px;
-        margin-bottom: 20px;
-    }
-    #main-navbar .logo {
-        margin-right: 0;
-        margin-bottom: 8px;
-    }
-    #main-navbar .logo img {
-        height: 70px;
-        width: 70px;
-    }
-    #main-navbar nav {
-        flex-wrap: wrap;
-        gap: 8px;
-        justify-content: center;
-        max-width: 100%;
-    }
-    #main-navbar nav a {
-        padding: 8px 16px;
-        font-size: 0.95em;
-        min-width: 80px;
-        text-align: center;
-    }
-    #main-navbar .user-info {
-        margin-left: 0;
-        margin-top: 8px;
-        flex-direction: column;
-        gap: 8px;
-        align-items: center;
-    }
-    #main-navbar .user-info span {
-        text-align: center;
-        min-width: 120px;
-    }
-    #main-navbar .logout-btn {
-        margin-right: 0;
-        width: 100%;
-        max-width: 200px;
-    }
+  #main-navbar {
+    padding: 12px 16px;
+    margin-bottom: 20px;
+  }
+  
+  .hamburger-menu {
+    display: flex;
+  }
+  
+  #main-navbar nav {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 280px;
+    height: 100vh;
+    background: #ede7f6;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 80px 20px 20px 20px;
+    box-shadow: -2px 0 12px #e4e6eb33;
+    transition: right 0.3s ease;
+    z-index: 1000;
+    overflow-y: auto;
+  }
+  
+  #main-navbar nav.active {
+    right: 0;
+  }
+  
+  #main-navbar nav a {
+    width: 100%;
+    margin: 8px 0;
+    justify-content: center;
+    border-radius: 12px;
+    min-height: 50px;
+    font-size: 1em;
+  }
+  
+  /* User info at top of mobile menu */
+  #main-navbar .mobile-user-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    background: #f1f4fa;
+    border-radius: 12px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  #main-navbar .mobile-user-info span {
+    text-align: center;
+    min-width: 120px;
+    padding: 8px 16px;
+  }
+  
+  #main-navbar .mobile-user-info .logout-btn {
+    width: 100%;
+    max-width: 200px;
+    margin: 0;
+  }
+  
+  /* Hide desktop user info */
+  #main-navbar .user-info {
+    display: none;
+  }
+  
+  /* Logo adjustments */
+  #main-navbar .logo img {
+    height: 60px;
+    width: 60px;
+  }
 }
 
 /* Mobile portrait */
 @media (max-width: 600px) {
-    #main-navbar {
-        padding: 8px 12px;
-        gap: 12px;
-        margin-bottom: 16px;
-        border-radius: 0 0 12px 12px;
-    }
-    #main-navbar .logo img {
-        height: 60px;
-        width: 60px;
-    }
-    #main-navbar nav {
-        gap: 6px;
-        width: 100%;
-        justify-content: center;
-    }
-    #main-navbar nav a {
-        padding: 10px 12px;
-        font-size: 0.9em;
-        min-width: 70px;
-        border-radius: 12px;
-    }
-    #main-navbar .user-info {
-        gap: 6px;
-        width: 100%;
-    }
-    #main-navbar .user-info span {
-        padding: 6px 10px;
-        font-size: 0.9em;
-        min-width: 100px;
-    }
-    #main-navbar .logout-btn {
-        padding: 8px 16px;
-        font-size: 0.9em;
-        border-radius: 8px;
-    }
+  #main-navbar {
+    padding: 8px 12px;
+    margin-bottom: 16px;
+    border-radius: 0 0 12px 12px;
+  }
+  
+  #main-navbar nav {
+    width: 100%;
+    right: -100%;
+  }
+  
+  #main-navbar nav.active {
+    right: 0;
+  }
+  
+  #main-navbar nav a {
+    padding: 12px 16px;
+    font-size: 0.95em;
+    min-height: 48px;
+  }
+  
+  #main-navbar .logo img {
+    height: 55px;
+    width: 55px;
+  }
+  
+  .hamburger-menu {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .hamburger-menu span {
+    height: 2.5px;
+  }
 }
 
 /* Extra small mobile */
 @media (max-width: 400px) {
-    #main-navbar {
-        padding: 6px 8px;
-        gap: 10px;
-    }
-    #main-navbar .logo img {
-        height: 50px;
-        width: 50px;
-    }
-    #main-navbar nav {
-        gap: 4px;
-    }
-    #main-navbar nav a {
-        padding: 8px 10px;
-        font-size: 0.85em;
-        min-width: 60px;
-    }
-    #main-navbar .user-info span {
-        padding: 5px 8px;
-        font-size: 0.85em;
-        min-width: 90px;
-    }
-    #main-navbar .logout-btn {
-        padding: 6px 12px;
-        font-size: 0.85em;
-    }
+  #main-navbar {
+    padding: 6px 8px;
+  }
+  
+  #main-navbar .logo img {
+    height: 50px;
+    width: 50px;
+  }
+  
+  #main-navbar nav {
+    padding: 70px 15px 15px 15px;
+  }
+  
+  #main-navbar nav a {
+    padding: 10px 14px;
+    font-size: 0.9em;
+    min-height: 44px;
+  }
+  
+  .hamburger-menu {
+    width: 26px;
+    height: 26px;
+  }
 }
 
 /* Landscape orientation improvements */
 @media (max-height: 500px) and (orientation: landscape) {
-    #main-navbar {
-        padding: 6px 12px;
-        gap: 8px;
-        margin-bottom: 12px;
-    }
-    #main-navbar .logo img {
-        height: 50px;
-        width: 50px;
-    }
-    #main-navbar nav a {
-        padding: 6px 12px;
-        font-size: 0.85em;
-    }
+  #main-navbar {
+    padding: 8px 12px;
+    margin-bottom: 12px;
+  }
+  
+  #main-navbar .logo img {
+    height: 45px;
+    width: 45px;
+  }
+  
+  #main-navbar nav {
+    padding: 60px 15px 15px 15px;
+  }
+  
+  #main-navbar nav a {
+    padding: 8px 12px;
+    font-size: 0.85em;
+    min-height: 40px;
+  }
 }
 
 /* High DPI displays */
 @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-    #main-navbar nav a,
-    #main-navbar .logout-btn {
-        border-width: 0.5px;
-    }
+  #main-navbar nav a,
+  #main-navbar .logout-btn {
+    border-width: 0.5px;
+  }
+}
+
+/* Overlay for mobile menu */
+.mobile-menu-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.mobile-menu-overlay.active {
+  display: block;
+  opacity: 1;
 }
 </style>
+
 <div id="main-navbar">
-    <div class="logo">
-        <img src="sigalitlogo.png" alt="סיגלית" />
+  <div class="logo">
+    <img src="sigalitlogo.png" alt="סיגלית" />
+  </div>
+  
+  <!-- Hamburger Menu Button -->
+  <button class="hamburger-menu" onclick="toggleMobileMenu()">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+  
+  <!-- Desktop Navigation -->
+  <nav>
+    <!-- Mobile User Info (shown at top of mobile menu) -->
+    <div class="mobile-user-info">
+      <span id="mobile-header-user"></span>
+      <span id="mobile-header-role"></span>
+      <button class="logout-btn" onclick="logout()">התנתק</button>
     </div>
-    <nav>
-        <a href="dashboard.html">עמוד הבית</a>
-        <a href="schedule.html">סידור חודשי</a>
-        <a href="weekly_activities.html">לו"ז שבועי</a>
-        <a href="guides.html">ניהול צוות</a>
-        <a href="constraints.html">אילוצים וחופשות</a>
-        <a href="tasks.html">משימות חפיפה</a>
-        <a href="scheduler.html" id="scheduler-link" style="display:none;">שיבוץ</a>
-        <a href="reports.html" id="reports-link" style="display:none;">דוחו"ת</a>
-    </nav>
-    <div class="user-info">
-        <span id="header-user"></span>
-        <span id="header-role"></span>
-        <button class="logout-btn" onclick="logout()">התנתק</button>
-    </div>
+    
+    <!-- Navigation Links -->
+    <a href="dashboard.html">עמוד הבית</a>
+    <a href="schedule.html">סידור חודשי</a>
+    <a href="weekly_activities.html">לו"ז שבועי</a>
+    <a href="guides.html">ניהול צוות</a>
+    <a href="constraints.html">אילוצים וחופשות</a>
+    <a href="tasks.html">משימות חפיפה</a>
+    <a href="scheduler.html" id="scheduler-link" style="display:none;">שיבוץ</a>
+    <a href="reports.html" id="reports-link" style="display:none;">דוחו"ת</a>
+  </nav>
+  
+  <!-- Desktop User Info -->
+  <div class="user-info">
+    <span id="header-user"></span>
+    <span id="header-role"></span>
+    <button class="logout-btn" onclick="logout()">התנתק</button>
+  </div>
 </div>
+
+<!-- Mobile Menu Overlay -->
+<div class="mobile-menu-overlay" onclick="closeMobileMenu()"></div>
+
+<script>
+// Mobile menu functionality
+function toggleMobileMenu() {
+  const nav = document.querySelector('#main-navbar nav');
+  const hamburger = document.querySelector('.hamburger-menu');
+  const overlay = document.querySelector('.mobile-menu-overlay');
+  
+  nav.classList.toggle('active');
+  hamburger.classList.toggle('active');
+  overlay.classList.toggle('active');
+  
+  // Prevent body scroll when menu is open
+  if (nav.classList.contains('active')) {
+    document.body.style.overflow = 'hidden';
+  } else {
+    document.body.style.overflow = 'auto';
+  }
+}
+
+function closeMobileMenu() {
+  const nav = document.querySelector('#main-navbar nav');
+  const hamburger = document.querySelector('.hamburger-menu');
+  const overlay = document.querySelector('.mobile-menu-overlay');
+  
+  nav.classList.remove('active');
+  hamburger.classList.remove('active');
+  overlay.classList.remove('active');
+  document.body.style.overflow = 'auto';
+}
+
+// Close menu when clicking on a link
+document.addEventListener('DOMContentLoaded', function() {
+  const navLinks = document.querySelectorAll('#main-navbar nav a[href]');
+  navLinks.forEach(link => {
+    link.addEventListener('click', closeMobileMenu);
+  });
+  
+  // Close menu on escape key
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      closeMobileMenu();
+    }
+  });
+});
+
+// Update mobile user info when header user info is updated
+function updateMobileUserInfo() {
+  const desktopUser = document.getElementById('header-user');
+  const desktopRole = document.getElementById('header-role');
+  const mobileUser = document.getElementById('mobile-header-user');
+  const mobileRole = document.getElementById('mobile-header-role');
+  
+  if (desktopUser && mobileUser) {
+    mobileUser.textContent = desktopUser.textContent;
+  }
+  if (desktopRole && mobileRole) {
+    mobileRole.textContent = desktopRole.textContent;
+  }
+}
+
+// Call this function after header user info is populated
+setTimeout(updateMobileUserInfo, 1000);
+</script>
 
