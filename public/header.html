@@ -46,6 +46,7 @@
   padding: 0;
   z-index: 1001;
   transition: all 0.3s ease;
+  position: relative;
 }
 
 .hamburger-menu span {
@@ -182,13 +183,13 @@
   }
   
   .hamburger-menu {
-    display: flex;
+    display: flex !important;
   }
   
   #main-navbar nav {
     position: fixed;
     top: 0;
-    right: -100%;
+    left: -100%;
     width: 280px;
     height: 100vh;
     background: #ede7f6;
@@ -196,14 +197,14 @@
     justify-content: flex-start;
     align-items: center;
     padding: 80px 20px 20px 20px;
-    box-shadow: -2px 0 12px #e4e6eb33;
-    transition: right 0.3s ease;
+    box-shadow: 2px 0 12px #e4e6eb33;
+    transition: left 0.3s ease;
     z-index: 1000;
     overflow-y: auto;
   }
   
   #main-navbar nav.active {
-    right: 0;
+    left: 0;
   }
   
   #main-navbar nav a {
@@ -263,11 +264,11 @@
   
   #main-navbar nav {
     width: 100%;
-    right: -100%;
+    left: -100%;
   }
   
   #main-navbar nav.active {
-    right: 0;
+    left: 0;
   }
   
   #main-navbar nav a {
@@ -361,6 +362,13 @@
   z-index: 999;
   opacity: 0;
   transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.mobile-menu-overlay.active {
+  display: block;
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .mobile-menu-overlay.active {
