@@ -5,6 +5,63 @@ if (!role) {
     window.location.href = "login.html";
 }
 
+// ========== MOBILE MENU FUNCTIONS ==========
+// Mobile menu functionality
+window.toggleMobileMenu = function() {
+  const nav = document.querySelector('#main-navbar nav');
+  const hamburger = document.querySelector('.hamburger-menu');
+  const overlay = document.querySelector('.mobile-menu-overlay');
+  
+  if (!nav || !hamburger) return;
+  
+  nav.classList.toggle('active');
+  hamburger.classList.toggle('active');
+  
+  if (overlay) {
+    overlay.classList.toggle('active');
+  }
+  
+  // Prevent body scroll when menu is open
+  if (nav.classList.contains('active')) {
+    document.body.style.overflow = 'hidden';
+  } else {
+    document.body.style.overflow = 'auto';
+  }
+};
+
+window.closeMobileMenu = function() {
+  const nav = document.querySelector('#main-navbar nav');
+  const hamburger = document.querySelector('.hamburger-menu');
+  const overlay = document.querySelector('.mobile-menu-overlay');
+  
+  if (!nav || !hamburger) return;
+  
+  nav.classList.remove('active');
+  hamburger.classList.remove('active');
+  
+  if (overlay) {
+    overlay.classList.remove('active');
+  }
+  
+  document.body.style.overflow = 'auto';
+};
+
+// Update mobile user info when header user info is updated
+function updateMobileUserInfo() {
+  const desktopUser = document.getElementById('header-user');
+  const desktopRole = document.getElementById('header-role');
+  const mobileUser = document.getElementById('mobile-header-user');
+  const mobileRole = document.getElementById('mobile-header-role');
+  
+  if (desktopUser && mobileUser) {
+    mobileUser.textContent = desktopUser.textContent;
+  }
+  if (desktopRole && mobileRole) {
+    mobileRole.textContent = desktopRole.textContent;
+  }
+}
+
+// ========== HEADER USER RENDERING ==========
 // פונקציה להצגת שם המשתמש והתפקיד
 function renderHeaderUser(retryCount = 0) {
     console.log('renderHeaderUser called, retry count:', retryCount);
@@ -56,24 +113,47 @@ function renderHeaderUser(retryCount = 0) {
       reportsLink.style.display = (role === "רכז" || role === "רכזת") ? "inline-block" : "none";
       console.log('Reports link display set to:', reportsLink.style.display);
     }
+    
+    // Update mobile user info after header is rendered
+    setTimeout(updateMobileUserInfo, 100);
 }
 
-
-
+// ========== EVENT LISTENERS ==========
 // פונקציית התנתקות
 window.logout = function() {
   localStorage.clear();
   window.location.href = "login.html";
 };
 
+// Setup mobile menu event listeners
+function setupMobileMenu() {
+  // Close menu when clicking on a link
+  const navLinks = document.querySelectorAll('#main-navbar nav a[href]');
+  navLinks.forEach(link => {
+    link.addEventListener('click', closeMobileMenu);
+  });
+  
+  // Close menu on escape key
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      closeMobileMenu();
+    }
+  });
+}
+
 // הפעלת הפונקציה כשהדף נטען
 document.addEventListener("DOMContentLoaded", function() {
     renderHeaderUser();
+    setupMobileMenu();
 });
 
 // הפעלת הפונקציה גם אם הדף כבר נטען
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', renderHeaderUser);
+    document.addEventListener('DOMContentLoaded', function() {
+        renderHeaderUser();
+        setupMobileMenu();
+    });
 } else {
     renderHeaderUser();
+    setupMobileMenu();
 } 
